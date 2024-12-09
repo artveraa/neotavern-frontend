@@ -1,6 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import MapScreen from "./MapScreen";
+import RegisterScreen from "./RegisterScreen";
+import RegisterUser from "../components/RegisterUser";
 
 const WelcomeScreen = ({ navigation }) => {
   return (
@@ -8,6 +10,7 @@ const WelcomeScreen = ({ navigation }) => {
       <Text>WelcomeScreen</Text>
       <TouchableOpacity onPress={() => navigation.navigate("RegisterScreen")}>
         <Text>Go to home</Text>
+        <RegisterUser />
       </TouchableOpacity>
     </View>
   );
