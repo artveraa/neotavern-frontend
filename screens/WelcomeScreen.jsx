@@ -8,10 +8,10 @@ const WelcomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text>WelcomeScreen</Text>
-      <TouchableOpacity onPress={() => navigation.navigate("RegisterScreen")}>
+      <TouchableOpacity onPress={() => navigation.navigate("TabNavigator")}>
         <Text>Go to home</Text>
-        <RegisterUser />
       </TouchableOpacity>
+      <RegisterUser />
     </View>
   );
 };

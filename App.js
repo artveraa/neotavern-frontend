@@ -27,7 +27,7 @@ const TabNavigator = () => {
 
           if (route.name === "Bookmarked") {
             iconName = "bookmark-o";
-          } else if (route.name === "Map") {
+          } else if (route.name === "MapScreen") {
             iconName = "map-o";
           } else if (route.name === "AddEvent") {
             iconName = "plus-square-o";
@@ -43,7 +43,7 @@ const TabNavigator = () => {
       })}
     >
       <Tab.Screen name="Bookmarked" component={BookmarkedScreen} />
-      <Tab.Screen name="Map" component={MapScreen} />
+      <Tab.Screen name="MapScreen" component={MapScreen} />
       <Tab.Screen name="AddEvent" component={AddEventScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>

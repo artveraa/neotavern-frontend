@@ -1,6 +1,10 @@
+import { View, Text } from "react-native";
+
 const RegisterUser = () => {
   return (
-    <div>RegisterUser</div>
-  )
-}
-export default RegisterUser
+    <View>
+      <Text>Register user</Text>
+    </View>
+  );
+};
+export default RegisterUser;
