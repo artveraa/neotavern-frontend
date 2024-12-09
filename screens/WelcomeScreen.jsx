@@ -1,55 +1,66 @@
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaView, View, Image, Text, StyleSheet, TouchableOpacity } from "react-native";
 import MapScreen from "./MapScreen";
-import RegisterScreen from "./RegisterScreen";
 import RegisterUser from "../components/RegisterUser";
-// import colors  from '../styleConstants/colors'
+import LoginUser from "../components/LoginUser";
 
-const purple = '#EDA0FF'
-const green = '#E7FF98'
-
-const light = '#F5F5F5'
-const dark =  '#333333'
-const purpleBorder = '#E264FF'
-
+import colors  from '../styleConstants/colors'
 
 const WelcomeScreen = ({navigation}) => {
+  const [resgisterForm, setResgisterForm]= useState(false)
+  const [loginForm, setLoginForm]= useState(false)
+
 
   const handleSignup = () => {
-    console.log('clic')
-    return <RegisterUser/>
+    setResgisterForm(!resgisterForm)
+    if(resgisterForm){
+      navigation.navigate("TabNavigator", { screen: 'MapScreen' })
+    }
+  }
+
+  const handleLogin = () => {
+    setLoginForm(!loginForm)
+    if(loginForm){
+      navigation.navigate("TabNavigator", { screen: 'MapScreen' })
+    }
   }
 
   return (
     <SafeAreaView style={styles.container}>
       <Image source={require('../assets/icon.png')} style={styles.logo}/>
 
-      <View style={styles.btnContainer}>
+      <View style={[styles.btnContainer, styles.btnContainerLogin]}>
         <TouchableOpacity style={styles.btnPrimary} onPress={() => navigation.navigate("TabNavigator")}>
           <Image source={require('../assets/favicon.png')} style={styles.logoG}/>
           <Text>Se connecter avec Google</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.btnPrimary} onPress={() => navigation.navigate("TabNavigator")}>
+        {loginForm && <LoginUser navigation={navigation}/>}
+        <TouchableOpacity style={styles.btnPrimary}onPress={() => handleLogin()}>
           <Text>Se connecter avec Google</Text>
         </TouchableOpacity>
       </View>
 
+
       <View style={styles.btnContainer}>
         <Text>Pas encore inscrit ?</Text>
-        <TouchableOpacity style={styles.btnSecondary} onPress={() => handleSignup()}>
+        {resgisterForm && <RegisterUser navigation={navigation}/>}
+          <TouchableOpacity style={styles.btnSecondary} onPress={() => handleSignup()}>
           <Text>Créer un compte</Text>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        
       </View>
+
     </SafeAreaView>
   );
 };
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: light,
-    color: dark,
+    backgroundColor: colors.light,
+    color: colors.dark,
     justifyContent: "space-between",
     alignItems: "center",
 
@@ -57,14 +68,13 @@ const styles = StyleSheet.create({
     paddingBottom:'25%',
     paddingRight:28,
     paddingLeft:28,
-
   },
   logo:{
     width:'40%',
     height:'20%',
   },
   btnContainer:{
-    color: dark,
+    color: colors.dark,
 
     width:"100%",
     justifyContent:'center',
@@ -85,9 +95,9 @@ const styles = StyleSheet.create({
     height:40,
     padding: 4,
 
-    backgroundColor: light,
+    backgroundColor: colors.light,
     borderWidth: 1,
-    borderColor: purpleBorder,
+    borderColor: colors.purpleBorder,
     borderRadius:15,
   },
   btnSecondary:{
@@ -99,7 +109,7 @@ const styles = StyleSheet.create({
     height:40,
     padding: 4,
 
-    backgroundColor: green,
+    backgroundColor: colors.green,
     borderRadius:15,
   }
 });

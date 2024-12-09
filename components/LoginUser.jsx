@@ -3,24 +3,13 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-nativ
 
 import colors  from '../styleConstants/colors'
 
-const RegisterUser = ({navigation}) => {
-  const [nickname, setNickname] = useState('')
+const LoginUser = ({navigation}) => {
   const [mail, setMail] = useState('')
   const [pass, setPass] = useState('')
-  const [confirmationPass, setConfirmationPass] = useState('')
 
-  const handleRegisterUser = () => {
-    // navigation.navigate('TabNavigator');
-    console.log('clicUser')
-  }
 
   return (
     <View>
-      <View>
-        <Text>Surnom</Text>
-        <TextInput placeholder="Surnom" onChangeText={(value) => setNickname(value)} value={nickname} style={styles.input} /> 
-      </View>
-
       <View>
         <Text>E-mail de connexion</Text>
         <TextInput placeholder="Email" onChangeText={(value) => setMail(value)} value={mail} style={styles.input} /> 
@@ -29,11 +18,6 @@ const RegisterUser = ({navigation}) => {
       <View>
         <Text>Mot de passe</Text>
         <TextInput placeholder="Mot de passe" onChangeText={(value) => setPass(value)} value={pass} style={styles.input} /> 
-      </View>
-
-      <View>
-        <Text>Mot de passe</Text>
-        <TextInput placeholder="Confirmation mot de passe" onChangeText={(value) => setConfirmationPass(value)} value={confirmationPass} style={styles.input} />
       </View>
     </View>
   );
@@ -61,4 +45,4 @@ btnSecondary:{
 }
 })
 
-export default RegisterUser;
+export default LoginUser;
