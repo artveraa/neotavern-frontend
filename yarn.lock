@@ -811,6 +811,11 @@
     "@babel/helper-string-parser" "^7.25.9"
     "@babel/helper-validator-identifier" "^7.25.9"
 
+"@expo-google-fonts/lexend@^0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@expo-google-fonts/lexend/-/lexend-0.2.3.tgz#05991a5a20266cd2436072872ec73dcd4de2d073"
+  integrity sha512-GtEv1oYYAZ0+bdVbvmR640dsOuQAPAZFDgBL2p8zGDnz0oGcNxQVxwml8k8We6BnRLyJmM43WshgxZvQ4i6TeA==
+
 "@expo/bunyan@^4.0.0":
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/@expo/bunyan/-/bunyan-4.0.1.tgz#ab9e17e36c71c704a0ce72168378a487368da736"
@@ -2667,7 +2672,7 @@ expo-file-system@~18.0.4:
   dependencies:
     web-streams-polyfill "^3.3.2"
 
-expo-font@~13.0.1:
+expo-font@^13.0.1, expo-font@~13.0.1:
   version "13.0.1"
   resolved "https://registry.yarnpkg.com/expo-font/-/expo-font-13.0.1.tgz#3a7eed7a4238a352fc74a425fd8c020c5f122382"
   integrity sha512-8JE47B+6cLeKWr5ql8gU6YsPHjhrz1vMrTqYMm72No/8iW8Sb/uL4Oc0dpmbjq3hLLXBY0xPBQOgU7FQ6Y04Vg==
