@@ -1,12 +1,71 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { Button, StyleSheet, Text, View } from "react-native";
+
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+
+import SplashScreen from "./screens/SplashScreen";
+import WelcomeScreen from "./screens/WelcomeScreen";
+import LoginScreen from "./screens/LoginScreen";
+import RegisterScreen from "./screens/RegisterScreen";
+import HomeScreen from "./screens/HomeScreen";
+import BookmarkedScreen from "./screens/BookmarkedScreen";
+import MapScreen from "./screens/MapScreen";
+import AddEventScreen from "./screens/AddEventScreen";
+import ProfileScreen from "./screens/ProfileScreen";
+
+const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+
+const TabNavigator = () => {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          let iconName = "";
+
+          if (route.name === "Bookmarked") {
+            iconName = "bookmark-o";
+          } else if (route.name === "Map") {
+            iconName = "map-o";
+          } else if (route.name === "AddEvent") {
+            iconName = "plus-square-o";
+          } else if (route.name === "Profile") {
+            iconName = "user-o";
+          }
+
+          return <FontAwesome name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: "#2196f3",
+        tabBarInactiveTintColor: "gray",
+        headerShown: false,
+      })}
+    >
+      <Tab.Screen name="Bookmarked" component={BookmarkedScreen} />
+      <Tab.Screen name="Map" component={MapScreen} />
+      <Tab.Screen name="AddEvent" component={AddEventScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+    </Tab.Navigator>
+  );
+};
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Hello</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator
+        initialRouteName="Welcome"
+        screenOptions={{ headerShown: false }}
+      >
+        {/* <Stack.Screen name="Splash" component={SplashScreen} /> */}
+        {/* <Stack.Screen name="MapScreen" component={MapScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Register" component={RegisterScreen} /> */}
+        {/* <Stack.Screen name="Home" component={HomeScreen}  /> */}
+        <Stack.Screen name="Welcome" component={WelcomeScreen} />
+        <Stack.Screen name="TabNavigator" component={TabNavigator} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
