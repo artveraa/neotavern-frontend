@@ -15,7 +15,13 @@ import MapScreen from "./screens/MapScreen";
 import AddEventScreen from "./screens/AddEventScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 
-import { ThemeProvider, ThemeContext } from "./context/ThemeContext";
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import user from './reducers/user';
+
+const store = configureStore({
+  reducer: { user },
+});
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -54,7 +60,7 @@ const TabNavigator = () => {
 
 export default function App() {
   return (
-    <ThemeProvider>
+    <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator
           initialRouteName="Welcome"
@@ -69,7 +75,7 @@ export default function App() {
           <Stack.Screen name="TabNavigator" component={TabNavigator} />
         </Stack.Navigator>
       </NavigationContainer>
-    </ThemeProvider>
+    </Provider>
   );
 }
 
