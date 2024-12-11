@@ -27,10 +27,10 @@ const LoginUser = ({navigation}) => {
     .then(response => response.json())
     .then(userData => {
       if (userData.result){
-        setError(!error)
-      }else{
         dispatch(login({user: userData}))
         navigation.navigate("TabNavigator", { screen: 'MapScreen' })
+      }else{
+        setError(!error)
       }
     });
   }

@@ -10,14 +10,5 @@ const getAllEvents = async () => {
   }
 };
 
-const createEvent = async () => {
-  try {
-    const response = await fetch(`https://neotavern-backend.vercel.app/events/createEvent`);
-    return await response.json();
-  } catch (error) {
-    console.error("Erreur lors de la récupération des événements :", error);
-    throw error;
-  }
-};
 
-export default {getAllEvents, createEvent};
+export default getAllEvents;

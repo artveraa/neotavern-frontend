@@ -46,7 +46,7 @@ const AddEventScreen = () => {
 
 
   const user = useSelector((state) => state.user.value);
-  console.log(user)
+  console.log(user.user.user.userData._id)
 
   // tableau brut de resto / bars pour test => à remplacer par la BDD
   const items = [
@@ -91,10 +91,13 @@ const AddEventScreen = () => {
   };
 
   // clique sur la date souhaitée et fermeture du calendrier
+ 
   const handleConfirm = (selectedDate) => {
+    console.log(selectedDate)
     setEventDate(selectedDate.toDateString());
     hideDatePicker();
   };
+  
 
   // affichage de l'horloge pour horaire de l'événement
   const showTimePicker = () => {
@@ -128,6 +131,9 @@ const AddEventScreen = () => {
     drinksTab.push(drink.label);
   };
 
+  const date = new Date(eventDate)
+
+
   const handleCreate = () => {
     console.log('CLIQUE CA MARCHE')
     fetch('https://neotavern-backend.vercel.app/events/createEvent', {
@@ -138,17 +144,17 @@ const AddEventScreen = () => {
       body: JSON.stringify({
           name: eventName,
           description: eventText,
-          date: eventDate,
+          date: date,
           mainCategory: eventType,
           likes: 2,
           categories: [],
-          infosTag: [
+          infosTags: [
             { food: [] },
             { drinks: [] },
             { price: [] },
             { legal: [] },
           ],
-          user: user._id
+          user: user.user.user.userData._id
       })
     })
     .then(response => {
@@ -165,6 +171,7 @@ const AddEventScreen = () => {
     });
 
   }
+
 
   return (
     <SafeAreaView style={styles.container}>
