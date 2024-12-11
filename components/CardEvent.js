@@ -9,7 +9,8 @@ import {
 } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
-const CardEvent = ({ event, handleLike }) => {
+const CardEvent = ({ event, handleLike, userLikes }) => {
+  const isLiked = userLikes.includes(event._id);
   const formatDate = (date) => {
     if (new Date(date).toDateString() === new Date().toDateString()) {
       return "Aujourd'hui";
@@ -32,8 +33,15 @@ const CardEvent = ({ event, handleLike }) => {
             style={styles.image}
             source={require("../assets/default.jpg")}
           />
-          <TouchableOpacity style={styles.likeBtn} onPress={() => handleLike()}>
-            <FontAwesome name="heart" size={15} color="#EDA0FF" />
+          <TouchableOpacity
+            style={styles.likeBtn}
+            onPress={() => handleLike(event._id)}
+          >
+            <FontAwesome
+              name="heart"
+              size={15}
+              color={isLiked ? "#FF0000" : "#EDA0FF"}
+            />
           </TouchableOpacity>
         </View>
         <View style={styles.textContainer}>

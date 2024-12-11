@@ -15,9 +15,14 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
-import getAllEvents from "../fetchers/events";
+import { getAllEvents, stockLikeInDB } from "../fetchers/events";
+import { useSelector, useDispatch } from "react-redux";
+import { likeAnEvent, dislikeAnEvent } from "../reducers/user";
 
 const MapScreen = () => {
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
   const bottomSheetRef = useRef(null);
   const [region, setRegion] = useState(null);
   const [allEvents, setAllEvents] = useState(null);
@@ -53,13 +58,23 @@ const MapScreen = () => {
     }
   };
 
-  const handleLike = () => {
-    console.log("like");
+  const handleLike = (eventId) => {
+    fetch(
+      `https://neotavern-backend.vercel.app/events/like/${user.value.token}/${eventId}`,
+      {
+        method: "POST",
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      });
   };
 
   useEffect(() => {
     openPanel();
     fetchEvents();
+    console.log(user);
   }, []);
 
   return (
@@ -90,6 +105,7 @@ const MapScreen = () => {
                 key={event._id}
                 event={event}
                 handleLike={handleLike}
+                userLikes={user.value.likes}
               />
             ))}
         </BottomSheetScrollView>

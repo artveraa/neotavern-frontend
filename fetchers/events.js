@@ -10,4 +10,19 @@ const getAllEvents = async () => {
   }
 };
 
-export default getAllEvents;
+const stockLikeInDB = async (eventId, userToken) => {
+  try {
+    const response = await fetch(
+      `https://neotavern-backend.vercel.app/events/like/${userToken}/${eventId}`,
+      {
+        method: "POST",
+      }
+    );
+    return await response.json();
+  } catch (error) {
+    console.error("Erreur lors du stockage du like :", error);
+    throw error;
+  }
+};
+
+export { getAllEvents, stockLikeInDB };
