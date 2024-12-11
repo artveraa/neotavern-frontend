@@ -1,6 +1,6 @@
 const ENDPOINT = process.env.API_ENDPOINT;
 
-const getAllEvents = async () => {
+export const getAllEvents = async () => {
   try {
     const response = await fetch(`https://neotavern-backend.vercel.app/events`);
     return await response.json();
@@ -9,5 +9,6 @@ const getAllEvents = async () => {
     throw error;
   }
 };
+
 
 export default getAllEvents;

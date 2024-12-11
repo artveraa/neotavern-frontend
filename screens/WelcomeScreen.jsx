@@ -109,6 +109,15 @@ const WelcomeScreen = ({ navigation }) => {
                 </TextApp>
               </TouchableOpacity>
             )}
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("TabNavigator", {
+                  screen: "MapScreen",
+                })
+              }
+            >
+              <Text>Accéder à la map</Text>
+            </TouchableOpacity>
           </View>
         )}
         

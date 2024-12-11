@@ -52,8 +52,8 @@ const RegisterUser = ({ navigation }) => {
           setPassErr(passErr)
         }
 
-        dispatch(login({ nickname: userData.nickname, token: userData.token }));
-        navigation.navigate("TabNavigator", { screen: "MapScreen" });
+      dispatch(login({user: userData}))
+      navigation.navigate("TabNavigator", { screen: 'MapScreen' })
       });
   };
 
