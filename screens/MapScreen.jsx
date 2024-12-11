@@ -53,6 +53,10 @@ const MapScreen = () => {
     }
   };
 
+  const handleLike = () => {
+    console.log("like");
+  };
+
   useEffect(() => {
     openPanel();
     fetchEvents();
@@ -82,7 +86,11 @@ const MapScreen = () => {
         <BottomSheetScrollView style={styles.scrollContainer}>
           {allEvents &&
             allEvents.map((event) => (
-              <CardEvent key={event._id} event={event} />
+              <CardEvent
+                key={event._id}
+                event={event}
+                handleLike={handleLike}
+              />
             ))}
         </BottomSheetScrollView>
       </BottomSheet>
@@ -111,15 +119,11 @@ const styles = StyleSheet.create({
   },
 
   scrollContainer: {
-    // height: "100%",
-    // gap: 10,
-    // borderWidth: 1,
-    // borderColor: "blue",
-    // height: "auto",
+    width: "100%",
   },
 
   drawer: {
-    paddingHorizontal: 30,
+    paddingHorizontal: 20,
   },
 });
 
