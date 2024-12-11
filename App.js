@@ -15,7 +15,6 @@ import BookmarkedScreen from "./screens/BookmarkedScreen";
 import MapScreen from "./screens/MapScreen";
 import AddEventScreen from "./screens/AddEventScreen";
 import ProfileScreen from "./screens/ProfileScreen";
-
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import user from "./reducers/user";
@@ -44,12 +43,11 @@ const TabNavigator = () => {
             iconName = "user-o";
           }
 
-
           return <FontAwesome name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: "#2196f3",
         tabBarInactiveTintColor: "gray",
-        
+
         headerShown: false,
       })}
     >
@@ -60,6 +58,19 @@ const TabNavigator = () => {
     </Tab.Navigator>
   );
 };
+
+import {
+  useFonts,
+  Lexend_900Black,
+  Lexend_800ExtraBold,
+  Lexend_700Bold,
+  Lexend_600SemiBold,
+  Lexend_500Medium,
+  Lexend_400Regular,
+  Lexend_300Light,
+  Lexend_200ExtraLight,
+  Lexend_100Thin,
+} from "@expo-google-fonts/lexend";
 
 export default function App() {
   let [fontsLoaded] = useFonts({
