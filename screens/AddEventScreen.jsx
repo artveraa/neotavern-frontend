@@ -123,7 +123,7 @@ const AddEventScreen = () => {
   };
 
   const handleCreate = () => {
-    
+
   }
 
   return (
@@ -281,7 +281,9 @@ const AddEventScreen = () => {
       <View>
         <Text style={styles.label}>UPLOAD UNE IMAGE</Text>
       </View>
-      <TouchableOpacity style={styles.btn} onPress={() => handleCreate}></TouchableOpacity>
+      <TouchableOpacity style={styles.btn3} onPress={() => handleCreate}>
+       <Text style={styles.txtBtn}>Créer l'événement !</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
@@ -322,9 +324,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   btn: {
-    width: 80,
     borderWidth: 1,
-    fontSize: 12,
     marginLeft: 20,
     marginBottom: 10,
     padding: 5,
@@ -334,10 +334,18 @@ const styles = StyleSheet.create({
   btn2: {
     width: 90,
     borderWidth: 1,
-    fontSize: 12,
     marginBottom: 10,
     borderRadius: 8,
     padding: 5,
+    backgroundColor: colors.yellow,
+  },
+  btn3: {
+    borderWidth: 1,
+    marginLeft: 20,
+    marginBottom: 10,
+    marginTop: 20,
+    padding: 5,
+    borderRadius: 8,
     backgroundColor: colors.yellow,
   },
   modalView: {
