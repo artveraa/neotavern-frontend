@@ -226,6 +226,7 @@ const styles = StyleSheet.create({
     color: "#333333",
   },
   label: {
+    fontFamily: 'Lexend_700Bold',
     color: "#333333",
     justifyContent: "center",
   },
@@ -240,11 +241,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   btn: {
-    width: 60,
+    width: 70,
     borderWidth: 1,
     fontSize: 12,
     marginLeft: 20,
     marginBottom: 10,
+    borderRadius: 8,
+    backgroundColor: colors.green,
   },
   btn2: {
     width: 80,
