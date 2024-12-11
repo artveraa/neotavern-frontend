@@ -23,6 +23,7 @@ import TextApp from "../styleComponents/TextApp";
 import colors from "../styleConstants/colors";
 
 const EventScreen = () => {
+  // ICI voir le reduecr de chaque éléments de l'élément cliqué
   const user = useSelector((state) => state.user.value);
   //map localisation user pour le moment
   const [region, setRegion] = useState(null);
@@ -84,11 +85,7 @@ const EventScreen = () => {
             </TagL>
             <TagL>
               <Image source={require("../assets/date.png")} style={styles.tagIcon}/>
-                Coktail
-            </TagL>
-            <TagL>
-              <Image source={require("../assets/date.png")} style={styles.tagIcon}/>
-                Soft
+                Style event
             </TagL>
           </View>
         </View>
@@ -179,7 +176,6 @@ container: {
     flexDirection:'row',
     gap:12,
 
-    overflow:z
     paddingTop:24,
     paddingBottom:24,
   },

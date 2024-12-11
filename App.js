@@ -57,10 +57,12 @@ const TabNavigator = () => {
             iconName = "user-o";
           }
 
+
           return <FontAwesome name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: "#2196f3",
         tabBarInactiveTintColor: "gray",
+        
         headerShown: false,
       })}
     >
