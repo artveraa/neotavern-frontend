@@ -1,10 +1,10 @@
-import React from "react";
-import { useState} from "react";
-import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   View,
   Text,
   StyleSheet,
+  ScrollView,
   Button,
   TextInput,
   TouchableOpacity,
@@ -14,15 +14,15 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import colors from "../styleConstants/colors";
+import TextApp from "../styleComponents/TextApp";
 import {
   Select,
   SelectProvider,
 } from "@mobile-reality/react-native-select-pro";
 import Checkbox from "expo-checkbox";
-import createEvent from '../fetchers/events'
+import createEvent from "../fetchers/events";
 
 const AddEventScreen = () => {
-  const [placeSearch, setPlaceSearch] = useState("");
   const [selectedPlace, setSelectedPlace] = useState("");
   const [isModalVisible, setModalVisible] = useState(false);
   const [eventName, setEventName] = useState("");
@@ -44,23 +44,13 @@ const AddEventScreen = () => {
   const [isDateVisible, setDateVisibility] = useState(false);
   const [isTimeVisible, setTimeVisibility] = useState(false);
 
-
   const user = useSelector((state) => state.user.value);
-  console.log(user)
-
-  // tableau brut de resto / bars pour test => à remplacer par la BDD
-  const items = [
-    { label: "Resto1", value: "resto1" },
-    { label: "Bar1", value: "bar1" },
-    { label: "Resto2", value: "resto2" },
-    { label: "Bar2", value: "bar2" },
-    { label: "Restaurant", value: "restaurant" },
-  ];
+  // console.log(user);
 
   // tri des établissements en minuscule, pour éviter la casse et recherche dans le tableau avec l'état (input)
-  const filteredItems = items.filter((item) =>
-    item.label.toLowerCase().includes(placeSearch.toLowerCase())
-  );
+  // const filteredItems = items.filter((item) =>
+  //   item.label.toLowerCase().includes(placeSearch.toLowerCase())
+  // );
 
   // tableau brut de type d'événement
   const types = [
@@ -78,7 +68,6 @@ const AddEventScreen = () => {
     { label: "Softs", value: "softs" },
     { label: "Eau", value: "eau" },
   ];
-
 
   // affichage du calendrier
   const showDatePicker = () => {
@@ -119,211 +108,198 @@ const AddEventScreen = () => {
     setModalVisible(true);
   };
 
-  // fermeture de la modal de recherche d'établissement
-  const hideModal = () => {
-    setModalVisible(false);
-  };
-
-  const handleDrink = () => {
-    drinksTab.push(drink.label);
-  };
-
   const handleCreate = () => {
-    console.log('CLIQUE CA MARCHE')
-    fetch('https://neotavern-backend.vercel.app/events/createEvent', {
-      method: 'POST',       
+    console.log("CLIQUE CA MARCHE");
+    fetch("https://neotavern-backend.vercel.app/events/createEvent", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-          name: eventName,
-          description: eventText,
-          date: eventDate,
-          mainCategory: eventType,
-          likes: 2,
-          categories: [],
-          infosTag: [
-            { food: [] },
-            { drinks: [] },
-            { price: [] },
-            { legal: [] },
-          ],
-          user: user._id
+        name: eventName,
+        description: eventText,
+        date: eventDate,
+        mainCategory: eventType,
+        likes: 2,
+        categories: [],
+        infosTag: [{ food: [] }, { drinks: [] }, { price: [] }, { legal: [] }],
+        user: user._id,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Erreur lors de l’ajout de la tâche");
+        }
+        return response.json();
       })
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Erreur lors de l’ajout de la tâche');
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log('Tâche ajoutée avec succès :', data);
-    })
-    .catch(error => {
-      console.error('Erreur:', error);
+      .then((data) => {
+        console.log("Tâche ajoutée avec succès :", data);
+      })
+      .catch((error) => {
+        console.error("Erreur:", error);
+      });
+  };
+
+  const [placesList, setPlacesList] = useState([]);
+  const [placesResult, setPlacesResult] = useState([]);
+  const [placeSearch, setPlaceSearch] = useState("");
+
+  useEffect(() => {
+    fetch("https://neotavern-backend.vercel.app/places/allPlaces")
+      .then((response) => response.json())
+      .then((data) => {
+        setPlacesList(data.data);
+      });
+  }, []);
+
+  const handleSearch = (text) => {
+    setPlaceSearch(text);
+
+    if (text === "") {
+      setPlacesResult([]);
+      return;
+    }
+
+    const filteredPlaces = placesList.filter((place) => {
+      return place.name.toLowerCase().includes(text.toLowerCase());
     });
 
-  }
+    setPlacesResult(filteredPlaces);
+  };
+
+  const chooseResult = (place) => {
+    setPlaceSearch(place);
+    setPlacesResult([]);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.picker}>
-        <Text style={styles.label}>Recherchez un établissement:</Text>
-        <View style={styles.dateInput}>
-          {selectedPlace ? (
-            <Text
-              style={styles.inputPlace}
-              onPress={() => {
-                setSelectedPlace("");
-              }}
-            >
-              {selectedPlace}
-            </Text>
-          ) : (
-            <TextInput
-              style={styles.inputPlace}
-              placeholder="Rechercher..."
-              onChangeText={setPlaceSearch}
-              value={placeSearch}
-            />
+      <Text style={styles.mainTitle}>Ajouter un évènement</Text>
+      <ScrollView style={styles.scrollWrapper}>
+        <View style={styles.searchSection}>
+          <Text style={styles.label}>Lieu de l'événement</Text>
+          <TextInput
+            placeholder="Rechercher un établissement"
+            style={styles.input}
+            value={placeSearch}
+            onChangeText={handleSearch}
+          />
+          {placesResult.length > 0 && (
+            <View style={styles.resultsList}>
+              {placesResult.map((place) => (
+                <Text
+                  style={styles.resultItem}
+                  onPress={() => chooseResult(place.name)}
+                  key={place._id}
+                >
+                  {place.name}
+                </Text>
+              ))}
+            </View>
           )}
-          <TouchableOpacity style={styles.btn2} onPress={showModal}>
-            <Text style={styles.txtBtn}>Rechercher</Text>
-          </TouchableOpacity>
+          <View style={styles.searchResult}></View>
         </View>
-        <Modal visible={isModalVisible} animationType="slide">
-          <View style={styles.modalView}>
-            {filteredItems.map((item, i) => (
-              <TouchableOpacity
-                key={i}
-                onPress={() => {
-                  setSelectedPlace(item.label);
-                  setModalVisible(false);
-                }}
-              >
-                <Text style={styles.modalText}>{item.label}</Text>
-              </TouchableOpacity>
-            ))}
-            <TouchableOpacity
-              style={styles.btn}
-              title="Fermer"
-              onPress={hideModal}
-            >
-              <Text style={styles.txtBtn}>Fermer</Text>
+        <View>
+          <Text style={styles.label}>Nom de l'événement:</Text>
+          <TextInput
+            placeholder="Soirée du nouvel an"
+            style={styles.input}
+            onChangeText={(value) => setEventName(value)}
+            value={eventName}
+          />
+        </View>
+        <View style={styles.picker}>
+          <Text style={styles.label}>Type d'événement:</Text>
+          {types.map((type, i) => (
+            <Text key={i}>{type.label}</Text>
+          ))}
+        </View>
+        <View>
+          <Text style={styles.label}>Description:</Text>
+
+          <TextInput
+            placeholder="Décrire l'événement"
+            multiline={true}
+            numberOfLines={4}
+            onChangeText={(value) => setEventText(value)}
+            value={eventText}
+            style={styles.input}
+          />
+        </View>
+        <View style={styles.picker}>
+          <Text style={styles.label}>Date de l'événement:</Text>
+          <View style={styles.dateInput}>
+            <Text style={styles.label}>{eventDate}</Text>
+            <TouchableOpacity style={styles.btn} onPress={showDatePicker}>
+              <Text style={styles.txtBtn}>Choisir une date</Text>
             </TouchableOpacity>
           </View>
-        </Modal>
-      </View>
-      <View>
-        <Text style={styles.label}>Nom de l'événement:</Text>
-        <TextInput
-          placeholder="Soirée du nouvel an"
-          style={styles.input}
-          onChangeText={(value) => setEventName(value)}
-          value={eventName}
-        />
-      </View>
-      <View style={styles.picker}>
-        <Text style={styles.label}>Type d'événement:</Text>
-        <Picker
-          selectedValue={eventType}
-          onValueChange={(value) => setEventType(value)}
-        >
-          {types.map((type, i) => (
+          <DateTimePickerModal
+            isVisible={isDateVisible}
+            mode="date"
+            onConfirm={handleConfirm}
+            onCancel={hideDatePicker}
+            minimumDate={new Date()}
+          />
+        </View>
+        <View style={styles.picker}>
+          <Text style={styles.label}>Horaire de l'événement:</Text>
+          <View style={styles.dateInput}>
+            <Text style={styles.label}>{eventHour}</Text>
+            <TouchableOpacity style={styles.btn} onPress={showTimePicker}>
+              <Text style={styles.txtBtn}>Choisir une heure</Text>
+            </TouchableOpacity>
+            <DateTimePickerModal
+              isVisible={isTimeVisible}
+              mode="time"
+              onConfirm={handleValid}
+              onCancel={hideTimePicker}
+            />
+          </View>
+        </View>
+        <View style={styles.picker}>
+          <Text style={styles.label}>Tarif de l'événement:</Text>
+          <Picker
+            selectedValue={eventPrice}
+            onValueChange={(value) => setEventPrice(value)}
+          >
             <Picker.Item
-              key={i}
-              label={type.label}
-              value={type.value}
+              label="Gratuit"
+              value="gratuit"
               onPress={() => {
-                setEventType("");
+                setEventPrice("");
               }}
             />
-          ))}
-        </Picker>
-      </View>
-      <View>
-        <Text style={styles.label}>Description:</Text>
-        <TextInput
-          placeholder="Décrire l'événement"
-          style={styles.input}
-          onChangeText={(value) => setEventText(value)}
-          value={eventText}
-        />
-      </View>
-      <View style={styles.picker}>
-        <Text style={styles.label}>Date de l'événement:</Text>
-        <View style={styles.dateInput}>
-          <Text style={styles.label}>{eventDate}</Text>
-          <TouchableOpacity style={styles.btn} onPress={showDatePicker}>
-            <Text style={styles.txtBtn}>Choisir une date</Text>
-          </TouchableOpacity>
+            <Picker.Item
+              label="Payant"
+              value="payant"
+              onPress={() => {
+                setEventPrice("");
+              }}
+            />
+          </Picker>
         </View>
-        <DateTimePickerModal
-          isVisible={isDateVisible}
-          mode="date"
-          onConfirm={handleConfirm}
-          onCancel={hideDatePicker}
-          minimumDate={new Date()}
-        />
-      </View>
-      <View style={styles.picker}>
-        <Text style={styles.label}>Horaire de l'événement:</Text>
-        <View style={styles.dateInput}>
-          <Text style={styles.label}>{eventHour}</Text>
-          <TouchableOpacity style={styles.btn} onPress={showTimePicker}>
-            <Text style={styles.txtBtn}>Choisir une heure</Text>
-          </TouchableOpacity>
-          <DateTimePickerModal
-            isVisible={isTimeVisible}
-            mode="time"
-            onConfirm={handleValid}
-            onCancel={hideTimePicker}
-          />
-        </View>
-      </View>
-      <View style={styles.picker}>
-        <Text style={styles.label}>Tarif de l'événement:</Text>
-        <Picker
-          selectedValue={eventPrice}
-          onValueChange={(value) => setEventPrice(value)}
-        >
-          <Picker.Item
-            label="Gratuit"
-            value="gratuit"
-            onPress={() => {
-              setEventPrice("");
-            }}
-          />
-          <Picker.Item
-            label="Payant"
-            value="payant"
-            onPress={() => {
-              setEventPrice("");
-            }}
-          />
-        </Picker>
-      </View>
-      {/* <View style={styles.picker}>
+        {/* <View style={styles.picker}>
         <Text style={styles.label}>Boissons:</Text>
         
         {drinks.map((drink, i) => (
           <View style={styles.checkbox} key={i} >
-            <Checkbox 
-            style={styles.checkbox}
-            value={isChecked}
-            onValueChange={setChecked}
-            />
-            <Text>{drink.label}</Text>
+          <Checkbox 
+          style={styles.checkbox}
+          value={isChecked}
+          onValueChange={setChecked}
+          />
+          <Text>{drink.label}</Text>
           </View>
-        ))}
-      </View> */}
-      <View>
-        <Text style={styles.label}>UPLOAD UNE IMAGE</Text>
-      </View>
-      <TouchableOpacity style={styles.btn3} onPress={() => handleCreate()}>
-       <Text style={styles.txtBtn}>Créer l'événement !</Text>
-      </TouchableOpacity>
+          ))}
+          </View> */}
+        <View>
+          <Text style={styles.label}>UPLOAD UNE IMAGE</Text>
+        </View>
+        <TouchableOpacity style={styles.btn3} onPress={() => handleCreate()}>
+          <Text style={styles.txtBtn}>Créer l'événement !</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -336,13 +312,15 @@ const styles = StyleSheet.create({
   },
   searchPlace: {},
   input: {
-    width: 300,
+    width: "100%",
     borderBottomWidth: 1,
     color: "#333333",
     marginBottom: 20,
+    paddingVertical: 10,
+    fontSize: 14,
   },
   inputPlace: {
-    width: 200,
+    width: "100%",
     color: "#333333",
   },
   label: {
@@ -354,7 +332,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   picker: {
-    width: 300,
+    width: "100%",
     borderBottomWidth: 1,
     marginBottom: 20,
     color: colors.purple,
@@ -412,8 +390,36 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   checkbox: {
-    flexDirection: 'row',
-  }
+    flexDirection: "row",
+  },
+  scrollWrapper: {
+    padding: 20,
+    borderWidth: 1,
+    borderColor: "red",
+    width: "100%",
+  },
+
+  mainTitle: {
+    fontSize: 24,
+    paddingVertical: 20,
+    width: "100%",
+    textAlign: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#333",
+  },
+
+  resultsList: {
+    width: "100%",
+    // backgroundColor: "red",
+    padding: 10,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: "#333",
+  },
+
+  resultItem: {
+    padding: 10,
+  },
 });
 
 export default AddEventScreen;
