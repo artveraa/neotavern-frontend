@@ -9,6 +9,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../reducers/user";
 
+import TextApp from "../styleComponents/TextApp";
 import colors from "../styleConstants/colors";
 
 const RegisterUser = ({ navigation }) => {
@@ -35,18 +36,15 @@ const RegisterUser = ({ navigation }) => {
 
       .then((userData) => {
         if (userData.error === `Champs manquants ou vides`) {
-          console.log("vide");
           setEmptyErr({ emptyErr: true });
           return;
         }
         if (userData.error === `Ce surnom est déjà existant`) {
           setNameErr(!nameErr);
-          console.log("ex");
           return;
         }
         if (!mailPattern.test(mail)) {
           setMailErr(mailErr);
-          console.log("mail");
           return;
         }
 
@@ -58,10 +56,10 @@ const RegisterUser = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>
+        <TextApp style={styles.label}>
           Surnom
-          {nameErr && <Text style={styles.error}> - nom déjà existant !</Text>}
-        </Text>
+          {nameErr && <TextApp style={styles.error}> - nom déjà existant !</TextApp>}
+        </TextApp>
         <TextInput
           placeholder="Surnom"
           onChangeText={(value) => setNickname(value)}
@@ -69,10 +67,10 @@ const RegisterUser = ({ navigation }) => {
           style={styles.input}
         />
 
-        <Text style={styles.label}>
+        <TextApp style={styles.label}>
           E-mail de connexion
-          {mailErr && <Text style={styles.error}> - mail erreur</Text>}
-        </Text>
+          {mailErr && <TextApp style={styles.error}> - mail erreur</TextApp>}
+        </TextApp>
         <TextInput
           placeholder="Email"
           onChangeText={(value) => setMail(value)}
@@ -80,16 +78,18 @@ const RegisterUser = ({ navigation }) => {
           style={styles.input}
         />
 
-        <Text style={styles.label}>Mot de passe</Text>
-        <TextInput
+        <TextApp style={styles.label}>Mot de passe</TextApp>
+        <TextInput 
+          secureTextEntry={true}
           placeholder="Mot de passe"
           onChangeText={(value) => setPass(value)}
           value={pass}
           style={styles.input}
         />
 
-        <Text style={styles.label}>Confirmer le mot de passe</Text>
+        <TextApp style={styles.label}>Confirmer le mot de passe</TextApp>
         <TextInput
+          secureTextEntry={true}
           placeholder="Confirmation mot de passe"
           onChangeText={(value) => setConfirmationPass(value)}
           value={confirmationPass}
@@ -98,17 +98,17 @@ const RegisterUser = ({ navigation }) => {
       </View>
 
       {emptyErr && (
-        <Text style={[styles.label, styles.error]}>
+        <TextApp style={[styles.label, styles.error]}>
           {" "}
           Des champs sont vides !{" "}
-        </Text>
+        </TextApp>
       )}
 
       <TouchableOpacity
         style={styles.btnSecondary}
         onPress={() => handleRegisterUser()}
       >
-        <Text>Valider</Text>
+        <TextApp>Valider</TextApp>
       </TouchableOpacity>
     </View>
   );
@@ -123,15 +123,15 @@ const styles = StyleSheet.create({
     marginTop: 28,
     marginBottom: 28,
   },
+  
   inputContainer: {
-    // alignItems: "lef",
     width: "100%",
-    margin: 0,
-    padding: 0,
   },
+
   label: {
     fontSize: 12,
   },
+
   input: {
     fontSize: 14,
 
@@ -141,10 +141,12 @@ const styles = StyleSheet.create({
     paddingBottom: 4,
     marginBottom: 24,
   },
+
   error: {
     paddingBottom: 12,
     color: colors.purpleBorder,
   },
+
   btnSecondary: {
     flexDirection: "row",
     alignItems: "center",
