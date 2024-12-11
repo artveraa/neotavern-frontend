@@ -15,11 +15,11 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import RegisterUser from "../components/RegisterUser";
 import LoginUser from "../components/LoginUser";
 
+import TextApp from "../styleComponents/TextApp";
 import colors from "../styleConstants/colors";
 
 const WelcomeScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.value);
-  console.log(user);
 
   //formulaire -> visible ou non
   const [resgisterForm, setResgisterForm] = useState(false);
@@ -37,7 +37,6 @@ const WelcomeScreen = ({ navigation }) => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
-      <SafeAreaView>
         <Image source={require("../assets/icon.png")} style={styles.logo} />
 
         {!resgisterForm && (
@@ -50,9 +49,9 @@ const WelcomeScreen = ({ navigation }) => {
                 source={require("../assets/GoogleLogo.png")}
                 style={styles.logoG}
               />
-              <Text style={[styles.l, styles.dark, styles.labelBtn]}>
+              <TextApp style={[styles.l, styles.dark, styles.labelBtn]}>
                 Se connecter avec Google
-              </Text>
+              </TextApp>
             </TouchableOpacity>
 
             {loginForm ? (
@@ -63,9 +62,9 @@ const WelcomeScreen = ({ navigation }) => {
                   style={styles.back}
                   onPress={() => handleLoginForm()}
                 >
-                  <Text style={[styles.s, styles.dark, styles.labelBtn]}>
+                  <TextApp style={[styles.s, styles.dark, styles.labelBtn]}>
                     &lt; retour
-                  </Text>
+                  </TextApp>
                 </TouchableOpacity>
               </>
             ) : (
@@ -73,9 +72,9 @@ const WelcomeScreen = ({ navigation }) => {
                 style={styles.btnPrimary}
                 onPress={() => handleLoginForm()}
               >
-                <Text style={[styles.l, styles.dark, styles.labelBtn]}>
+                <TextApp style={[styles.l, styles.dark, styles.labelBtn]}>
                   Se connecter avec son compte
-                </Text>
+                </TextApp>
               </TouchableOpacity>
             )}
           </View>
@@ -83,11 +82,11 @@ const WelcomeScreen = ({ navigation }) => {
         {!loginForm && (
           <View style={styles.btnContainer}>
             <View style={styles.straight}></View>
-            <Text
+            <TextApp
               style={[styles.s, styles.center, styles.dark, styles.labelBtn]}
             >
               Pas encore inscrit ?
-            </Text>
+            </TextApp>
             {resgisterForm ? (
               <>
                 <RegisterUser navigation={navigation} />
@@ -95,9 +94,9 @@ const WelcomeScreen = ({ navigation }) => {
                   style={styles.back}
                   onPress={() => handleSignupForm()}
                 >
-                  <Text style={[styles.s, styles.dark, styles.labelBtn]}>
+                  <TextApp style={[styles.s, styles.dark, styles.labelBtn]}>
                     &lt; retour
-                  </Text>
+                  </TextApp>
                 </TouchableOpacity>
               </>
             ) : (
@@ -105,50 +104,41 @@ const WelcomeScreen = ({ navigation }) => {
                 style={styles.btnSecondary}
                 onPress={() => handleSignupForm()}
               >
-                <Text style={[styles.l, styles.dark, styles.labelBtn]}>
+                <TextApp style={[styles.l, styles.dark, styles.labelBtn]}>
                   Créer un compte
-                </Text>
+                </TextApp>
               </TouchableOpacity>
             )}
           </View>
         )}
-      </SafeAreaView>
+        
     </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    position: "relative",
     flex: 1,
     backgroundColor: colors.light,
     color: colors.dark,
     justifyContent: "center",
-    gap: 110,
+    gap: '8%',
     alignItems: "center",
     width: "100%",
-    paddingTop: "25%",
-    paddingBottom: "25%",
     paddingRight: 28,
     paddingLeft: 28,
   },
 
-  dark: {
-    color: colors.dark,
-  },
-  s: {
-    fontSize: 12,
-  },
-  l: {
-    fontSize: 16,
-  },
   logo: {
-    width: "40%",
-    height: "20%",
+    width: 100,
+    height: "10%",
   },
+
   btnContainer: {
+    width: "100%",
     alignItems: "center",
   },
+
   logoG: {
     width: 20,
     height: 20,
@@ -197,8 +187,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.green,
     borderRadius: 15,
   },
+
   back: {
-    width: "80%",
+    width: "100%",
   },
 });
 
