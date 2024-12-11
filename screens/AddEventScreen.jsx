@@ -13,6 +13,8 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import colors from "../styleConstants/colors";
+import { Select, SelectProvider } from '@mobile-reality/react-native-select-pro'
+import Checkbox from 'expo-checkbox'
 
 const AddEventScreen = () => {
   const [placeSearch, setPlaceSearch] = useState("");
@@ -30,6 +32,8 @@ const AddEventScreen = () => {
   const [isDateVisible, setDateVisibility] = useState(false);
   const [isTimeVisible, setTimeVisibility] = useState(false);
 
+
+  // tableau brut de resto / bars pour test => à remplacer par la BDD
   const items = [
     { label: "Resto1", value: "resto1" },
     { label: "Bar1", value: "bar1" },
@@ -38,10 +42,12 @@ const AddEventScreen = () => {
     { label: "Restaurant", value: "restaurant" },
   ];
 
+  // tri des établissements en minuscule, pour éviter la casse et recherche dans le tableau avec l'état (input)
   const filteredItems = items.filter((item) =>
     item.label.toLowerCase().includes(placeSearch.toLowerCase())
   );
 
+  // tableau brut de type d'événement
   const types = [
     { label: "Musique", value: "musique" },
     { label: "Football", value: "foot" },
@@ -50,27 +56,43 @@ const AddEventScreen = () => {
     { label: "Nouvel An", value: "nouvelan" },
   ]
 
-  const filteredTypes = types.filter((type) =>
-    type.label.toLowerCase().includes(eventType.toLowerCase())
-  );
+  const drinks = [
+    { label: "Vin", value: "vin" },
+    { label: "Bières", value: "biere" },
+    { label: "Spiritueux", value: "spiritueux" },
+    { label: "Softs", value: "softs" },
+    { label: "Eau", value: "eau" },
+  ]
 
+  const drinksTab = [];
+
+  // affichage du calendrier
   const showDatePicker = () => {
     setDateVisibility(true);
   };
+
+  // fermeture du calendrier 
   const hideDatePicker = () => {
     setDateVisibility(false);
   };
+
+  // clique sur la date souhaitée et fermeture du calendrier
   const handleConfirm = (selectedDate) => {
     setEventDate(selectedDate.toDateString());
     hideDatePicker();
   };
 
+  // affichage de l'horloge pour horaire de l'événement
   const showTimePicker = () => {
     setTimeVisibility(true);
   };
+
+  // fermeture de l'horloge pour horaire de l'événement
   const hideTimePicker = () => {
     setTimeVisibility(false);
   };
+
+  // clique sur l'horaire souhaité pour l'événement en 2 digits pour l'heure et les minutes, puis fermeture de l'horloge
   const handleValid = (time) => {
     setEventHour(
       time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
@@ -78,12 +100,19 @@ const AddEventScreen = () => {
     hideTimePicker();
   };
 
+  // affichage de la modal de recherche d'établissement
   const showModal = () => {
     setModalVisible(true);
   };
+
+  // fermeture de la modal de recherche d'établissement
   const hideModal = () => {
     setModalVisible(false);
   };
+
+  const handleDrink = () => {
+    drinksTab.push(drink.label)
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -108,7 +137,7 @@ const AddEventScreen = () => {
             />
           )}
           <TouchableOpacity style={styles.btn2} onPress={showModal}>
-            <Text style={styles.label}>Rechercher</Text>
+            <Text style={styles.txtBtn}>Rechercher</Text>
           </TouchableOpacity>
         </View>
         <Modal visible={isModalVisible} animationType="slide">
@@ -129,7 +158,7 @@ const AddEventScreen = () => {
               title="Fermer"
               onPress={hideModal}
             >
-              <Text>Fermer</Text>
+              <Text style={styles.txtBtn}>Fermer</Text>
             </TouchableOpacity>
           </View>
         </Modal>
@@ -149,7 +178,7 @@ const AddEventScreen = () => {
           selectedValue={eventType}
           onValueChange={(value) => setEventType(value)}
         >
-              {filteredTypes.map((type, i) => (
+              {types.map((type, i) => (
                 <Picker.Item
                   key={i}
                   label={type.label}
@@ -175,7 +204,7 @@ const AddEventScreen = () => {
         <View style={styles.dateInput}>
           <Text style={styles.label}>{eventDate}</Text>
           <TouchableOpacity style={styles.btn} onPress={showDatePicker}>
-            <Text style={styles.label}>Choisir une date</Text>
+            <Text style={styles.txtBtn}>Choisir une date</Text>
           </TouchableOpacity>
         </View>
         <DateTimePickerModal
@@ -191,7 +220,7 @@ const AddEventScreen = () => {
         <View style={styles.dateInput}>
           <Text style={styles.label}>{eventHour}</Text>
           <TouchableOpacity style={styles.btn} onPress={showTimePicker}>
-            <Text style={styles.label}>Choisir une heure</Text>
+            <Text style={styles.txtBtn}>Choisir une heure</Text>
           </TouchableOpacity>
           <DateTimePickerModal
             isVisible={isTimeVisible}
@@ -200,6 +229,46 @@ const AddEventScreen = () => {
             onCancel={hideTimePicker}
           />
         </View>
+      </View>
+      <View style={styles.picker}>
+        <Text style={styles.label}>Tarif de l'événement:</Text>
+        <Picker
+          selectedValue={eventPrice}
+          onValueChange={(value) => setEventPrice(value)}
+        >
+          <Picker.Item
+            label='Gratuit'
+            value='gratuit'
+            onPress={() => {
+              setEventPrice("");
+            }}
+          />
+          <Picker.Item
+            label='Payant'
+            value='payant'
+            onPress={() => {
+              setEventPrice("");
+            }}
+          />
+        </Picker>
+      </View>
+      <View style={styles.picker}>
+        <Text style={styles.label}>Boissons:</Text>
+        <Picker
+          selectedValue={eventDrinks}
+          onValueChange={(value) => setEventDrinks(value)}
+        >
+          {drinks.map((drink, i) => (
+                <Picker.Item
+                  key={i}
+                  label={drink.label}
+                  value={drink.value}
+                  onPress={() => {
+                    setEventDrinks("")
+                  }}
+                />
+              ))}
+        </Picker>
       </View>
       <View>
         <Text style={styles.label}>UPLOAD UNE IMAGE</Text>
@@ -230,6 +299,9 @@ const styles = StyleSheet.create({
     color: "#333333",
     justifyContent: "center",
   },
+  txtBtn: {
+    fontWeight: 'bold',
+  },
   picker: {
     width: 300,
     borderBottomWidth: 1,
@@ -241,19 +313,23 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   btn: {
-    width: 70,
+    width: 80,
     borderWidth: 1,
     fontSize: 12,
     marginLeft: 20,
     marginBottom: 10,
+    padding: 5,
     borderRadius: 8,
-    backgroundColor: colors.green,
+    backgroundColor: colors.yellow,
   },
   btn2: {
-    width: 80,
+    width: 90,
     borderWidth: 1,
     fontSize: 12,
-    marginBottom: 15,
+    marginBottom: 10,
+    borderRadius: 8,
+    padding: 5,
+    backgroundColor: colors.yellow,
   },
   modalView: {
     margin: 20,
@@ -274,7 +350,7 @@ const styles = StyleSheet.create({
     width: 350,
     margin: 10,
     textAlign: "center",
-    backgroundColor: colors.green,
+    backgroundColor: colors.darkGreen,
     borderRadius: 15,
     padding: 15,
   },

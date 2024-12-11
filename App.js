@@ -19,6 +19,19 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import user from './reducers/user';
 
+import {
+  useFonts,
+  Lexend_900Black,
+  Lexend_800ExtraBold,
+  Lexend_700Bold,
+  Lexend_600SemiBold,
+  Lexend_500Medium,
+  Lexend_400Regular,
+  Lexend_300Light,
+  Lexend_200ExtraLight,
+  Lexend_100Thin,
+} from "@expo-google-fonts/lexend";
+
 const store = configureStore({
   reducer: { user },
 });
@@ -59,6 +72,23 @@ const TabNavigator = () => {
 };
 
 export default function App() {
+
+  let [fontsLoaded] = useFonts({
+    Lexend_900Black,
+    Lexend_800ExtraBold,
+    Lexend_700Bold,
+    Lexend_600SemiBold,
+    Lexend_500Medium,
+    Lexend_400Regular,
+    Lexend_300Light,
+    Lexend_200ExtraLight,
+    Lexend_100Thin
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <Provider store={store}>
       <NavigationContainer>

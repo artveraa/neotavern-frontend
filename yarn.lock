@@ -1311,6 +1311,14 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@mobile-reality/react-native-select-pro@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@mobile-reality/react-native-select-pro/-/react-native-select-pro-2.3.0.tgz#236ce57f8bf045928538f09576f1f09d18a15e81"
+  integrity sha512-+3xtBZMcBqCj81+BoW9Tg7dNuj2DWzbPFpmV8NhUobnqOYpT273iI3SzYylhJReDU5EB+IeFRergCtXvbF7W6Q==
+  dependencies:
+    "@gorhom/portal" "1.0.14"
+    react-fast-compare "3.2.1"
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz#7619c2eb21b25483f6d167548b4cfd5a7488c3d5"
@@ -2722,6 +2730,11 @@ expo-asset@~11.0.1:
     expo-constants "~17.0.0"
     invariant "^2.2.4"
     md5-file "^3.2.3"
+
+expo-checkbox@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/expo-checkbox/-/expo-checkbox-4.0.0.tgz#beceea701896d67e68b8383b3d54135b1a89e074"
+  integrity sha512-kgmdau1cmlztRVEdjAQkdBCBSvI3W1Z6B+gTTr5ickbItxz07qt3j6dQEB3VDL69/bnIN/h9/iwNLVxuSn/C2Q==
 
 expo-constants@~17.0.0, expo-constants@~17.0.3:
   version "17.0.3"
@@ -4645,6 +4658,11 @@ react-devtools-core@^5.3.1:
   dependencies:
     shell-quote "^1.6.1"
     ws "^7"
+
+react-fast-compare@3.2.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-3.2.1.tgz#53933d9e14f364281d6cba24bfed7a4afb808b5f"
+  integrity sha512-xTYf9zFim2pEif/Fw16dBiXpe0hoy5PxcD8+OwBnTtNLfIm3g6WxhKNurY+6OmdH1u6Ta/W/Vl6vjbYP1MFnDg==
 
 react-freeze@^1.0.0:
   version "1.0.4"
