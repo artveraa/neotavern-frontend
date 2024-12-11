@@ -1,16 +1,22 @@
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, Touchable, TouchableOpacity } from "react-native";
 
-const CardEvent = ({ event }) => {
+const CardEvent = ({ event, navigation }) => {
+  const handleEvent = () => {
+  navigation.navigate('Event')
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.card}>
+        <TouchableOpacity onPress={() => handleEvent()}>
         <View style={styles.imgContainer}>
           <Image
             style={styles.image}
             source={require("../assets/default.jpg")}
           />
         </View>
+        </TouchableOpacity>
         <View style={styles.textContainer}>
           <Text>{event?.place?.name}</Text>
           <Text style={styles.separator}></Text>

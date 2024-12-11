@@ -7,6 +7,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 import SplashScreen from "./screens/SplashScreen";
 import WelcomeScreen from "./screens/WelcomeScreen";
+import EventScreen from "./screens/EventScreen";
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import HomeScreen from "./screens/HomeScreen";
@@ -88,7 +89,6 @@ export default function App() {
   if (!fontsLoaded) {
     return null;
   }
-
   
   return (
     <Provider store={store}>
@@ -103,6 +103,8 @@ export default function App() {
         <Stack.Screen name="Register" component={RegisterScreen} /> */}
           {/* <Stack.Screen name="Home" component={HomeScreen}  /> */}
           <Stack.Screen name="Welcome" component={WelcomeScreen} />
+          <Stack.Screen name="Event" component={EventScreen} />
+
           <Stack.Screen name="TabNavigator" component={TabNavigator} />
         </Stack.Navigator>
       </NavigationContainer>

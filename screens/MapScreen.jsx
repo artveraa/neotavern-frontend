@@ -17,7 +17,7 @@ import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import getAllEvents from "../fetchers/events";
 
-const MapScreen = () => {
+const MapScreen = ({navigation}) => {
   const bottomSheetRef = useRef(null);
   const [region, setRegion] = useState(null);
   const [allEvents, setAllEvents] = useState(null);
@@ -82,7 +82,7 @@ const MapScreen = () => {
         <BottomSheetScrollView style={styles.scrollContainer}>
           {allEvents &&
             allEvents.map((event) => (
-              <CardEvent key={event._id} event={event} />
+              <CardEvent key={event._id} event={event} navigation={navigation} />
             ))}
         </BottomSheetScrollView>
       </BottomSheet>

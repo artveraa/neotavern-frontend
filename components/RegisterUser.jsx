@@ -24,6 +24,7 @@ const RegisterUser = ({ navigation }) => {
   const [emptyErr, setEmptyErr] = useState(false);
   const [mailErr, setMailErr] = useState(false);
   const [nameErr, setNameErr] = useState(false);
+  const [passErr, setPassErr] = useState(false);
   const mailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const handleRegisterUser = () => {
@@ -39,13 +40,16 @@ const RegisterUser = ({ navigation }) => {
           setEmptyErr({ emptyErr: true });
           return;
         }
-        if (userData.error === `Ce surnom est déjà existant`) {
+        if (userData.error === `Ce mail est déjà existant`) {
           setNameErr(!nameErr);
           return;
         }
         if (!mailPattern.test(mail)) {
           setMailErr(mailErr);
           return;
+        }
+        if (pass != confirmationPass){
+          setPassErr(passErr)
         }
 
         dispatch(login({ nickname: userData.nickname, token: userData.token }));

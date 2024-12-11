@@ -5,6 +5,7 @@ import { login } from '../reducers/user';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 
 import colors  from '../styleConstants/colors'
+import TextAppS from "../styleComponents/TextApp";
 import TextApp from "../styleComponents/TextApp";
 
 
@@ -18,7 +19,6 @@ const LoginUser = ({navigation}) => {
   const [error, setError] = useState(false)
   
   const handleLoginUser = () => {
-    
     fetch('http://neotavern-backend.vercel.app/users/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
