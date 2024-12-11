@@ -3,7 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../reducers/user';
 
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+
 import colors  from '../styleConstants/colors'
+import TextApp from "../styleComponents/TextApp";
 
 
 const LoginUser = ({navigation}) => {
@@ -24,8 +26,7 @@ const LoginUser = ({navigation}) => {
     })
     .then(response => response.json())
     .then(userData => {
-      if (!userData.result){
-        console.log('-->')
+      if (userData.result){
         setError(!error)
       }else{
         dispatch(login({user: userData}))
@@ -34,20 +35,26 @@ const LoginUser = ({navigation}) => {
     });
   }
 
-
   return (
     <View style={styles.container}>
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>E-mail de connexion</Text>
+        <TextApp style={styles.label}>E-mail de connexion</TextApp>
         <TextInput placeholder="Email" onChangeText={(value) => setMail(value)} value={mail} style={styles.input} /> 
-        <Text style={styles.label}>Mot de passe</Text>
-        <TextInput placeholder="Mot de passe" onChangeText={(value) => setPass(value)} value={pass} style={styles.input} /> 
+        <TextApp style={styles.label}>Mot de passe</TextApp>
+
+        <TextInput 
+          secureTextEntry={true}
+          placeholder="Mot de passe"
+          onChangeText={(value) => setPass(value)}
+          value={pass}
+          style={styles.input}
+        />
       </View>
 
-      {error && <Text style={[styles.label, styles.error]}>Mauvais mail ou mdp ! </Text>}
+      {error && <TextApp style={[styles.label, styles.error]}>Mauvais mail ou mdp ! </TextApp>}
 
       <TouchableOpacity style={styles.btnPrimary} onPress={() => handleLoginUser()}>
-          <Text>Valider</Text>
+          <TextApp>Valider</TextApp>
       </TouchableOpacity>
     </View>
   );
@@ -62,14 +69,8 @@ container: {
   marginTop:28,
   marginBottom:28,
 },
-s:{
-  fontSize:12,
-},
 inputContainer:{
-  alignItems: "lef",
-  width:'85%',
-  margin:0,
-  padding:0
+  width:'100%',
 },
 label:{
   fontSize:12,

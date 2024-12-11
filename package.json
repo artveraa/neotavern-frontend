@@ -14,6 +14,7 @@
     "@mobile-reality/react-native-select-pro": "^2.3.0",
     "@react-native-community/datetimepicker": "^8.2.0",
     "@react-native-picker/picker": "^2.10.2",
+    "@react-native-vector-icons/fontawesome": "^4.7.0",
     "@react-navigation/bottom-tabs": "6",
     "@react-navigation/native": "6",
     "@react-navigation/native-stack": "6",
