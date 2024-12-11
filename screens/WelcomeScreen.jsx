@@ -37,7 +37,7 @@ const WelcomeScreen = ({ navigation }) => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
-      <SafeAreaView style={styles.wrapper}>
+      <SafeAreaView>
         <Image source={require("../assets/icon.png")} style={styles.logo} />
 
         {!resgisterForm && (
@@ -50,7 +50,7 @@ const WelcomeScreen = ({ navigation }) => {
                 source={require("../assets/GoogleLogo.png")}
                 style={styles.logoG}
               />
-              <Text style={[styles.l, styles.dark]}>
+              <Text style={[styles.l, styles.dark, styles.labelBtn]}>
                 Se connecter avec Google
               </Text>
             </TouchableOpacity>
@@ -63,7 +63,9 @@ const WelcomeScreen = ({ navigation }) => {
                   style={styles.back}
                   onPress={() => handleLoginForm()}
                 >
-                  <Text style={[styles.s, styles.dark]}>&lt; retour</Text>
+                  <Text style={[styles.s, styles.dark, styles.labelBtn]}>
+                    &lt; retour
+                  </Text>
                 </TouchableOpacity>
               </>
             ) : (
@@ -71,7 +73,7 @@ const WelcomeScreen = ({ navigation }) => {
                 style={styles.btnPrimary}
                 onPress={() => handleLoginForm()}
               >
-                <Text style={[styles.l, styles.dark]}>
+                <Text style={[styles.l, styles.dark, styles.labelBtn]}>
                   Se connecter avec son compte
                 </Text>
               </TouchableOpacity>
@@ -81,7 +83,9 @@ const WelcomeScreen = ({ navigation }) => {
         {!loginForm && (
           <View style={styles.btnContainer}>
             <View style={styles.straight}></View>
-            <Text style={[styles.s, styles.center, styles.dark]}>
+            <Text
+              style={[styles.s, styles.center, styles.dark, styles.labelBtn]}
+            >
               Pas encore inscrit ?
             </Text>
             {resgisterForm ? (
@@ -91,7 +95,9 @@ const WelcomeScreen = ({ navigation }) => {
                   style={styles.back}
                   onPress={() => handleSignupForm()}
                 >
-                  <Text style={[styles.s, styles.dark]}>&lt; retour</Text>
+                  <Text style={[styles.s, styles.dark, styles.labelBtn]}>
+                    &lt; retour
+                  </Text>
                 </TouchableOpacity>
               </>
             ) : (
@@ -99,7 +105,9 @@ const WelcomeScreen = ({ navigation }) => {
                 style={styles.btnSecondary}
                 onPress={() => handleSignupForm()}
               >
-                <Text style={[styles.l, styles.dark]}>Créer un compte</Text>
+                <Text style={[styles.l, styles.dark, styles.labelBtn]}>
+                  Créer un compte
+                </Text>
               </TouchableOpacity>
             )}
           </View>
@@ -111,11 +119,7 @@ const WelcomeScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    marginHorizontal: 20,
-  },
-
-  wrapper: {
+    position: "relative",
     flex: 1,
     backgroundColor: colors.light,
     color: colors.dark,
@@ -127,8 +131,6 @@ const styles = StyleSheet.create({
     paddingBottom: "25%",
     paddingRight: 28,
     paddingLeft: 28,
-    borderWidth: 1,
-    borderColor: "red",
   },
 
   dark: {
@@ -149,8 +151,9 @@ const styles = StyleSheet.create({
   },
   logoG: {
     width: 20,
-    aspectRatio: 1,
+    height: 20,
   },
+
   straight: {
     alignSelf: "center",
 
@@ -160,23 +163,25 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     backgroundColor: colors.purple,
   },
+
   btnPrimary: {
     width: "100%",
+    display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-
+    justifyContent: "center",
+    gap: 10,
     height: 43,
     padding: 4,
     marginTop: 12,
     marginBottom: 12,
-
     fontSize: 16,
     backgroundColor: colors.light,
     borderWidth: 1,
     borderColor: colors.purpleBorder,
     borderRadius: 15,
   },
+
   btnSecondary: {
     flexDirection: "row",
     alignItems: "center",
