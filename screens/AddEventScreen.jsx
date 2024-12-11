@@ -1,5 +1,6 @@
 import React from "react";
-import { useState } from "react";
+import { useState} from "react";
+import { useDispatch, useSelector } from 'react-redux';
 import {
   View,
   Text,
@@ -18,6 +19,7 @@ import {
   SelectProvider,
 } from "@mobile-reality/react-native-select-pro";
 import Checkbox from "expo-checkbox";
+import createEvent from '../fetchers/events'
 
 const AddEventScreen = () => {
   const [placeSearch, setPlaceSearch] = useState("");
@@ -41,6 +43,10 @@ const AddEventScreen = () => {
   const [eventAge, setEventAge] = useState("");
   const [isDateVisible, setDateVisibility] = useState(false);
   const [isTimeVisible, setTimeVisibility] = useState(false);
+
+
+  const user = useSelector((state) => state.user.value);
+  console.log(user)
 
   // tableau brut de resto / bars pour test => à remplacer par la BDD
   const items = [
@@ -123,6 +129,40 @@ const AddEventScreen = () => {
   };
 
   const handleCreate = () => {
+    console.log('CLIQUE CA MARCHE')
+    fetch('https://neotavern-backend.vercel.app/events/createEvent', {
+      method: 'POST',       
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+          name: eventName,
+          description: eventText,
+          date: eventDate,
+          mainCategory: eventType,
+          likes: 2,
+          categories: [],
+          infosTag: [
+            { food: [] },
+            { drinks: [] },
+            { price: [] },
+            { legal: [] },
+          ],
+          user: user._id
+      })
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Erreur lors de l’ajout de la tâche');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Tâche ajoutée avec succès :', data);
+    })
+    .catch(error => {
+      console.error('Erreur:', error);
+    });
 
   }
 
@@ -281,7 +321,7 @@ const AddEventScreen = () => {
       <View>
         <Text style={styles.label}>UPLOAD UNE IMAGE</Text>
       </View>
-      <TouchableOpacity style={styles.btn3} onPress={() => handleCreate}>
+      <TouchableOpacity style={styles.btn3} onPress={() => handleCreate()}>
        <Text style={styles.txtBtn}>Créer l'événement !</Text>
       </TouchableOpacity>
     </SafeAreaView>

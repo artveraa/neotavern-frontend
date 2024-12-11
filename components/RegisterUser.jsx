@@ -45,7 +45,7 @@ const RegisterUser = ({navigation}) => {
         return
       }
 
-      dispatch(login({nickname: userData.nickname, token: userData.token}))
+      dispatch(login({user: userData}))
       navigation.navigate("TabNavigator", { screen: 'MapScreen' })
       });
   }

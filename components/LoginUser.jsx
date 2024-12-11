@@ -28,7 +28,7 @@ const LoginUser = ({navigation}) => {
         console.log('-->')
         setError(!error)
       }else{
-        dispatch(login({nickname: userData.nickname, token: userData.token}))
+        dispatch(login({user: userData}))
         navigation.navigate("TabNavigator", { screen: 'MapScreen' })
       }
     });
