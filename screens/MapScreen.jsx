@@ -61,6 +61,7 @@ const MapScreen = ({navigation}) => {
     openPanel();
     fetchEvents();
   }, []);
+  
 
   return (
     <GestureHandlerRootView style={styles.container}>
@@ -86,11 +87,11 @@ const MapScreen = ({navigation}) => {
         <BottomSheetScrollView style={styles.scrollContainer}>
           {allEvents &&
             allEvents.map((event) => (
-              <CardEvent
-                key={event._id}
-                event={event}
-                handleLike={handleLike}
-              navigation={navigation} />
+                <CardEvent
+                  key={event._id}
+                  event={event}
+                  handleLike={handleLike}
+                navigation={navigation} />
             ))}
         </BottomSheetScrollView>
       </BottomSheet>

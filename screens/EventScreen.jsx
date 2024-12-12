@@ -22,8 +22,11 @@ import TextAppBold from "../styleComponents/TextAppBold";
 import TextApp from "../styleComponents/TextApp";
 import colors from "../styleConstants/colors";
 
-const EventScreen = () => {
-  // ICI voir le reduecr de chaque éléments de l'élément cliqué
+const EventScreen = ({route}) => {
+  // navigation -> get param
+  const { event } = route.params;
+  console.log('param',event)
+
   const user = useSelector((state) => state.user.value);
   //map localisation user pour le moment
   const [region, setRegion] = useState(null);
@@ -60,7 +63,7 @@ const EventScreen = () => {
       <View style={styles.container}>
         <View style={styles.titleContainer}>
           <View style={[styles.txtWrap, styles.borderStyle]}>
-            <TextAppTitle>Event-Name</TextAppTitle>
+            <TextAppTitle>{event?.name}</TextAppTitle>
           </View>
           <View style={[styles.dateWrap, styles.borderStyle]}>
             <Image source={require("../assets/date.png")} style={{width:24,height:24}}/>
