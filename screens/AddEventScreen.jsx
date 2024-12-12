@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Modal,
+  Image,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -21,6 +22,7 @@ import {
 } from "@mobile-reality/react-native-select-pro";
 import Checkbox from "expo-checkbox";
 import createEvent from "../fetchers/events";
+import * as ImagePicker from "expo-image-picker";
 
 const AddEventScreen = () => {
   const [selectedPlace, setSelectedPlace] = useState("");
@@ -43,8 +45,56 @@ const AddEventScreen = () => {
   const [eventAge, setEventAge] = useState("");
   const [isDateVisible, setDateVisibility] = useState(false);
   const [isTimeVisible, setTimeVisibility] = useState(false);
+  const [photo, setPhoto] = useState({});
 
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
+  console.log("VOICI LE LOG DE PHOTO:", photo);
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images", "videos"],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log("resultat de l image upload: ", result);
+
+    if (!result.canceled) {
+      setPhoto(result.assets[0]);
+    }
+  };
+
+  const uploadImage = async () => {
+    // type d'encodage de donnée (fichier + chaîne de caracteres)
+    const formData = new FormData();
+    // Chaque info à envoyer sera “ajoutée” au formData
+    formData.append("photoFromFront", {
+      // nom de la propriété qui va représenter le fichier côté backend
+      uri: photo.uri, // chemin physique vers le fichier
+      name: "photo.jpg", // nom générique
+      type: "image/jpeg", // mimetype du fichier
+    });
+
+    try {
+      const response = await fetch(
+        "https://neotavern-backend.vercel.app/upload",
+        { method: "POST", body: formData }
+      );
+      const data = await response.json();
+      console.log("CLOUDINARY:", data);
+      if (data && data.url) {
+        dispatch(addUpload(data.url));
+      } else {
+        console.error("Upload échoué :", data);
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'upload :", error);
+    }
+  };
+
   // console.log(user);
 
   // tri des établissements en minuscule, pour éviter la casse et recherche dans le tableau avec l'état (input)
@@ -80,13 +130,12 @@ const AddEventScreen = () => {
   };
 
   // clique sur la date souhaitée et fermeture du calendrier
- 
+
   const handleConfirm = (selectedDate) => {
-    console.log(selectedDate)
+    console.log(selectedDate);
     setEventDate(selectedDate.toDateString());
     hideDatePicker();
   };
-  
 
   // affichage de l'horloge pour horaire de l'événement
   const showTimePicker = () => {
@@ -111,9 +160,13 @@ const AddEventScreen = () => {
     setModalVisible(true);
   };
 
+  console.log("USER:", user);
+
   const handleCreate = () => {
     console.log("CLIQUE CA MARCHE");
-  
+
+    uploadImage(); //upload cloudinary de l'image téléchargé
+
     fetch("https://neotavern-backend.vercel.app/events/createEvent", {
       method: "POST",
       headers: {
@@ -122,28 +175,23 @@ const AddEventScreen = () => {
       body: JSON.stringify({
         name: eventName,
         description: eventText,
-        date: date,
+        // date: date,
         mainCategory: eventType,
         likes: 2,
+        photo: photo.uri,
         categories: [],
-        infosTags: [
-          { food: [] },
-          { drinks: [] },
-          { price: [] },
-          { legal: [] },
-        ],
-        user: user.user.user.userData._id
+        infosTags: [{ food: [] }, { drinks: [] }, { price: [] }, { legal: [] }],
+        // user: user.user.userData._id,
+      }),
+    })
+      .then((response) => response.json()) // Conversion de la réponse en JSON
+      .then((data) => {
+        console.log("Tâche ajoutée avec succès :", data);
       })
-    })
-    .then((response) => response.json()) // Conversion de la réponse en JSON
-    .then((data) => {
-      console.log("Tâche ajoutée avec succès :", data);
-    })
-    .catch((error) => {
-      console.error("Erreur:", error);
-    });
+      .catch((error) => {
+        console.error("Erreur:", error);
+      });
   };
-  
 
   const [placesList, setPlacesList] = useState([]);
   const [placesResult, setPlacesResult] = useState([]);
@@ -176,7 +224,6 @@ const AddEventScreen = () => {
     setPlaceSearch(place);
     setPlacesResult([]);
   };
-
 
   return (
     <SafeAreaView style={styles.container}>
@@ -299,8 +346,11 @@ const AddEventScreen = () => {
           </View>
           ))}
           </View> */}
-        <View>
-          <Text style={styles.label}>UPLOAD UNE IMAGE</Text>
+        <View style={styles.select}>
+          {photo && <Image source={{ uri: photo.uri }} style={styles.image} />}
+          <TouchableOpacity style={styles.btn2} onPress={pickImage}>
+            <Text style={styles.txtBtn}>Télécharge ta photo</Text>
+          </TouchableOpacity>
         </View>
         <TouchableOpacity style={styles.btn3} onPress={() => handleCreate()}>
           <Text style={styles.txtBtn}>Créer l'événement !</Text>
@@ -338,6 +388,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   picker: {
+    width: "100%",
+    borderBottomWidth: 1,
+    marginBottom: 20,
+    color: colors.purple,
+  },
+  select: {
+    flexDirection: "row",
     width: "100%",
     borderBottomWidth: 1,
     marginBottom: 20,
@@ -425,6 +482,10 @@ const styles = StyleSheet.create({
 
   resultItem: {
     padding: 10,
+  },
+  image: {
+    width: 200,
+    height: 200,
   },
 });
 
