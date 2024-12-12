@@ -9,9 +9,13 @@ import {
   TextInput,
   TouchableOpacity,
   SafeAreaView,
+  Modal,
+  Image,
 } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import colors from "../styleConstants/colors";
+import * as ImagePicker from "expo-image-picker";
+
 
 const AddEventScreen = () => {
   const [eventName, setEventName] = useState("");
@@ -20,8 +24,63 @@ const AddEventScreen = () => {
   const [eventHour, setEventHour] = useState("");
   const [isDateVisible, setDateVisibility] = useState(false);
   const [isTimeVisible, setTimeVisibility] = useState(false);
+  const [photo, setPhoto] = useState({});
+  const [photoUrl, setPhotoUrl] = useState("")
 
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
+  console.log("VOICI LE LOG DE PHOTO:", photo);
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images", "videos"],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log("resultat de l image upload: ", result);
+
+    if (!result.canceled) {
+      setPhoto(result.assets[0]);
+    }
+  };
+
+  const uploadImage = async () => {
+    // type d'encodage de donnée (fichier + chaîne de caracteres)
+    const formData = new FormData();
+    // Chaque info à envoyer sera “ajoutée” au formData
+    formData.append("photoFromFront", {
+      // nom de la propriété qui va représenter le fichier côté backend
+      uri: photo.uri, // chemin physique vers le fichier
+      name: "photo.jpg", // nom générique
+      type: "image/jpeg", // mimetype du fichier
+    });
+
+    try {
+      const response = await fetch(
+        "https://neotavern-backend.vercel.app/upload",
+        { method: "POST", body: formData }
+      );
+      const data = await response.json();
+      console.log("CLOUDINARY:", data);
+      if (data && data.url) {
+        setPhotoUrl(data.url)
+      } else {
+        console.error("Upload échoué :", data);
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'upload :", error);
+    }
+  };
+
+  // console.log(user);
+
+  // tri des établissements en minuscule, pour éviter la casse et recherche dans le tableau avec l'état (input)
+  // const filteredItems = items.filter((item) =>
+  //   item.label.toLowerCase().includes(placeSearch.toLowerCase())
+  // );
 
   // tableau brut de type d'événement
   const types = [
@@ -91,6 +150,10 @@ const AddEventScreen = () => {
   };
 
   const handleCreate = () => {
+    console.log("CLIQUE CA MARCHE");
+
+    uploadImage(); //upload cloudinary de l'image téléchargé
+
     fetch("https://neotavern-backend.vercel.app/events/createEvent", {
       method: "POST",
       headers: {
@@ -119,24 +182,6 @@ const AddEventScreen = () => {
       .catch((error) => {
         console.error("Erreur:", error);
       });
-
-    // const event = {
-    //   name: eventName,
-    //   description: eventText,
-    //   date: eventDate,
-    //   mainCategory: selectedType,
-    //   likes: 0,
-    //   categories: selectedType,
-    //   infosTags: {
-    //     food: selectedFood,
-    //     drinks: selectedDrink,
-    //     price: paid ? "Payant" : "Gratuit",
-    //   },
-    //   place: placeId,
-    //   user: user.user?.userData._id,
-    // };
-
-    // console.log(event);
   };
 
   // Recherche de lieu
@@ -418,8 +463,11 @@ const AddEventScreen = () => {
 
         {/* Image */}
 
-        <View>
-          <Text style={styles.label}>UPLOAD UNE IMAGE</Text>
+        <View style={styles.select}>
+          {photo && <Image source={{ uri: photo.uri }} style={styles.image} />}
+          <TouchableOpacity style={styles.btn4} onPress={pickImage}>
+            <Text style={styles.txtBtn}>Télécharge ta photo</Text>
+          </TouchableOpacity>
         </View>
 
         <TouchableOpacity style={styles.btn3} onPress={() => handleCreate()}>
@@ -463,6 +511,15 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: colors.purple,
   },
+  select: {
+    width: "100%",
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    marginBottom: 20,
+    paddingBottom: 20,
+    color: colors.purple,
+  },
   dateInput: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -492,6 +549,18 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: colors.green,
   },
+  btn4: {
+    justifyContent: 'center', 
+    alignItems: 'center',
+    borderWidth: 1,
+    padding: 5,
+    borderRadius: 8,
+    backgroundColor: colors.yellow,
+  },
+  
+
+   
+  
 
   checkbox: {
     flexDirection: "row",
@@ -554,6 +623,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 10,
     marginVertical: 10,
+  },
+  image: {
+    width: '100%',
+    height: 300,
+    margin: 10,
+    borderRadius: 8,
   },
 });
 
