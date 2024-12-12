@@ -10,9 +10,20 @@ import {
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 const CardEvent = ({ event, navigation, handleLike }) => {
-  const handleEvent = () => {
-    navigation.navigate("Event");
-  };
+  //navigation -> avec route de paramêtres à pousser
+  const handleEvent = (event) => {
+    navigation.push('Event', {
+      event,
+      handleLike
+    })
+  }
+
+  //like
+  const handleClick = () => {
+    handleLike(event._id)
+    console.log('cloic', event._id)
+  }
+  
 
   const formatDate = (date) => {
     if (new Date(date).toDateString() === new Date().toDateString()) {
@@ -30,18 +41,18 @@ const CardEvent = ({ event, navigation, handleLike }) => {
 
   return (
     <View style={styles.container}>
+    <TouchableOpacity  onPress={() => handleEvent(event) }>
+
       <View style={styles.card}>
-        <TouchableOpacity onPress={() => handleEvent()}>
           <View style={styles.imgContainer}>
             <Image style={styles.image} source={{ uri: event?.photo }} />
             <TouchableOpacity
               style={styles.likeBtn}
-              onPress={() => handleLike()}
+              onPress={() => handleClick()}
             >
               <FontAwesome name="heart" size={15} color="#EDA0FF" />
             </TouchableOpacity>
           </View>
-        </TouchableOpacity>
         <View style={styles.textContainer}>
           <Text>{event?.place?.name}</Text>
           {event?.place?.name && <Text style={styles.separator}></Text>}
@@ -55,6 +66,7 @@ const CardEvent = ({ event, navigation, handleLike }) => {
           </View>
         </View>
       </View>
+      </TouchableOpacity>
     </View>
   );
 };

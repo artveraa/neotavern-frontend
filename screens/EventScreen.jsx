@@ -16,17 +16,38 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 
+import TextAppS from "../styleComponents/TextAppS";
 import TagL from "../styleComponents/TagL";
 import TextAppTitle from "../styleComponents/TextAppTitle";
 import TextAppBold from "../styleComponents/TextAppBold";
 import TextApp from "../styleComponents/TextApp";
 import colors from "../styleConstants/colors";
 
-const EventScreen = () => {
-  // ICI voir le reduecr de chaque éléments de l'élément cliqué
-  const user = useSelector((state) => state.user.value);
+const EventScreen = ({navigation, route}) => {
+  const user = useSelector((state) => state.user.value); 
   //map localisation user pour le moment
   const [region, setRegion] = useState(null);
+
+  // navigation -> get params event
+  const { handleLike, event } = route.params;
+
+  // navigation -> back map screen
+  const handleBackMap = () => {
+    navigation.navigate("TabNavigator", { screen: "MapScreen" })
+  }
+
+  //date formatage
+  const formatDate = (date) => {
+    if (new Date(date).toDateString() === new Date().toDateString()) {
+      return "Aujourd'hui";
+    }
+    const options = {
+      // weekday: "long",
+      month: "numeric",
+      day: "numeric",
+    };
+    return new Date(date).toLocaleDateString("fr-FR", options);
+  };
 
   //map
   useEffect(() => {
@@ -45,37 +66,48 @@ const EventScreen = () => {
     })();
   }, []);
 
+
   return (
     <>
-      <View style={styles.imageContainer}>
+    {/* HERO */}
+      <View style={styles.heroContainer}>
         <Image source={require("../assets/default.jpg")} style={styles.image}/>
 
-        <Image source={require("../assets/badge.png")} style={styles.badgeIcon}/>
-        <View style={styles.likeWrap}>
+        <TouchableOpacity style={[styles.backWrap, styles.borderStyle]} 
+        onPress={() => handleBackMap()}>
+          <View >
+            <Text style={styles.arrow}>&#x2190;</Text>
+          </View>
+        </TouchableOpacity>
 
+        <View style={[styles.likeWrap, styles.borderStyle]}>
+        <TouchableOpacity style={styles.likeBtn} onPress={() => handleLike()}>
+              <FontAwesome name="heart" size={18} color="#EDA0FF" paddingRight={6}/>
+        </TouchableOpacity>
+        <TextAppS>{event?.likes}</TextAppS>
         </View>
-        <Image source={require("../assets/badge.png")} style={styles.badgeIcon}/>
       </View>
 
+    {/*MAIN infos */}
       <View style={styles.container}>
         <View style={styles.titleContainer}>
           <View style={[styles.txtWrap, styles.borderStyle]}>
-            <TextAppTitle>Event-Name</TextAppTitle>
+            <TextAppTitle>{event?.name}</TextAppTitle>
           </View>
           <View style={[styles.dateWrap, styles.borderStyle]}>
             <Image source={require("../assets/date.png")} style={{width:24,height:24}}/>
-            <TextAppBold>Date</TextAppBold>
+            <TextAppBold>{formatDate(event?.date)}</TextAppBold>
           </View>
         </View>
         
         <View style={styles.eventContainer}>
           <TouchableOpacity>
-            <TextAppTitle>Event-Place</TextAppTitle>
+            <TextAppTitle>{event?.place?.name}</TextAppTitle>
           </TouchableOpacity>
 
           <View >
-            <TextApp>Heure -Event</TextApp>
-            <TextApp>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi. Maxime mollitia, molestiae.</TextApp>
+            <TextAppBold>{formatDate(event?.date)}</TextAppBold>
+            <TextApp></TextApp>
           </View>
 
           <View style={styles.tagWrap}>
@@ -98,9 +130,9 @@ const EventScreen = () => {
             region={region}
             >
             <Marker
-              coordinate={{ latitude: 37.78825, longitude: -122.4324 }}
-              title={"Marker Title"}
-              description={"Marker Description"}
+            coordinate={{ latitude: 37.78825, longitude: -122.4324 }}
+            title={"Marker Title"}
+            description={"Marker Description"}
             />
       </MapView>
         </View>
@@ -111,30 +143,45 @@ const EventScreen = () => {
 
 const styles = StyleSheet.create({
   //image hero
-imageContainer:{
+heroContainer:{
   flex: 1,
 },
 image:{
   width:'100%',
   height:'100%',
 },
-badgeIcon:{
+backWrap:{
   position:'absolute',
+  justifyContent:'center',
+  alignItems:'center',
 
-  top:28,
-  right:28,
-  zIndex:12,
-  width:62,
-  height:62,
+  top:48,
+  left:28,
+  zIndex:1,
+  width:'12%',
+  height:30,
+},
+arrow:{
+  fontFamily:'Lexend_600SemiBold',
+  lineHeight:20,
+  fontSize:20,
 },
 likeWrap:{
   position:'absolute',
+
+  flexDirection:'row',
+  justifyContent:'center',
+  alignItems:'center',
+
   backgroundColor:colors.light,
+
   top:48,
-  left:28,
-  zIndex:12,
-  width:62,
-  height:24,
+  right:28,
+  zIndex:1,
+  width:'18.2%',
+  height:30,
+
+  borderRadius:8,
 },
   //main
 container: {
@@ -148,28 +195,33 @@ container: {
   //->title et date
   titleContainer:{
     flexDirection:'row',
+
     justifyContent:'space-between',
-    alignItems:'center',
+    alignItems: 'stretch',
+    gap:12,
+    maxWidth:'100%',
+    
+    top: "-6%",
   },
   borderStyle:{
-    paddingLeft:24,
-    paddingRight:24,
-
     backgroundColor:colors.light,
     borderColor:colors.dark,
     borderWidth:1,
     borderRadius:15,
   },
   txtWrap:{
-    top:-26,
-    paddingTop:14,
-    paddingBottom:14,
+    justifyContent:'center',
+
+    padding:24,
+    width:'72%',
+    maxWidth:'72%',
   },
   dateWrap:{
+    justifyContent:'center',
     alignItems:'center',
-    top:-26,
-    paddingTop:2,
-    paddingBottom:4,
+
+    width:'22%',
+    padding:12,
   },
   //tag wrap
   tagWrap:{
