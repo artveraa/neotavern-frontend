@@ -16,7 +16,6 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import colors from "../styleConstants/colors";
 import * as ImagePicker from "expo-image-picker";
 
-
 const AddEventScreen = () => {
   const [eventName, setEventName] = useState("");
   const [eventText, setEventText] = useState("");
@@ -25,9 +24,8 @@ const AddEventScreen = () => {
   const [isDateVisible, setDateVisibility] = useState(false);
   const [isTimeVisible, setTimeVisibility] = useState(false);
   const [photo, setPhoto] = useState({});
-  const [photoUrl, setPhotoUrl] = useState("")
+  const [photoUrl, setPhotoUrl] = useState("");
 
-  const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
   console.log("VOICI LE LOG DE PHOTO:", photo);
 
@@ -66,7 +64,9 @@ const AddEventScreen = () => {
       const data = await response.json();
       console.log("CLOUDINARY:", data);
       if (data && data.url) {
-        setPhotoUrl(data.url)
+        console.log(data.url);
+
+        setPhotoUrl(data.url);
       } else {
         console.error("Upload échoué :", data);
       }
@@ -165,6 +165,7 @@ const AddEventScreen = () => {
         date: eventDate,
         hour: eventHour,
         likes: 0,
+        photo: photoUrl,
         categories: selectedType,
         infosTags: {
           food: selectedFood,
@@ -513,8 +514,8 @@ const styles = StyleSheet.create({
   },
   select: {
     width: "100%",
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderBottomWidth: 1,
     marginBottom: 20,
     paddingBottom: 20,
@@ -550,17 +551,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.green,
   },
   btn4: {
-    justifyContent: 'center', 
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 1,
     padding: 5,
     borderRadius: 8,
     backgroundColor: colors.yellow,
   },
-  
-
-   
-  
 
   checkbox: {
     flexDirection: "row",
@@ -625,7 +622,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   image: {
-    width: '100%',
+    width: "100%",
     height: 300,
     margin: 10,
     borderRadius: 8,
