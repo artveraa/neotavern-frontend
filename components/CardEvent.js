@@ -11,8 +11,8 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 const CardEvent = ({ event, navigation, handleLike }) => {
   const handleEvent = () => {
-  navigation.navigate('Event')
-  }
+    navigation.navigate("Event");
+  };
 
   const formatDate = (date) => {
     if (new Date(date).toDateString() === new Date().toDateString()) {
@@ -32,15 +32,18 @@ const CardEvent = ({ event, navigation, handleLike }) => {
     <View style={styles.container}>
       <View style={styles.card}>
         <TouchableOpacity onPress={() => handleEvent()}>
-        <View style={styles.imgContainer}>
-          <Image
-            style={styles.image}
-            source={require("../assets/default.jpg")}
-          />
-          <TouchableOpacity style={styles.likeBtn} onPress={() => handleLike()}>
-            <FontAwesome name="heart" size={15} color="#EDA0FF" />
-          </TouchableOpacity>
-        </View>
+          <View style={styles.imgContainer}>
+            <Image
+              style={styles.image}
+              source={require("../assets/default.jpg")}
+            />
+            <TouchableOpacity
+              style={styles.likeBtn}
+              onPress={() => handleLike()}
+            >
+              <FontAwesome name="heart" size={15} color="#EDA0FF" />
+            </TouchableOpacity>
+          </View>
         </TouchableOpacity>
         <View style={styles.textContainer}>
           <Text>{event?.place?.name}</Text>
