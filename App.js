@@ -16,9 +16,9 @@ import MapScreen from "./screens/MapScreen";
 import AddEventScreen from "./screens/AddEventScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
-import user from './reducers/user';
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
+import user from "./reducers/user";
 
 import {
   useFonts,
@@ -32,8 +32,6 @@ import {
   Lexend_200ExtraLight,
   Lexend_100Thin,
 } from "@expo-google-fonts/lexend";
-
-
 
 const store = configureStore({
   reducer: { user },
@@ -58,7 +56,7 @@ const TabNavigator = () => {
           } else if (route.name === "Profile") {
             iconName = "user-o";
           }
-          
+
           return <FontAwesome name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: "#2196f3",
@@ -75,21 +73,7 @@ const TabNavigator = () => {
   );
 };
 
-import {
-  useFonts,
-  Lexend_900Black,
-  Lexend_800ExtraBold,
-  Lexend_700Bold,
-  Lexend_600SemiBold,
-  Lexend_500Medium,
-  Lexend_400Regular,
-  Lexend_300Light,
-  Lexend_200ExtraLight,
-  Lexend_100Thin,
-} from "@expo-google-fonts/lexend";
-
 export default function App() {
-
   let [fontsLoaded] = useFonts({
     Lexend_900Black,
     Lexend_800ExtraBold,
@@ -99,13 +83,13 @@ export default function App() {
     Lexend_400Regular,
     Lexend_300Light,
     Lexend_200ExtraLight,
-    Lexend_100Thin
+    Lexend_100Thin,
   });
 
   if (!fontsLoaded) {
     return null;
   }
-  
+
   return (
     <Provider store={store}>
       <NavigationContainer>
