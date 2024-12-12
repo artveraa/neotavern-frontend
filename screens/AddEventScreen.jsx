@@ -24,6 +24,7 @@ import Checkbox from "expo-checkbox";
 import createEvent from "../fetchers/events";
 import * as ImagePicker from "expo-image-picker";
 
+
 const AddEventScreen = () => {
   const [selectedPlace, setSelectedPlace] = useState("");
   const [isModalVisible, setModalVisible] = useState(false);
@@ -46,6 +47,7 @@ const AddEventScreen = () => {
   const [isDateVisible, setDateVisibility] = useState(false);
   const [isTimeVisible, setTimeVisibility] = useState(false);
   const [photo, setPhoto] = useState({});
+  const [photoUrl, setPhotoUrl] = useState("")
 
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
@@ -86,7 +88,7 @@ const AddEventScreen = () => {
       const data = await response.json();
       console.log("CLOUDINARY:", data);
       if (data && data.url) {
-        dispatch(addUpload(data.url));
+        setPhotoUrl(data.url)
       } else {
         console.error("Upload échoué :", data);
       }
@@ -178,7 +180,7 @@ const AddEventScreen = () => {
         // date: date,
         mainCategory: eventType,
         likes: 2,
-        photo: photo.uri,
+        photo: photoUrl,
         categories: [],
         infosTags: [{ food: [] }, { drinks: [] }, { price: [] }, { legal: [] }],
         // user: user.user.userData._id,
@@ -348,7 +350,7 @@ const AddEventScreen = () => {
           </View> */}
         <View style={styles.select}>
           {photo && <Image source={{ uri: photo.uri }} style={styles.image} />}
-          <TouchableOpacity style={styles.btn2} onPress={pickImage}>
+          <TouchableOpacity style={styles.btn4} onPress={pickImage}>
             <Text style={styles.txtBtn}>Télécharge ta photo</Text>
           </TouchableOpacity>
         </View>
@@ -394,10 +396,12 @@ const styles = StyleSheet.create({
     color: colors.purple,
   },
   select: {
-    flexDirection: "row",
     width: "100%",
+    justifyContent: 'center',
+    alignItems: 'center',
     borderBottomWidth: 1,
     marginBottom: 20,
+    paddingBottom: 20,
     color: colors.purple,
   },
   dateInput: {
@@ -425,6 +429,14 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginBottom: 10,
     marginTop: 20,
+    padding: 5,
+    borderRadius: 8,
+    backgroundColor: colors.yellow,
+  },
+  btn4: {
+    justifyContent: 'center', 
+    alignItems: 'center',
+    borderWidth: 1,
     padding: 5,
     borderRadius: 8,
     backgroundColor: colors.yellow,
@@ -484,8 +496,10 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   image: {
-    width: 200,
-    height: 200,
+    width: '100%',
+    height: 300,
+    margin: 10,
+    borderRadius: 8,
   },
 });
 
