@@ -30,6 +30,12 @@
         {
           "fonts": ["node_modules/@expo-google-fonts/Lexend_100Thin.ttf", "node_modules/@expo-google-fonts/Lexend_200ExtraLight.ttf", "node_modules/@expo-google-fonts/Lexend_300Light.ttf","node_modules/@expo-google-fonts/Lexend_400Regular.ttf","node_modules/@expo-google-fonts/Lexend_500Medium.ttf","node_modules/@expo-google-fonts/Lexend_600SemiBold.ttf","node_modules/@expo-google-fonts/Lexend_700Bold.ttf","node_modules/@expo-google-fonts/Lexend_800ExtraBold.ttf","node_modules/@expo-google-fonts/Lexend_900Black.ttf"]
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
       ]
     ]
   }

@@ -44,15 +44,18 @@ const CardEvent = ({ event, navigation, handleLike }) => {
     <TouchableOpacity  onPress={() => handleEvent(event) }>
 
       <View style={styles.card}>
-        <View style={styles.imgContainer}>
-          <Image
-            style={styles.image}
-            source={require("../assets/default.jpg")}
-          />
-          <TouchableOpacity style={styles.likeBtn} onPress={() => handleClick()}>
-            <FontAwesome name="heart" size={15} color="#EDA0FF" />
-          </TouchableOpacity>
-        </View>
+          <View style={styles.imgContainer}>
+            <Image
+              style={styles.image}
+              source={require("../assets/default.jpg")}
+            />
+            <TouchableOpacity
+              style={styles.likeBtn}
+              onPress={() => handleClick()}
+            >
+              <FontAwesome name="heart" size={15} color="#EDA0FF" />
+            </TouchableOpacity>
+          </View>
         <View style={styles.textContainer}>
           <Text>{event?.place?.name}</Text>
           {event?.place?.name && <Text style={styles.separator}></Text>}

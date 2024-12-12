@@ -63,7 +63,7 @@ const TabNavigator = () => {
         },
         tabBarActiveTintColor: "#2196f3",
         tabBarInactiveTintColor: "gray",
-        
+
         headerShown: false,
       })}
     >
@@ -74,6 +74,19 @@ const TabNavigator = () => {
     </Tab.Navigator>
   );
 };
+
+import {
+  useFonts,
+  Lexend_900Black,
+  Lexend_800ExtraBold,
+  Lexend_700Bold,
+  Lexend_600SemiBold,
+  Lexend_500Medium,
+  Lexend_400Regular,
+  Lexend_300Light,
+  Lexend_200ExtraLight,
+  Lexend_100Thin,
+} from "@expo-google-fonts/lexend";
 
 export default function App() {
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   View,
   Text,
@@ -10,41 +10,71 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Modal,
+  Image,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import colors from "../styleConstants/colors";
-import TextApp from "../styleComponents/TextApp";
-import {
-  Select,
-  SelectProvider,
-} from "@mobile-reality/react-native-select-pro";
-import Checkbox from "expo-checkbox";
-import createEvent from "../fetchers/events";
+import * as ImagePicker from "expo-image-picker";
+
 
 const AddEventScreen = () => {
-  const [selectedPlace, setSelectedPlace] = useState("");
-  const [isModalVisible, setModalVisible] = useState(false);
   const [eventName, setEventName] = useState("");
-  const [eventType, setEventType] = useState("");
   const [eventText, setEventText] = useState("");
   const [eventDate, setEventDate] = useState("");
   const [eventHour, setEventHour] = useState("");
-  const [eventPrice, setEventPrice] = useState("");
-  const [eventDrinks, setEventDrinks] = useState("");
-  const [isChecked, setChecked] = useState({
-    option1: false,
-    option2: false,
-    option3: false,
-    option4: false,
-    option5: false,
-  });
-  const [eventFood, setEventFood] = useState("");
-  const [eventAge, setEventAge] = useState("");
   const [isDateVisible, setDateVisibility] = useState(false);
   const [isTimeVisible, setTimeVisibility] = useState(false);
+  const [photo, setPhoto] = useState({});
+  const [photoUrl, setPhotoUrl] = useState("")
 
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
+  console.log("VOICI LE LOG DE PHOTO:", photo);
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images", "videos"],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log("resultat de l image upload: ", result);
+
+    if (!result.canceled) {
+      setPhoto(result.assets[0]);
+    }
+  };
+
+  const uploadImage = async () => {
+    // type d'encodage de donnée (fichier + chaîne de caracteres)
+    const formData = new FormData();
+    // Chaque info à envoyer sera “ajoutée” au formData
+    formData.append("photoFromFront", {
+      // nom de la propriété qui va représenter le fichier côté backend
+      uri: photo.uri, // chemin physique vers le fichier
+      name: "photo.jpg", // nom générique
+      type: "image/jpeg", // mimetype du fichier
+    });
+
+    try {
+      const response = await fetch(
+        "https://neotavern-backend.vercel.app/upload",
+        { method: "POST", body: formData }
+      );
+      const data = await response.json();
+      console.log("CLOUDINARY:", data);
+      if (data && data.url) {
+        setPhotoUrl(data.url)
+      } else {
+        console.error("Upload échoué :", data);
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'upload :", error);
+    }
+  };
+
   // console.log(user);
 
   // tri des établissements en minuscule, pour éviter la casse et recherche dans le tableau avec l'état (input)
@@ -54,19 +84,36 @@ const AddEventScreen = () => {
 
   // tableau brut de type d'événement
   const types = [
-    { label: "Musique", value: "musique" },
-    { label: "Football", value: "foot" },
-    { label: "Danse", value: "danse" },
-    { label: "Jeux", value: "jeux" },
-    { label: "Nouvel An", value: "nouvelan" },
+    { label: "Concert" },
+    { label: "Soirée" },
+    { label: "Exposition" },
+    { label: "Conférence" },
+    { label: "Atelier" },
+    { label: "Festival" },
+    { label: "Spectacle" },
+    { label: "Cinéma" },
+    { label: "Théâtre" },
+    { label: "Sport" },
+    { label: "Jeux" },
+    { label: "Autre" },
   ];
 
   const drinks = [
-    { label: "Vin", value: "vin" },
-    { label: "Bières", value: "biere" },
-    { label: "Spiritueux", value: "spiritueux" },
-    { label: "Softs", value: "softs" },
-    { label: "Eau", value: "eau" },
+    { label: "Softs" },
+    { label: "Bière" },
+    { label: "Vin" },
+    { label: "Cocktails" },
+    { label: "Alcool fort" },
+    { label: "Mocktails" },
+  ];
+
+  const food = [
+    { label: "Végétarien" },
+    { label: "Végétalien" },
+    { label: "Sans gluten" },
+    { label: "Halal" },
+    { label: "Casher" },
+    { label: "Vegan" },
   ];
 
   // affichage du calendrier
@@ -80,13 +127,11 @@ const AddEventScreen = () => {
   };
 
   // clique sur la date souhaitée et fermeture du calendrier
- 
-  const handleConfirm = (selectedDate) => {
-    console.log(selectedDate)
-    setEventDate(selectedDate.toDateString());
+
+  const handleConfirmDate = (selectedDate) => {
+    setEventDate(new Date(selectedDate));
     hideDatePicker();
   };
-  
 
   // affichage de l'horloge pour horaire de l'événement
   const showTimePicker = () => {
@@ -100,20 +145,15 @@ const AddEventScreen = () => {
 
   // clique sur l'horaire souhaité pour l'événement en 2 digits pour l'heure et les minutes, puis fermeture de l'horloge
   const handleValid = (time) => {
-    setEventHour(
-      time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-    );
+    setEventHour(new Date(time));
     hideTimePicker();
-  };
-
-  // affichage de la modal de recherche d'établissement
-  const showModal = () => {
-    setModalVisible(true);
   };
 
   const handleCreate = () => {
     console.log("CLIQUE CA MARCHE");
-  
+
+    uploadImage(); //upload cloudinary de l'image téléchargé
+
     fetch("https://neotavern-backend.vercel.app/events/createEvent", {
       method: "POST",
       headers: {
@@ -122,32 +162,34 @@ const AddEventScreen = () => {
       body: JSON.stringify({
         name: eventName,
         description: eventText,
-        date: date,
-        mainCategory: eventType,
-        likes: 2,
-        categories: [],
-        infosTags: [
-          { food: [] },
-          { drinks: [] },
-          { price: [] },
-          { legal: [] },
-        ],
-        user: user.user.user.userData._id
+        date: eventDate,
+        hour: eventHour,
+        likes: 0,
+        categories: selectedType,
+        infosTags: {
+          food: selectedFood,
+          drinks: selectedDrink,
+          price: paid ? "Payant" : "Gratuit",
+        },
+        place: placeId,
+        user: user.user?.userData._id,
+      }),
+    })
+      .then((response) => response.json()) // Conversion de la réponse en JSON
+      .then((data) => {
+        console.log("Tâche ajoutée avec succès :", data);
       })
-    })
-    .then((response) => response.json()) // Conversion de la réponse en JSON
-    .then((data) => {
-      console.log("Tâche ajoutée avec succès :", data);
-    })
-    .catch((error) => {
-      console.error("Erreur:", error);
-    });
+      .catch((error) => {
+        console.error("Erreur:", error);
+      });
   };
-  
+
+  // Recherche de lieu
 
   const [placesList, setPlacesList] = useState([]);
   const [placesResult, setPlacesResult] = useState([]);
   const [placeSearch, setPlaceSearch] = useState("");
+  const [placeId, setPlaceId] = useState("");
 
   useEffect(() => {
     fetch("https://neotavern-backend.vercel.app/places/allPlaces")
@@ -172,16 +214,72 @@ const AddEventScreen = () => {
     setPlacesResult(filteredPlaces);
   };
 
-  const chooseResult = (place) => {
-    setPlaceSearch(place);
+  const chooseResult = (placeName, placeId) => {
+    setPlaceSearch(placeName);
+    setPlaceId(placeId);
     setPlacesResult([]);
   };
 
+  // Séléctionner des types d'événements
+
+  const [selectedType, setSelectedType] = useState([]);
+
+  const handleType = (type) => {
+    if (selectedType.includes(type)) {
+      setSelectedType(selectedType.filter((item) => item !== type));
+      return;
+    } else {
+      setSelectedType([...selectedType, type]);
+    }
+  };
+
+  // Séléctionner le tarif de l'événement
+
+  const [free, setFree] = useState(true);
+  const [paid, setPaid] = useState(false);
+
+  const handlePayment = (toggle) => {
+    if (toggle === "paid") {
+      setFree(false);
+      setPaid(true);
+    } else {
+      setPaid(false);
+      setFree(true);
+    }
+  };
+
+  // Séléctionner les types de boissons
+
+  const [selectedDrink, setSelectedDrink] = useState([]);
+
+  const handleDrink = (drink) => {
+    if (selectedDrink.includes(drink)) {
+      setSelectedDrink(selectedDrink.filter((item) => item !== drink));
+      return;
+    } else {
+      setSelectedDrink([...selectedDrink, drink]);
+    }
+  };
+
+  // Séléctionner les types de Nourriture
+
+  const [selectedFood, setSelectedFood] = useState([]);
+
+  const handleFood = (food) => {
+    if (selectedFood.includes(food)) {
+      setSelectedFood(selectedFood.filter((item) => item !== food));
+      return;
+    } else {
+      setSelectedFood([...selectedFood, food]);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.mainTitle}>Ajouter un évènement</Text>
       <ScrollView style={styles.scrollWrapper}>
+        {/* Recherche de lieu */}
+
         <View style={styles.searchSection}>
           <Text style={styles.label}>Lieu de l'événement</Text>
           <TextInput
@@ -195,7 +293,7 @@ const AddEventScreen = () => {
               {placesResult.map((place) => (
                 <Text
                   style={styles.resultItem}
-                  onPress={() => chooseResult(place.name)}
+                  onPress={() => chooseResult(place.name, place._id)}
                   key={place._id}
                 >
                   {place.name}
@@ -205,6 +303,9 @@ const AddEventScreen = () => {
           )}
           <View style={styles.searchResult}></View>
         </View>
+
+        {/* Nom de l'événement */}
+
         <View>
           <Text style={styles.label}>Nom de l'événement:</Text>
           <TextInput
@@ -214,12 +315,30 @@ const AddEventScreen = () => {
             value={eventName}
           />
         </View>
+
+        {/* Types d'événement */}
+
         <View style={styles.picker}>
           <Text style={styles.label}>Type d'événement:</Text>
-          {types.map((type, i) => (
-            <Text key={i}>{type.label}</Text>
-          ))}
+          <View style={styles.tags}>
+            {types.map((type, i) => (
+              <TouchableOpacity
+                key={i}
+                onPress={() => handleType(type.label)}
+                style={
+                  selectedType.includes(type.label)
+                    ? [styles.tagItem, styles.selectedTag]
+                    : styles.tagItem
+                }
+              >
+                <Text>{type.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
+
+        {/* Description de l'événement */}
+
         <View>
           <Text style={styles.label}>Description:</Text>
 
@@ -232,10 +351,13 @@ const AddEventScreen = () => {
             style={styles.input}
           />
         </View>
+
+        {/* Date de l'évènement */}
+
         <View style={styles.picker}>
           <Text style={styles.label}>Date de l'événement:</Text>
           <View style={styles.dateInput}>
-            <Text style={styles.label}>{eventDate}</Text>
+            <Text style={styles.label}>Date</Text>
             <TouchableOpacity style={styles.btn} onPress={showDatePicker}>
               <Text style={styles.txtBtn}>Choisir une date</Text>
             </TouchableOpacity>
@@ -243,15 +365,18 @@ const AddEventScreen = () => {
           <DateTimePickerModal
             isVisible={isDateVisible}
             mode="date"
-            onConfirm={handleConfirm}
+            onConfirm={handleConfirmDate}
             onCancel={hideDatePicker}
             minimumDate={new Date()}
           />
         </View>
+
+        {/* Horaire de l'événement */}
+
         <View style={styles.picker}>
           <Text style={styles.label}>Horaire de l'événement:</Text>
           <View style={styles.dateInput}>
-            <Text style={styles.label}>{eventHour}</Text>
+            <Text style={styles.label}>heure</Text>
             <TouchableOpacity style={styles.btn} onPress={showTimePicker}>
               <Text style={styles.txtBtn}>Choisir une heure</Text>
             </TouchableOpacity>
@@ -263,45 +388,88 @@ const AddEventScreen = () => {
             />
           </View>
         </View>
+
+        {/* Tarif de l'événement */}
+
         <View style={styles.picker}>
           <Text style={styles.label}>Tarif de l'événement:</Text>
-          <Picker
-            selectedValue={eventPrice}
-            onValueChange={(value) => setEventPrice(value)}
-          >
-            <Picker.Item
-              label="Gratuit"
-              value="gratuit"
-              onPress={() => {
-                setEventPrice("");
-              }}
-            />
-            <Picker.Item
-              label="Payant"
-              value="payant"
-              onPress={() => {
-                setEventPrice("");
-              }}
-            />
-          </Picker>
-        </View>
-        {/* <View style={styles.picker}>
-        <Text style={styles.label}>Boissons:</Text>
-        
-        {drinks.map((drink, i) => (
-          <View style={styles.checkbox} key={i} >
-          <Checkbox 
-          style={styles.checkbox}
-          value={isChecked}
-          onValueChange={setChecked}
-          />
-          <Text>{drink.label}</Text>
+          <View style={styles.togglePrice}>
+            <TouchableOpacity
+              onPress={() => handlePayment("free")}
+              style={[
+                styles.tagItem,
+                free
+                  ? { backgroundColor: colors.purple }
+                  : { backgroundColor: "#F5F5F5" },
+              ]}
+            >
+              <Text style={styles.label}>Gratuit</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => handlePayment("paid")}
+              style={[
+                styles.tagItem,
+                paid
+                  ? { backgroundColor: colors.purple }
+                  : { backgroundColor: "#F5F5F5" },
+              ]}
+            >
+              <Text style={styles.label}>Payant</Text>
+            </TouchableOpacity>
           </View>
-          ))}
-          </View> */}
-        <View>
-          <Text style={styles.label}>UPLOAD UNE IMAGE</Text>
         </View>
+
+        {/* Boissons */}
+
+        <View style={styles.picker}>
+          <Text style={styles.label}>Boissons:</Text>
+          <View style={styles.tags}>
+            {drinks.map((drink, i) => (
+              <TouchableOpacity
+                key={i}
+                onPress={() => handleDrink(drink.label)}
+                style={
+                  selectedDrink.includes(drink.label)
+                    ? [styles.tagItem, styles.selectedTag]
+                    : styles.tagItem
+                }
+              >
+                <Text>{drink.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
+        {/* Nourriture */}
+        <View style={styles.picker}>
+          <Text style={styles.label}>Nourriture:</Text>
+          <View style={styles.tags}>
+            {food.map((food, i) => (
+              <TouchableOpacity
+                key={i}
+                onPress={() => handleFood(food.label)}
+                style={
+                  selectedFood.includes(food.label)
+                    ? [styles.tagItem, styles.selectedTag]
+                    : styles.tagItem
+                }
+              >
+                <Text>{food.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
+        {/* Image */}
+
+        <View style={styles.select}>
+          {photo && <Image source={{ uri: photo.uri }} style={styles.image} />}
+          <TouchableOpacity style={styles.btn4} onPress={pickImage}>
+            <Text style={styles.txtBtn}>Télécharge ta photo</Text>
+          </TouchableOpacity>
+        </View>
+
         <TouchableOpacity style={styles.btn3} onPress={() => handleCreate()}>
           <Text style={styles.txtBtn}>Créer l'événement !</Text>
         </TouchableOpacity>
@@ -343,6 +511,15 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: colors.purple,
   },
+  select: {
+    width: "100%",
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    marginBottom: 20,
+    paddingBottom: 20,
+    color: colors.purple,
+  },
   dateInput: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -353,7 +530,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding: 5,
     borderRadius: 8,
-    backgroundColor: colors.yellow,
+    backgroundColor: colors.green,
   },
   btn2: {
     width: 90,
@@ -361,7 +538,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 8,
     padding: 5,
-    backgroundColor: colors.yellow,
+    backgroundColor: colors.green,
   },
   btn3: {
     borderWidth: 1,
@@ -370,38 +547,26 @@ const styles = StyleSheet.create({
     marginTop: 20,
     padding: 5,
     borderRadius: 8,
+    backgroundColor: colors.green,
+  },
+  btn4: {
+    justifyContent: 'center', 
+    alignItems: 'center',
+    borderWidth: 1,
+    padding: 5,
+    borderRadius: 8,
     backgroundColor: colors.yellow,
   },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  modalText: {
-    width: 350,
-    margin: 10,
-    textAlign: "center",
-    backgroundColor: colors.darkGreen,
-    borderRadius: 15,
-    padding: 15,
-  },
+  
+
+   
+  
+
   checkbox: {
     flexDirection: "row",
   },
   scrollWrapper: {
     padding: 20,
-    borderWidth: 1,
-    borderColor: "red",
     width: "100%",
   },
 
@@ -414,9 +579,10 @@ const styles = StyleSheet.create({
     borderBottomColor: "#333",
   },
 
+  // Search section
+
   resultsList: {
     width: "100%",
-    // backgroundColor: "red",
     padding: 10,
     borderRadius: 5,
     borderWidth: 1,
@@ -425,6 +591,44 @@ const styles = StyleSheet.create({
 
   resultItem: {
     padding: 10,
+  },
+
+  // Tags
+
+  tags: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    gap: 10,
+    flexWrap: "wrap",
+    marginVertical: 10,
+  },
+
+  tagItem: {
+    borderWidth: 1,
+    paddingLeft: 24,
+    paddingRight: 24,
+    backgroundColor: colors.light,
+    borderColor: colors.dark,
+    borderWidth: 1,
+    borderRadius: 15,
+  },
+
+  selectedTag: {
+    backgroundColor: colors.purple,
+  },
+
+  // Price
+  togglePrice: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 10,
+    marginVertical: 10,
+  },
+  image: {
+    width: '100%',
+    height: 300,
+    margin: 10,
+    borderRadius: 8,
   },
 });
 
