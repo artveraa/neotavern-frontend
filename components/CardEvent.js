@@ -18,6 +18,13 @@ const CardEvent = ({ event, navigation, handleLike }) => {
     })
   }
 
+  //like
+  const handleClick = () => {
+    handleLike(event._id)
+    console.log('cloic', event._id)
+  }
+  
+
   const formatDate = (date) => {
     if (new Date(date).toDateString() === new Date().toDateString()) {
       return "Aujourd'hui";
@@ -42,7 +49,7 @@ const CardEvent = ({ event, navigation, handleLike }) => {
             style={styles.image}
             source={require("../assets/default.jpg")}
           />
-          <TouchableOpacity style={styles.likeBtn} onPress={() => handleLike()}>
+          <TouchableOpacity style={styles.likeBtn} onPress={() => handleClick()}>
             <FontAwesome name="heart" size={15} color="#EDA0FF" />
           </TouchableOpacity>
         </View>

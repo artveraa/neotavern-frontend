@@ -70,7 +70,7 @@ const EventScreen = ({navigation, route}) => {
   return (
     <>
     {/* HERO */}
-      <View style={styles.imageContainer}>
+      <View style={styles.heroContainer}>
         <Image source={require("../assets/default.jpg")} style={styles.image}/>
 
         <TouchableOpacity style={[styles.backWrap, styles.borderStyle]} 
@@ -79,7 +79,6 @@ const EventScreen = ({navigation, route}) => {
             <Text style={styles.arrow}>&#x2190;</Text>
           </View>
         </TouchableOpacity>
-
 
         <View style={[styles.likeWrap, styles.borderStyle]}>
         <TouchableOpacity style={styles.likeBtn} onPress={() => handleLike()}>
@@ -103,12 +102,12 @@ const EventScreen = ({navigation, route}) => {
         
         <View style={styles.eventContainer}>
           <TouchableOpacity>
-            <TextAppTitle>event place :{event?.place?.name}</TextAppTitle>
+            <TextAppTitle>{event?.place?.name}</TextAppTitle>
           </TouchableOpacity>
 
           <View >
             <TextAppBold>{formatDate(event?.date)}</TextAppBold>
-            <TextApp>Event Description : </TextApp>
+            <TextApp></TextApp>
           </View>
 
           <View style={styles.tagWrap}>
@@ -144,7 +143,7 @@ const EventScreen = ({navigation, route}) => {
 
 const styles = StyleSheet.create({
   //image hero
-imageContainer:{
+heroContainer:{
   flex: 1,
 },
 image:{
