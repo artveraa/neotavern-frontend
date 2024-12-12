@@ -10,16 +10,13 @@ import {
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 const CardEvent = ({ event, navigation, handleLike }) => {
-
-  
-  //navigation event push parem ->
+  //navigation -> avec route de paramêtres à pousser
   const handleEvent = (event) => {
-    console.log("->",event)
     navigation.push('Event', {
-      event
+      event,
+      handleLike
     })
   }
-
 
   const formatDate = (date) => {
     if (new Date(date).toDateString() === new Date().toDateString()) {
