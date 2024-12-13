@@ -23,7 +23,7 @@ const MapScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.value);
   console.log(user);
 
-  const token = user.user.userData.token;
+  const token = user.user.dbData.token;
 
   const [postLiked, setPostLiked] = useState([]);
 

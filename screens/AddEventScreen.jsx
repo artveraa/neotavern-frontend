@@ -25,26 +25,35 @@ const AddEventScreen = () => {
   const [isTimeVisible, setTimeVisibility] = useState(false);
   const [photo, setPhoto] = useState({});
   const [photoUrl, setPhotoUrl] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
 
   const user = useSelector((state) => state.user.value);
   console.log("VOICI LE LOG DE PHOTO:", photo);
 
+
+// SELECTION DE L'IMAGE VIA UPLOAD
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
+    setIsUploading(true); // Commencer l'upload 
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images", "videos"],
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.5,
     });
+
+    console.log('USER/', user)
 
     console.log("resultat de l image upload: ", result);
 
-    if (!result.canceled) {
-      setPhoto(result.assets[0]);
-    }
+    if (!result.canceled) { 
+      setIsUploading(false); // Terminer l'upload 
+      setPhoto(result.assets[0]); 
+      }
   };
 
+
+  // STOCKAGE DE L'IMAGE SUR LE CLOUDINARY
   const uploadImage = async () => {
     // type d'encodage de donnée (fichier + chaîne de caracteres)
     const formData = new FormData();
@@ -52,7 +61,7 @@ const AddEventScreen = () => {
     formData.append("photoFromFront", {
       // nom de la propriété qui va représenter le fichier côté backend
       uri: photo.uri, // chemin physique vers le fichier
-      name: "photo.jpg", // nom générique
+      name: "photo.webp", // nom générique
       type: "image/jpeg", // mimetype du fichier
     });
 
@@ -74,13 +83,6 @@ const AddEventScreen = () => {
       console.error("Erreur lors de l'upload :", error);
     }
   };
-
-  // console.log(user);
-
-  // tri des établissements en minuscule, pour éviter la casse et recherche dans le tableau avec l'état (input)
-  // const filteredItems = items.filter((item) =>
-  //   item.label.toLowerCase().includes(placeSearch.toLowerCase())
-  // );
 
   // tableau brut de type d'événement
   const types = [
@@ -149,40 +151,46 @@ const AddEventScreen = () => {
     hideTimePicker();
   };
 
+  // CHARGEMENT UPLOAD IMAGE ET CREATION D'EVENEMENT
   const handleCreate = () => {
     console.log("CLIQUE CA MARCHE");
 
+    setIsUploading(true)
     uploadImage(); //upload cloudinary de l'image téléchargé
-
-    fetch("https://neotavern-backend.vercel.app/events/createEvent", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: eventName,
-        description: eventText,
-        date: eventDate,
-        hour: eventHour,
-        likes: 0,
-        categories: selectedType,
-        photo: photoUrl,
-        infosTags: {
-          food: selectedFood,
-          drinks: selectedDrink,
-          price: paid ? "Payant" : "Gratuit",
+    console.log('URL PHOTO AU CLIQUE:', photoUrl)
+    if (photoUrl) {
+      fetch("https://neotavern-backend.vercel.app/events/createEvent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        place: placeId,
-        user: user.user?.userData._id,
-      }),
-    })
-      .then((response) => response.json()) // Conversion de la réponse en JSON
-      .then((data) => {
-        console.log("Tâche ajoutée avec succès :", data);
+        body: JSON.stringify({
+          name: eventName,
+          description: eventText,
+          date: eventDate,
+          hour: eventHour,
+          likes: 0,
+          categories: selectedType,
+          photo: photoUrl,
+          infosTags: {
+            food: selectedFood,
+            drinks: selectedDrink,
+            price: paid ? "Payant" : "Gratuit",
+          },
+          place: placeId,
+          user: user.user?.dbData._id,
+        }),
       })
-      .catch((error) => {
-        console.error("Erreur:", error);
-      });
+        .then((response) => response.json()) // Conversion de la réponse en JSON
+        .then((data) => {
+          console.log("Tâche ajoutée avec succès :", data);
+        })
+        .catch((error) => {
+          console.error("Erreur:", error);
+        });
+        
+        setIsUploading(false)
+    }
   };
 
   // Recherche de lieu
@@ -465,7 +473,7 @@ const AddEventScreen = () => {
         {/* Image */}
 
         <View style={styles.select}>
-          {photo && <Image source={{ uri: photo.uri }} style={styles.image} />}
+          {isUploading ? <Text style={styles.loading}>LOADING...</Text> : photo && <Image source={{ uri: photo.uri }} style={styles.image} />}
           <TouchableOpacity style={styles.btn4} onPress={pickImage}>
             <Text style={styles.txtBtn}>Télécharge ta photo</Text>
           </TouchableOpacity>
@@ -627,6 +635,10 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 8,
   },
+  loading: {
+    fontSize: 20,
+    
+  }
 });
 
 export default AddEventScreen;
