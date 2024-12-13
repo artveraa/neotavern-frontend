@@ -129,8 +129,10 @@ const AddEventScreen = () => {
 
   // clique sur la date souhaitée et fermeture du calendrier
 
-  const handleConfirmDate = (selectedDate) => {
-    setEventDate(new Date(selectedDate));
+  const handleConfirmDate = (e) => {
+    console.log(e);
+
+    setEventDate(e);
     hideDatePicker();
   };
 
@@ -145,8 +147,15 @@ const AddEventScreen = () => {
   };
 
   // clique sur l'horaire souhaité pour l'événement en 2 digits pour l'heure et les minutes, puis fermeture de l'horloge
-  const handleValid = (time) => {
-    setEventHour(new Date(time));
+  const handleValid = (e) => {
+    // formatter l'heure en français
+    const formattedHour = e.toLocaleTimeString("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    console.log(formattedHour);
+
+    setEventHour(formattedHour);
     hideTimePicker();
   };
 
@@ -377,7 +386,9 @@ const AddEventScreen = () => {
         <View style={styles.picker}>
           <Text style={styles.label}>Date de l'événement:</Text>
           <View style={styles.dateInput}>
-            <Text style={styles.label}>Date</Text>
+            <Text style={styles.label}>
+              {new Date(eventDate).toLocaleDateString()}
+            </Text>
             <TouchableOpacity style={styles.btn} onPress={showDatePicker}>
               <Text style={styles.txtBtn}>Choisir une date</Text>
             </TouchableOpacity>
@@ -396,7 +407,7 @@ const AddEventScreen = () => {
         <View style={styles.picker}>
           <Text style={styles.label}>Horaire de l'événement:</Text>
           <View style={styles.dateInput}>
-            <Text style={styles.label}>heure</Text>
+            <Text style={styles.label}>{eventHour}</Text>
             <TouchableOpacity style={styles.btn} onPress={showTimePicker}>
               <Text style={styles.txtBtn}>Choisir une heure</Text>
             </TouchableOpacity>
@@ -479,6 +490,19 @@ const AddEventScreen = () => {
               </TouchableOpacity>
             ))}
           </View>
+        </View>
+
+        {/* Image */}
+
+        <View style={styles.select}>
+          {isUploading ? (
+            <Text style={styles.loading}>LOADING...</Text>
+          ) : (
+            photo && <Image source={{ uri: photo.uri }} style={styles.image} />
+          )}
+          <TouchableOpacity style={styles.btn4} onPress={pickImage}>
+            <Text style={styles.txtBtn}>Télécharge ta photo</Text>
+          </TouchableOpacity>
         </View>
 
         <TouchableOpacity style={styles.btn3} onPress={() => handleCreate()}>
