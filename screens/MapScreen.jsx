@@ -19,6 +19,7 @@ import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import getAllEvents from "../fetchers/events";
 import { useFocusEffect } from "@react-navigation/native";
+import colors from "../styleConstants/colors";
 
 const MapScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.value);
@@ -31,6 +32,23 @@ const MapScreen = ({ navigation }) => {
   const bottomSheetRef = useRef(null);
   const [region, setRegion] = useState(null);
   const [allEvents, setAllEvents] = useState(null);
+  const [selectedType, setSelectedType] = useState([]);
+
+  // tableau brut de type d'événement
+  const types = [
+    { label: "Concert" },
+    { label: "Soirée" },
+    { label: "Exposition" },
+    { label: "Conférence" },
+    { label: "Atelier" },
+    { label: "Festival" },
+    { label: "Spectacle" },
+    { label: "Cinéma" },
+    { label: "Théâtre" },
+    { label: "Sport" },
+    { label: "Jeux" },
+    { label: "Autre" },
+  ];
 
   const snapPoints = ["20%", "80%"];
 
@@ -85,8 +103,27 @@ const MapScreen = ({ navigation }) => {
     }, [])
   );
 
+
+
   return (
     <GestureHandlerRootView style={styles.container}>
+      <View style={styles.categories}>
+          <View style={styles.tags}>
+            {types.map((type, i) => (
+              <TouchableOpacity
+                key={i}
+                onPress={() => handleType(type.label)}
+                style={
+                  selectedType.includes(type.label)
+                    ? [styles.tagItem, styles.selectedTag]
+                    : styles.tagItem
+                }
+              >
+                <Text>{type.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+      </View>
       <MapView
         style={StyleSheet.absoluteFillObject}
         setUserLocationEnabled={true}
@@ -155,6 +192,19 @@ const styles = StyleSheet.create({
 
   drawer: {
     paddingHorizontal: 20,
+  },
+  categories: {
+    width: "100%",
+    borderBottomWidth: 1,
+    marginBottom: 20,
+    color: colors.purple,
+  },
+  tags: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    gap: 10,
+    flexWrap: "wrap",
+    marginVertical: 10,
   },
 });
 
