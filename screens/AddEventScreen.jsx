@@ -27,7 +27,6 @@ const AddEventScreen = () => {
   const [photo, setPhoto] = useState({});
   const [photoUrl, setPhotoUrl] = useState("")
 
-  const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
   console.log("VOICI LE LOG DE PHOTO:", photo);
 
@@ -166,6 +165,7 @@ const AddEventScreen = () => {
         hour: eventHour,
         likes: 0,
         categories: selectedType,
+        photo: photoUrl,
         infosTags: {
           food: selectedFood,
           drinks: selectedDrink,
