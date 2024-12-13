@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, use } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
 
 import {
@@ -18,10 +18,9 @@ import BottomSheet, {
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import getAllEvents from "../fetchers/events";
-import { useIsFocused } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 
 const MapScreen = ({ navigation }) => {
-  const [isFocused, setIsFocused] = useState(useIsFocused());
   const user = useSelector((state) => state.user.value);
   console.log(user);
 
@@ -78,11 +77,16 @@ const MapScreen = ({ navigation }) => {
       .then((data) => setPostLiked(data));
   };
 
-  useEffect(() => {
-    console.log("isFocused", isFocused);
-    openPanel();
-    fetchEvents();
-  }, [isFocused]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchEvents();
+      openPanel();
+
+      return () => {
+        setAllEvents([]);
+      };
+    }, [])
+  );
 
   return (
     <GestureHandlerRootView style={styles.container}>
