@@ -21,7 +21,6 @@ import getAllEvents from "../fetchers/events";
 
 const MapScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.value);
-  console.log(user);
 
   const token = user.user.userData.token;
 
@@ -89,11 +88,18 @@ const MapScreen = ({ navigation }) => {
         showsUserLocation={true}
         region={region}
       >
-        <Marker
-          coordinate={{ latitude: 37.78825, longitude: -122.4324 }}
-          title={"Marker Title"}
-          description={"Marker Description"}
-        />
+        {allEvents &&
+          allEvents.map((event) => (
+            <Marker
+              key={event._id}
+              coordinate={{
+                latitude: event.place.latitude,
+                longitude: event.place.longitude,
+              }}
+              title={event.name}
+              description={event.place.name}
+            />
+          ))}
       </MapView>
       <BottomSheet
         ref={bottomSheetRef}

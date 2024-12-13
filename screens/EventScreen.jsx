@@ -30,8 +30,6 @@ const EventScreen = ({ navigation, route }) => {
 
   // navigation -> get params event
   const { handleLike, event } = route.params;
-  console.log(event.place.longitude);
-  console.log(event.place.latitude);
 
   // navigation -> back map screen
   const handleBackMap = () => {
