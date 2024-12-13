@@ -491,20 +491,6 @@ const AddEventScreen = () => {
             ))}
           </View>
         </View>
-
-        {/* Image */}
-
-        <View style={styles.select}>
-          {isUploading ? (
-            <Text style={styles.loading}>LOADING...</Text>
-          ) : (
-            photo && <Image source={{ uri: photo.uri }} style={styles.image} />
-          )}
-          <TouchableOpacity style={styles.btn4} onPress={pickImage}>
-            <Text style={styles.txtBtn}>Télécharge ta photo</Text>
-          </TouchableOpacity>
-        </View>
-
         <TouchableOpacity style={styles.btn3} onPress={() => handleCreate()}>
           <Text style={styles.txtBtn}>Créer l'événement !</Text>
         </TouchableOpacity>
