@@ -23,8 +23,8 @@ import TextAppBold from "../styleComponents/TextAppBold";
 import TextApp from "../styleComponents/TextApp";
 import colors from "../styleConstants/colors";
 
-const EventScreen = ({navigation, route}) => {
-  const user = useSelector((state) => state.user.value); 
+const EventScreen = ({ navigation, route }) => {
+  const user = useSelector((state) => state.user.value);
   //map localisation user pour le moment
   const [region, setRegion] = useState(null);
 
@@ -33,8 +33,8 @@ const EventScreen = ({navigation, route}) => {
 
   // navigation -> back map screen
   const handleBackMap = () => {
-    navigation.navigate("TabNavigator", { screen: "MapScreen" })
-  }
+    navigation.navigate("TabNavigator", { screen: "MapScreen" });
+  };
 
   //date formatage
   const formatDate = (date) => {
@@ -66,183 +66,198 @@ const EventScreen = ({navigation, route}) => {
     })();
   }, []);
 
-
   return (
     <>
-    {/* HERO */}
+      {/* HERO */}
       <View style={styles.heroContainer}>
-        <Image source={require("../assets/default.jpg")} style={styles.image}/>
+        <Image source={{ uri: event?.photo }} style={styles.image} />
 
-        <TouchableOpacity style={[styles.backWrap, styles.borderStyle]} 
-        onPress={() => handleBackMap()}>
-          <View >
+        <TouchableOpacity
+          style={[styles.backWrap, styles.borderStyle]}
+          onPress={() => handleBackMap()}
+        >
+          <View>
             <Text style={styles.arrow}>&#x2190;</Text>
           </View>
         </TouchableOpacity>
 
         <View style={[styles.likeWrap, styles.borderStyle]}>
-        <TouchableOpacity style={styles.likeBtn} onPress={() => handleLike()}>
-              <FontAwesome name="heart" size={18} color="#EDA0FF" paddingRight={6}/>
-        </TouchableOpacity>
-        <TextAppS>{event?.likes}</TextAppS>
+          <TouchableOpacity style={styles.likeBtn} onPress={() => handleLike()}>
+            <FontAwesome
+              name="heart"
+              size={18}
+              color="#EDA0FF"
+              paddingRight={6}
+            />
+          </TouchableOpacity>
+          <TextAppS>{event?.likes}</TextAppS>
         </View>
       </View>
 
-    {/*MAIN infos */}
+      {/*MAIN infos */}
       <View style={styles.container}>
         <View style={styles.titleContainer}>
           <View style={[styles.txtWrap, styles.borderStyle]}>
             <TextAppTitle>{event?.name}</TextAppTitle>
           </View>
           <View style={[styles.dateWrap, styles.borderStyle]}>
-            <Image source={require("../assets/date.png")} style={{width:24,height:24}}/>
+            <Image
+              source={require("../assets/date.png")}
+              style={{ width: 24, height: 24 }}
+            />
             <TextAppBold>{formatDate(event?.date)}</TextAppBold>
           </View>
         </View>
-        
+
         <View style={styles.eventContainer}>
           <TouchableOpacity>
             <TextAppTitle>{event?.place?.name}</TextAppTitle>
           </TouchableOpacity>
 
-          <View >
+          <View>
             <TextAppBold>{formatDate(event?.date)}</TextAppBold>
             <TextApp></TextApp>
           </View>
 
           <View style={styles.tagWrap}>
             <TagL>
-              <Image source={require("../assets/date.png")} style={styles.tagIcon}/>
-                Free
+              <Image
+                source={require("../assets/date.png")}
+                style={styles.tagIcon}
+              />
+              Free
             </TagL>
             <TagL>
-              <Image source={require("../assets/date.png")} style={styles.tagIcon}/>
-                Style event
+              <Image
+                source={require("../assets/date.png")}
+                style={styles.tagIcon}
+              />
+              Style event
             </TagL>
           </View>
         </View>
 
         <View style={styles.mapWrap}>
-            <MapView
+          <MapView
             style={StyleSheet.absoluteFillObject}
             setUserLocationEnabled={true}
             showsUserLocation={true}
             region={region}
-            >
+          >
             <Marker
-            coordinate={{ latitude: 37.78825, longitude: -122.4324 }}
-            title={"Marker Title"}
-            description={"Marker Description"}
+              coordinate={{ latitude: 37.78825, longitude: -122.4324 }}
+              title={"Marker Title"}
+              description={"Marker Description"}
             />
-      </MapView>
+          </MapView>
         </View>
-    </View>
+      </View>
     </>
   );
 };
 
 const styles = StyleSheet.create({
   //image hero
-heroContainer:{
-  flex: 1,
-},
-image:{
-  width:'100%',
-  height:'100%',
-},
-backWrap:{
-  position:'absolute',
-  justifyContent:'center',
-  alignItems:'center',
+  heroContainer: {
+    flex: 1,
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+  },
+  backWrap: {
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
 
-  top:48,
-  left:28,
-  zIndex:1,
-  width:'12%',
-  height:30,
-},
-arrow:{
-  fontFamily:'Lexend_600SemiBold',
-  lineHeight:20,
-  fontSize:20,
-},
-likeWrap:{
-  position:'absolute',
+    top: 48,
+    left: 28,
+    zIndex: 1,
+    width: "12%",
+    height: 30,
+  },
+  arrow: {
+    fontFamily: "Lexend_600SemiBold",
+    lineHeight: 20,
+    fontSize: 20,
+  },
+  likeWrap: {
+    position: "absolute",
 
-  flexDirection:'row',
-  justifyContent:'center',
-  alignItems:'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
 
-  backgroundColor:colors.light,
+    backgroundColor: colors.light,
 
-  top:48,
-  right:28,
-  zIndex:1,
-  width:'18.2%',
-  height:30,
+    top: 48,
+    right: 28,
+    zIndex: 1,
+    width: "18.2%",
+    height: 30,
 
-  borderRadius:8,
-},
+    borderRadius: 8,
+  },
   //main
-container: {
-  flex: 2,
-  backgroundColor: colors.light,
+  container: {
+    flex: 2,
+    backgroundColor: colors.light,
 
-  width: "100%",
-  paddingLeft:28,
-  paddingRight:28,
-},
+    width: "100%",
+    paddingLeft: 28,
+    paddingRight: 28,
+  },
   //->title et date
-  titleContainer:{
-    flexDirection:'row',
+  titleContainer: {
+    flexDirection: "row",
 
-    justifyContent:'space-between',
-    alignItems: 'stretch',
-    gap:12,
-    maxWidth:'100%',
-    
+    justifyContent: "space-between",
+    alignItems: "stretch",
+    gap: 12,
+    maxWidth: "100%",
+
     top: "-6%",
   },
-  borderStyle:{
-    backgroundColor:colors.light,
-    borderColor:colors.dark,
-    borderWidth:1,
-    borderRadius:15,
+  borderStyle: {
+    backgroundColor: colors.light,
+    borderColor: colors.dark,
+    borderWidth: 1,
+    borderRadius: 15,
   },
-  txtWrap:{
-    justifyContent:'center',
+  txtWrap: {
+    justifyContent: "center",
 
-    padding:24,
-    width:'72%',
-    maxWidth:'72%',
+    padding: 24,
+    width: "72%",
+    maxWidth: "72%",
   },
-  dateWrap:{
-    justifyContent:'center',
-    alignItems:'center',
+  dateWrap: {
+    justifyContent: "center",
+    alignItems: "center",
 
-    width:'22%',
-    padding:12,
+    width: "22%",
+    padding: 12,
   },
   //tag wrap
-  tagWrap:{
-    flexDirection:'row',
-    gap:12,
+  tagWrap: {
+    flexDirection: "row",
+    gap: 12,
 
-    paddingTop:24,
-    paddingBottom:24,
+    paddingTop: 24,
+    paddingBottom: 24,
   },
-  tagIcon:{
-    width:14,
-    height:14,
+  tagIcon: {
+    width: 14,
+    height: 14,
   },
   //
-  mapWrap:{
-    height:200,
-    widht:'100%',
+  mapWrap: {
+    height: 200,
+    widht: "100%",
 
-    borderRadius:15,
-    overflow:'hidden',
-  }
+    borderRadius: 15,
+    overflow: "hidden",
+  },
 });
 
 export default EventScreen;
