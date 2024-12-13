@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   value: {
-    user: null,
+    user: {token: null, nickname: null, email: null, role: null, id: null},
   },
 };
 
@@ -11,8 +11,16 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action) => {
-      state.value.user = action.payload;
+      state.value.user.token = action.payload.token;
+      state.value.user.email = action.payload.email;
+      state.value.user.role = action.payload.role;
+      state.value.user.nickname = action.payload.nickname;
+      state.value.user.id = action.payload.id;
+      state.value.user.badges = action.payload.badges;
     },
+    likeEvent: (state, action) => {
+      state.value.user.likedEvents.push(action.payload.likedEvent)
+    }
   },
 });
 

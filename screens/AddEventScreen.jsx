@@ -40,7 +40,7 @@ const AddEventScreen = ({ navigation }) => {
       quality: 0.5,
     });
 
-    console.log("USER/", user);
+    // console.log("USER/", user);
 
     console.log("resultat de l image upload: ", result);
 
@@ -181,7 +181,7 @@ const AddEventScreen = ({ navigation }) => {
           price: paid ? "Payant" : "Gratuit",
         },
         place: placeId,
-        user: user.user?.data._id,
+        user: user.user?.id,
       }),
     })
       .then((response) => response.json()) // Conversion de la réponse en JSON

@@ -10,13 +10,15 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import colors  from '../styleConstants/colors'
+import colors from "../styleConstants/colors";
 import TextAppS from "../styleComponents/TextApp";
 import TextApp from "../styleComponents/TextApp";
 
 const LoginUser = ({ navigation }) => {
   // redux
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.value);
+
   // input valeur
   const [mail, setMail] = useState("");
   const [pass, setPass] = useState("");
@@ -24,16 +26,25 @@ const LoginUser = ({ navigation }) => {
   const [error, setError] = useState(false);
 
   const handleLoginUser = () => {
-    fetch("http://neotavern-backend.vercel.app/users/login", {
+    fetch('http://neotavern-backend.vercel.app/users/login', {
+    // fetch("http://192.168.251.129:3000/users/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ password: pass, email: mail }),
     })
       .then((response) => response.json())
       .then((userData) => {
-        console.log(userData);
         if (userData.result) {
-          dispatch(login(userData));
+          dispatch(
+            login({
+              token: userData?.token,
+              nickname: userData?.nickname,
+              email: userData?.nickname,
+              role: userData?.role,
+              id: userData?.id,
+              badges: userData?.badges,
+            })
+          );
           navigation.navigate("TabNavigator", { screen: "MapScreen" });
         } else {
           setError(!error);
