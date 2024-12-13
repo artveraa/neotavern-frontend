@@ -64,7 +64,7 @@ const AddEventScreen = () => {
       name: "photo.webp", // nom générique
       type: "image/jpeg", // mimetype du fichier
     });
-
+    setIsUploading(true)
     try {
       const response = await fetch(
         "https://neotavern-backend.vercel.app/upload",
@@ -76,6 +76,7 @@ const AddEventScreen = () => {
         console.log(data.url);
 
         setPhotoUrl(data.url);
+        setIsUploading(false)
       } else {
         console.error("Upload échoué :", data);
       }
@@ -153,12 +154,8 @@ const AddEventScreen = () => {
 
   // CHARGEMENT UPLOAD IMAGE ET CREATION D'EVENEMENT
   const handleCreate = () => {
-    console.log("CLIQUE CA MARCHE");
-
-    setIsUploading(true)
     uploadImage(); //upload cloudinary de l'image téléchargé
-    console.log('URL PHOTO AU CLIQUE:', photoUrl)
-    if (photoUrl) {
+
       fetch("https://neotavern-backend.vercel.app/events/createEvent", {
         method: "POST",
         headers: {
@@ -189,8 +186,6 @@ const AddEventScreen = () => {
           console.error("Erreur:", error);
         });
         
-        setIsUploading(false)
-    }
   };
 
   // Recherche de lieu
