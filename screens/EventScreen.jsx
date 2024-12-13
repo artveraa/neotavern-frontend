@@ -30,6 +30,8 @@ const EventScreen = ({ navigation, route }) => {
 
   // navigation -> get params event
   const { handleLike, event } = route.params;
+  console.log(event.place.longitude);
+  console.log(event.place.latitude);
 
   // navigation -> back map screen
   const handleBackMap = () => {
@@ -142,12 +144,20 @@ const EventScreen = ({ navigation, route }) => {
             style={StyleSheet.absoluteFillObject}
             setUserLocationEnabled={true}
             showsUserLocation={true}
-            region={region}
+            region={{
+              latitude: event?.place?.latitude,
+              longitude: event?.place?.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
           >
             <Marker
-              coordinate={{ latitude: 37.78825, longitude: -122.4324 }}
-              title={"Marker Title"}
-              description={"Marker Description"}
+              coordinate={{
+                latitude: event?.place?.latitude,
+                longitude: event?.place?.longitude,
+              }}
+              title={event?.place?.name}
+              description={event?.place?.address}
             />
           </MapView>
         </View>
