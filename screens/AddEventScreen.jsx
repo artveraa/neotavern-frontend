@@ -16,7 +16,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import colors from "../styleConstants/colors";
 import * as ImagePicker from "expo-image-picker";
 
-const AddEventScreen = () => {
+const AddEventScreen = ({ navigation }) => {
   const [eventName, setEventName] = useState("");
   const [eventText, setEventText] = useState("");
   const [eventDate, setEventDate] = useState("");
@@ -28,7 +28,6 @@ const AddEventScreen = () => {
   const [isUploading, setIsUploading] = useState(false);
 
   const user = useSelector((state) => state.user.value);
-  console.log("VOICI LE LOG DE PHOTO:", photo);
 
   // SELECTION DE L'IMAGE VIA UPLOAD
   const pickImage = async () => {
@@ -188,6 +187,7 @@ const AddEventScreen = () => {
       .then((response) => response.json()) // Conversion de la réponse en JSON
       .then((data) => {
         console.log("Tâche ajoutée avec succès :", data);
+        navigation.navigate("MapScreen");
       })
       .catch((error) => {
         console.error("Erreur:", error);
@@ -336,12 +336,14 @@ const AddEventScreen = () => {
             )
           ) : (
             <View style={styles.placeholder}>
-              <Text style={styles.label}>Séléctionnez une image de présentation de l'événement</Text>
+              <Text style={styles.label}>
+                Séléctionnez une image de présentation de l'événement
+              </Text>
             </View>
           )}
 
           <TouchableOpacity style={styles.btn4} onPress={pickImage}>
-            <Text style={styles.txtBtn}>Télécharge ta photo</Text>
+            <Text style={styles.txtBtn}>Upload ta photo</Text>
           </TouchableOpacity>
         </View>
 

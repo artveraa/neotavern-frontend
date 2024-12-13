@@ -81,10 +81,6 @@ const MapScreen = ({ navigation }) => {
     useCallback(() => {
       fetchEvents();
       openPanel();
-
-      return () => {
-        setAllEvents([]);
-      };
     }, [])
   );
 
