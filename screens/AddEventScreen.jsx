@@ -165,7 +165,6 @@ const AddEventScreen = () => {
         date: eventDate,
         hour: eventHour,
         likes: 0,
-        photo: photoUrl,
         categories: selectedType,
         photo: photoUrl,
         infosTags: {
