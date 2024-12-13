@@ -22,7 +22,7 @@ import getAllEvents from "../fetchers/events";
 const MapScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.value);
 
-  const token = user.user.dbData.token;
+  const token = user.user.data.token;
 
   const [postLiked, setPostLiked] = useState([]);
 

@@ -23,18 +23,17 @@ const AddEventScreen = () => {
   const [eventHour, setEventHour] = useState("");
   const [isDateVisible, setDateVisibility] = useState(false);
   const [isTimeVisible, setTimeVisibility] = useState(false);
-  const [photo, setPhoto] = useState({});
+  const [photo, setPhoto] = useState(null);
   const [photoUrl, setPhotoUrl] = useState("");
   const [isUploading, setIsUploading] = useState(false);
 
   const user = useSelector((state) => state.user.value);
   console.log("VOICI LE LOG DE PHOTO:", photo);
 
-
-// SELECTION DE L'IMAGE VIA UPLOAD
+  // SELECTION DE L'IMAGE VIA UPLOAD
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
-    setIsUploading(true); // Commencer l'upload 
+    setIsUploading(true); // Commencer l'upload
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images", "videos"],
       allowsEditing: true,
@@ -42,16 +41,15 @@ const AddEventScreen = () => {
       quality: 0.5,
     });
 
-    console.log('USER/', user)
+    console.log("USER/", user);
 
     console.log("resultat de l image upload: ", result);
 
-    if (!result.canceled) { 
-      setIsUploading(false); // Terminer l'upload 
-      setPhoto(result.assets[0]); 
-      }
+    if (!result.canceled) {
+      setIsUploading(false); // Terminer l'upload
+      setPhoto(result.assets[0]);
+    }
   };
-
 
   // STOCKAGE DE L'IMAGE SUR LE CLOUDINARY
   const uploadImage = async () => {
@@ -64,7 +62,7 @@ const AddEventScreen = () => {
       name: "photo.webp", // nom générique
       type: "image/jpeg", // mimetype du fichier
     });
-    setIsUploading(true)
+    setIsUploading(true);
     try {
       const response = await fetch(
         "https://neotavern-backend.vercel.app/upload",
@@ -76,7 +74,7 @@ const AddEventScreen = () => {
         console.log(data.url);
 
         setPhotoUrl(data.url);
-        setIsUploading(false)
+        setIsUploading(false);
       } else {
         console.error("Upload échoué :", data);
       }
@@ -156,36 +154,35 @@ const AddEventScreen = () => {
   const handleCreate = () => {
     uploadImage(); //upload cloudinary de l'image téléchargé
 
-      fetch("https://neotavern-backend.vercel.app/events/createEvent", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+    fetch("https://neotavern-backend.vercel.app/events/createEvent", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: eventName,
+        description: eventText,
+        date: eventDate,
+        hour: eventHour,
+        likes: 0,
+        categories: selectedType,
+        photo: photoUrl,
+        infosTags: {
+          food: selectedFood,
+          drinks: selectedDrink,
+          price: paid ? "Payant" : "Gratuit",
         },
-        body: JSON.stringify({
-          name: eventName,
-          description: eventText,
-          date: eventDate,
-          hour: eventHour,
-          likes: 0,
-          categories: selectedType,
-          photo: photoUrl,
-          infosTags: {
-            food: selectedFood,
-            drinks: selectedDrink,
-            price: paid ? "Payant" : "Gratuit",
-          },
-          place: placeId,
-          user: user.user?.dbData._id,
-        }),
+        place: placeId,
+        user: user.user?.data._id,
+      }),
+    })
+      .then((response) => response.json()) // Conversion de la réponse en JSON
+      .then((data) => {
+        console.log("Tâche ajoutée avec succès :", data);
       })
-        .then((response) => response.json()) // Conversion de la réponse en JSON
-        .then((data) => {
-          console.log("Tâche ajoutée avec succès :", data);
-        })
-        .catch((error) => {
-          console.error("Erreur:", error);
-        });
-        
+      .catch((error) => {
+        console.error("Erreur:", error);
+      });
   };
 
   // Recherche de lieu
@@ -318,6 +315,25 @@ const AddEventScreen = () => {
             onChangeText={(value) => setEventName(value)}
             value={eventName}
           />
+        </View>
+        {/* Image */}
+
+        <View style={styles.select}>
+          {photo ? (
+            isUploading ? (
+              <Text style={styles.loading}>CHARGEMENT DE L'IMAGE...</Text>
+            ) : (
+              <Image source={{ uri: photo.uri }} style={styles.image} />
+            )
+          ) : (
+            <View style={styles.placeholder}>
+              <Text style={styles.label}>Séléctionnez une image de présentation de l'événement</Text>
+            </View>
+          )}
+
+          <TouchableOpacity style={styles.btn4} onPress={pickImage}>
+            <Text style={styles.txtBtn}>Télécharge ta photo</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Types d'événement */}
@@ -465,15 +481,6 @@ const AddEventScreen = () => {
           </View>
         </View>
 
-        {/* Image */}
-
-        <View style={styles.select}>
-          {isUploading ? <Text style={styles.loading}>LOADING...</Text> : photo && <Image source={{ uri: photo.uri }} style={styles.image} />}
-          <TouchableOpacity style={styles.btn4} onPress={pickImage}>
-            <Text style={styles.txtBtn}>Télécharge ta photo</Text>
-          </TouchableOpacity>
-        </View>
-
         <TouchableOpacity style={styles.btn3} onPress={() => handleCreate()}>
           <Text style={styles.txtBtn}>Créer l'événement !</Text>
         </TouchableOpacity>
@@ -547,8 +554,7 @@ const styles = StyleSheet.create({
   btn3: {
     borderWidth: 1,
     marginLeft: 20,
-    marginBottom: 10,
-    marginTop: 20,
+    marginBottom: 40,
     padding: 5,
     borderRadius: 8,
     backgroundColor: colors.green,
@@ -632,8 +638,16 @@ const styles = StyleSheet.create({
   },
   loading: {
     fontSize: 20,
-    
-  }
+  },
+  placeholder: {
+    width: 300,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f0f0f0",
+    borderRadius: 5,
+    marginBottom: 10,
+  },
 });
 
 export default AddEventScreen;
