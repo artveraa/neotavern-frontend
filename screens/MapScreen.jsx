@@ -23,11 +23,12 @@ import colors from "../styleConstants/colors";
 
 const MapScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.value);
-
   const token = user.user.token;
-  console.log(token)
 
-  const [postLiked, setPostLiked] = useState([]);
+  console.log('IIIIIIIIIIIIIIIIIIIIuser',user)
+
+  //LIKE
+  const [postLiked, setPostLiked] = useState(null);
 
   const bottomSheetRef = useRef(null);
   const [region, setRegion] = useState(null);
@@ -81,8 +82,9 @@ const MapScreen = ({ navigation }) => {
     }
   };
 
+  // LIKed
   const handleLike = (event_Id) => {
-    console.log("e",event_Id)
+
     fetch(
       `http://neotavern-backend.vercel.app/events/like/${token}/${event_Id}`,
       {
@@ -92,10 +94,17 @@ const MapScreen = ({ navigation }) => {
       }
     )
       .then((response) => response.json())
-      .then(console.log("liked fetch", e))
-      .then((data) => console.log("----->",data));
+      .then((data) => console.log("----->",data))
+      .then((data)=> {
+        if (data){
+          
+          setPostLiked(data)
+        }
+      })  
   };
 
+
+  //useFOCUS
   useFocusEffect(
     useCallback(() => {
       fetchEvents();

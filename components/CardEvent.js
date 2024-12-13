@@ -20,16 +20,13 @@ const CardEvent = ({ event, navigation, handleLike }) => {
 
   // LIKED
   const handleClick = () => {
-    console.log("event->",event._id)
     handleLike(event._id)
   }
   
-
   const formatDate = (date) => {
     if (new Date(date).toDateString() === new Date().toDateString()) {
       return "Aujourd'hui";
     }
-
     const options = {
       // weekday: "long",
       year: "numeric",
