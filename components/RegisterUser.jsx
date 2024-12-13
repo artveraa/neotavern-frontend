@@ -15,6 +15,7 @@ import colors from "../styleConstants/colors";
 const RegisterUser = ({ navigation }) => {
   //redux
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.value);
   //input valeur
   const [nickname, setNickname] = useState("");
   const [mail, setMail] = useState("");
@@ -34,26 +35,28 @@ const RegisterUser = ({ navigation }) => {
       body: JSON.stringify({ nickname: nickname, password: pass, email: mail }),
     })
       .then((response) => response.json())
-
       .then((userData) => {
         if (userData.error === `Champs manquants ou vides`) {
           setEmptyErr({ emptyErr: true });
-          return;
-        }
-        if (userData.error === `Ce mail est déjà existant`) {
+        } else if (userData.error === `Ce mail est déjà existant`) {
           setNameErr(!nameErr);
-          return;
-        }
-        if (!mailPattern.test(mail)) {
+        } else if (!mailPattern.test(mail)) {
           setMailErr(mailErr);
-          return;
-        }
-        if (pass != confirmationPass){
-          setPassErr(passErr)
-        }
-
-      dispatch(login({user: userData}))
-      navigation.navigate("TabNavigator", { screen: 'MapScreen' })
+        } else if (pass != confirmationPass) {
+          setPassErr(passErr);
+        } else {
+          dispatch(
+            login({
+              token: userData?.token,
+              nickname: userData?.nickname,
+              email: userData?.nickname,
+              role: userData?.role,
+              id: userData?.id,
+              badges: userData?.badges,
+            })
+          )
+          navigation.navigate("TabNavigator", { screen: "MapScreen" })
+        }    
       });
   };
 
@@ -62,7 +65,9 @@ const RegisterUser = ({ navigation }) => {
       <View style={styles.inputContainer}>
         <TextApp style={styles.label}>
           Surnom
-          {nameErr && <TextApp style={styles.error}> - nom déjà existant !</TextApp>}
+          {nameErr && (
+            <TextApp style={styles.error}> - nom déjà existant !</TextApp>
+          )}
         </TextApp>
         <TextInput
           placeholder="Surnom"
@@ -83,7 +88,7 @@ const RegisterUser = ({ navigation }) => {
         />
 
         <TextApp style={styles.label}>Mot de passe</TextApp>
-        <TextInput 
+        <TextInput
           secureTextEntry={true}
           placeholder="Mot de passe"
           onChangeText={(value) => setPass(value)}
@@ -127,7 +132,7 @@ const styles = StyleSheet.create({
     marginTop: 28,
     marginBottom: 28,
   },
-  
+
   inputContainer: {
     width: "100%",
   },

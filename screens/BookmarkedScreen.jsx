@@ -25,12 +25,14 @@ import colors from "../styleConstants/colors";
 
 const BookmarkedScreen = () => {
   const user = useSelector((state) => state.user.value); 
-  
+  const name = user.user.nickname
+
+  console.log(name)
   return (
     <>
     <View style={styles.heroContainer}>
       <View style={[styles.heroWrap, styles.borderStyle]}>
-        <Text style={styles.heroContent}>Bienvenue, {user.user.user.newUser.nickname}&nbsp;!</Text>
+        <Text style={styles.heroContent}>Bienvenue, {name}&nbsp;!</Text>
       </View>
     </View>
     

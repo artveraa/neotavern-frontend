@@ -21,9 +21,9 @@ import getAllEvents from "../fetchers/events";
 
 const MapScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.value);
-  console.log(user);
 
-  const token = user.user.userData.token;
+  const token = user.user.token;
+  console.log(token)
 
   const [postLiked, setPostLiked] = useState([]);
 
@@ -63,6 +63,7 @@ const MapScreen = ({ navigation }) => {
   };
 
   const handleLike = (event_Id) => {
+    console.log("e",event_Id)
     fetch(
       `http://neotavern-backend.vercel.app/events/like/${token}/${event_Id}`,
       {
@@ -72,8 +73,8 @@ const MapScreen = ({ navigation }) => {
       }
     )
       .then((response) => response.json())
-      .then(console.log("liked fetch"))
-      .then((data) => setPostLiked(data));
+      .then(console.log("liked fetch", e))
+      .then((data) => console.log("----->",data));
   };
 
   useEffect(() => {

@@ -10,7 +10,7 @@ import {
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 const CardEvent = ({ event, navigation, handleLike }) => {
-  //navigation -> avec route de paramêtres à pousser
+  // navigation -> avec route de paramêtres à pousser
   const handleEvent = (event) => {
     navigation.push('Event', {
       event,
@@ -18,10 +18,10 @@ const CardEvent = ({ event, navigation, handleLike }) => {
     })
   }
 
-  //like
+  // LIKED
   const handleClick = () => {
+    console.log("event->",event._id)
     handleLike(event._id)
-    console.log('cloic', event._id)
   }
   
 
