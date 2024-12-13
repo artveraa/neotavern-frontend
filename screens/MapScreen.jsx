@@ -1,4 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+
 import {
   View,
   Text,
@@ -17,7 +19,14 @@ import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import getAllEvents from "../fetchers/events";
 
-const MapScreen = ({navigation}) => {
+const MapScreen = ({ navigation }) => {
+  const user = useSelector((state) => state.user.value);
+  console.log(user);
+
+  const token = user.user.userData.token;
+
+  const [postLiked, setPostLiked] = useState([]);
+
   const bottomSheetRef = useRef(null);
   const [region, setRegion] = useState(null);
   const [allEvents, setAllEvents] = useState(null);
@@ -53,8 +62,18 @@ const MapScreen = ({navigation}) => {
     }
   };
 
-  const handleLike = () => {
-    console.log("like");
+  const handleLike = (event_Id) => {
+    fetch(
+      `http://neotavern-backend.vercel.app/events/like/${token}/${event_Id}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(),
+      }
+    )
+      .then((response) => response.json())
+      .then(console.log("liked fetch"))
+      .then((data) => setPostLiked(data));
   };
 
   useEffect(() => {
@@ -90,7 +109,8 @@ const MapScreen = ({navigation}) => {
                 key={event._id}
                 event={event}
                 handleLike={handleLike}
-              navigation={navigation} />
+                navigation={navigation}
+              />
             ))}
         </BottomSheetScrollView>
       </BottomSheet>
