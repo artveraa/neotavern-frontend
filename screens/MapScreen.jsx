@@ -85,6 +85,8 @@ const MapScreen = ({ navigation }) => {
       })  
   };
 
+
+  //useFOCUS
   useFocusEffect(
     useCallback(() => {
       fetchEvents();
