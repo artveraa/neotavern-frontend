@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
 import {
   View,
@@ -15,6 +15,7 @@ import {
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import colors from "../styleConstants/colors";
 import * as ImagePicker from "expo-image-picker";
+import { useFocusEffect } from "@react-navigation/native";
 
 const AddEventScreen = ({ navigation }) => {
   const [eventName, setEventName] = useState("");
@@ -158,9 +159,63 @@ const AddEventScreen = ({ navigation }) => {
     hideTimePicker();
   };
 
+  // Vérification des champs
+
+  const validateFields = () => {
+    if (!eventName) {
+      alert("Veuillez renseigner le nom de l'événement.");
+      return false;
+    }
+
+    if (!eventText) {
+      alert("Veuillez renseigner la description de l'événement.");
+      return false;
+    }
+
+    if (!eventDate) {
+      alert("Veuillez renseigner la date de l'événement.");
+      return false;
+    }
+
+    if (!eventHour) {
+      alert("Veuillez renseigner l'horaire de l'événement.");
+      return false;
+    }
+
+    if (!photoUrl) {
+      alert("Veuillez télécharger une photo.");
+      return false;
+    }
+    if (!selectedFood) {
+      alert("Veuillez sélectionner un type de nourriture.");
+      return false;
+    }
+    if (!selectedDrink) {
+      alert("Veuillez sélectionner un type de boisson.");
+      return false;
+    }
+    if (!placeId) {
+      alert("Veuillez sélectionner un lieu.");
+      return false;
+    }
+    if (!user.user?.id) {
+      alert("Utilisateur non identifié.");
+      return false;
+    }
+    return true;
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      uploadImage();
+    }, [photo])
+  );
+
   // CHARGEMENT UPLOAD IMAGE ET CREATION D'EVENEMENT
   const handleCreate = () => {
-    uploadImage(); //upload cloudinary de l'image téléchargé
+    if (!validateFields()) {
+      return;
+    }
 
     fetch("https://neotavern-backend.vercel.app/events/createEvent", {
       method: "POST",
