@@ -115,7 +115,7 @@ const EventScreen = ({ navigation, route }) => {
           </TouchableOpacity>
 
           <View>
-            <TextAppBold>{formatDate(event?.date)}</TextAppBold>
+            <TextAppBold>{event?.hour}</TextAppBold>
             <TextApp></TextApp>
           </View>
 
@@ -125,15 +125,17 @@ const EventScreen = ({ navigation, route }) => {
                 source={require("../assets/date.png")}
                 style={styles.tagIcon}
               />
-              Free
+              {event?.infosTags?.price}
             </TagL>
-            <TagL>
-              <Image
-                source={require("../assets/date.png")}
-                style={styles.tagIcon}
-              />
-              Style event
-            </TagL>
+            {event?.categories?.map((category, index) => (
+              <TagL key={index}>
+                <Image
+                  source={require("../assets/date.png")}
+                  style={styles.tagIcon}
+                />
+                {category}
+              </TagL>
+            ))}
           </View>
         </View>
 
@@ -250,7 +252,7 @@ const styles = StyleSheet.create({
   tagWrap: {
     flexDirection: "row",
     gap: 12,
-
+    flexWrap: "wrap",
     paddingTop: 24,
     paddingBottom: 24,
   },

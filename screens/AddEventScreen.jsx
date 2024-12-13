@@ -30,11 +30,10 @@ const AddEventScreen = () => {
   const user = useSelector((state) => state.user.value);
   console.log("VOICI LE LOG DE PHOTO:", photo);
 
-
-// SELECTION DE L'IMAGE VIA UPLOAD
+  // SELECTION DE L'IMAGE VIA UPLOAD
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
-    setIsUploading(true); // Commencer l'upload 
+    setIsUploading(true); // Commencer l'upload
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images", "videos"],
       allowsEditing: true,
@@ -42,16 +41,15 @@ const AddEventScreen = () => {
       quality: 0.5,
     });
 
-    console.log('USER/', user)
+    console.log("USER/", user);
 
     console.log("resultat de l image upload: ", result);
 
-    if (!result.canceled) { 
-      setIsUploading(false); // Terminer l'upload 
-      setPhoto(result.assets[0]); 
-      }
+    if (!result.canceled) {
+      setIsUploading(false); // Terminer l'upload
+      setPhoto(result.assets[0]);
+    }
   };
-
 
   // STOCKAGE DE L'IMAGE SUR LE CLOUDINARY
   const uploadImage = async () => {
@@ -64,7 +62,7 @@ const AddEventScreen = () => {
       name: "photo.webp", // nom générique
       type: "image/jpeg", // mimetype du fichier
     });
-    setIsUploading(true)
+    setIsUploading(true);
     try {
       const response = await fetch(
         "https://neotavern-backend.vercel.app/upload",
@@ -76,7 +74,7 @@ const AddEventScreen = () => {
         console.log(data.url);
 
         setPhotoUrl(data.url);
-        setIsUploading(false)
+        setIsUploading(false);
       } else {
         console.error("Upload échoué :", data);
       }
@@ -131,8 +129,10 @@ const AddEventScreen = () => {
 
   // clique sur la date souhaitée et fermeture du calendrier
 
-  const handleConfirmDate = (selectedDate) => {
-    setEventDate(new Date(selectedDate));
+  const handleConfirmDate = (e) => {
+    console.log(e);
+
+    setEventDate(e);
     hideDatePicker();
   };
 
@@ -147,8 +147,15 @@ const AddEventScreen = () => {
   };
 
   // clique sur l'horaire souhaité pour l'événement en 2 digits pour l'heure et les minutes, puis fermeture de l'horloge
-  const handleValid = (time) => {
-    setEventHour(new Date(time));
+  const handleValid = (e) => {
+    // formatter l'heure en français
+    const formattedHour = e.toLocaleTimeString("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    console.log(formattedHour);
+
+    setEventHour(formattedHour);
     hideTimePicker();
   };
 
@@ -156,36 +163,35 @@ const AddEventScreen = () => {
   const handleCreate = () => {
     uploadImage(); //upload cloudinary de l'image téléchargé
 
-      fetch("https://neotavern-backend.vercel.app/events/createEvent", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+    fetch("https://neotavern-backend.vercel.app/events/createEvent", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: eventName,
+        description: eventText,
+        date: eventDate,
+        hour: eventHour,
+        likes: 0,
+        categories: selectedType,
+        photo: photoUrl,
+        infosTags: {
+          food: selectedFood,
+          drinks: selectedDrink,
+          price: paid ? "Payant" : "Gratuit",
         },
-        body: JSON.stringify({
-          name: eventName,
-          description: eventText,
-          date: eventDate,
-          hour: eventHour,
-          likes: 0,
-          categories: selectedType,
-          photo: photoUrl,
-          infosTags: {
-            food: selectedFood,
-            drinks: selectedDrink,
-            price: paid ? "Payant" : "Gratuit",
-          },
-          place: placeId,
-          user: user.user?.dbData._id,
-        }),
+        place: placeId,
+        user: user.user?.data._id,
+      }),
+    })
+      .then((response) => response.json()) // Conversion de la réponse en JSON
+      .then((data) => {
+        console.log("Tâche ajoutée avec succès :", data);
       })
-        .then((response) => response.json()) // Conversion de la réponse en JSON
-        .then((data) => {
-          console.log("Tâche ajoutée avec succès :", data);
-        })
-        .catch((error) => {
-          console.error("Erreur:", error);
-        });
-        
+      .catch((error) => {
+        console.error("Erreur:", error);
+      });
   };
 
   // Recherche de lieu
@@ -361,7 +367,9 @@ const AddEventScreen = () => {
         <View style={styles.picker}>
           <Text style={styles.label}>Date de l'événement:</Text>
           <View style={styles.dateInput}>
-            <Text style={styles.label}>Date</Text>
+            <Text style={styles.label}>
+              {new Date(eventDate).toLocaleDateString()}
+            </Text>
             <TouchableOpacity style={styles.btn} onPress={showDatePicker}>
               <Text style={styles.txtBtn}>Choisir une date</Text>
             </TouchableOpacity>
@@ -380,7 +388,7 @@ const AddEventScreen = () => {
         <View style={styles.picker}>
           <Text style={styles.label}>Horaire de l'événement:</Text>
           <View style={styles.dateInput}>
-            <Text style={styles.label}>heure</Text>
+            <Text style={styles.label}>{eventHour}</Text>
             <TouchableOpacity style={styles.btn} onPress={showTimePicker}>
               <Text style={styles.txtBtn}>Choisir une heure</Text>
             </TouchableOpacity>
@@ -468,7 +476,11 @@ const AddEventScreen = () => {
         {/* Image */}
 
         <View style={styles.select}>
-          {isUploading ? <Text style={styles.loading}>LOADING...</Text> : photo && <Image source={{ uri: photo.uri }} style={styles.image} />}
+          {isUploading ? (
+            <Text style={styles.loading}>LOADING...</Text>
+          ) : (
+            photo && <Image source={{ uri: photo.uri }} style={styles.image} />
+          )}
           <TouchableOpacity style={styles.btn4} onPress={pickImage}>
             <Text style={styles.txtBtn}>Télécharge ta photo</Text>
           </TouchableOpacity>
@@ -632,8 +644,7 @@ const styles = StyleSheet.create({
   },
   loading: {
     fontSize: 20,
-    
-  }
+  },
 });
 
 export default AddEventScreen;
