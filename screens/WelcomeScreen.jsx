@@ -37,7 +37,7 @@ const WelcomeScreen = ({ navigation }) => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
-        <Image source={require("../assets/icon.png")} style={styles.logo} />
+        <Image source={require("../assets/logo.png")} style={styles.logo} />
 
         {!resgisterForm && (
           <View style={styles.btnContainer}>
@@ -139,8 +139,9 @@ const styles = StyleSheet.create({
   },
 
   logo: {
-    width: 100,
+    width: 300,
     height: "10%",
+    marginBottom: 40,
   },
 
   btnContainer: {
