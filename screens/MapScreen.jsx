@@ -19,6 +19,7 @@ import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import getAllEvents from "../fetchers/events";
 import { useFocusEffect } from "@react-navigation/native";
+import colors from "../styleConstants/colors";
 
 const MapScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.value);
@@ -32,6 +33,8 @@ const MapScreen = ({ navigation }) => {
   const bottomSheetRef = useRef(null);
   const [region, setRegion] = useState(null);
   const [allEvents, setAllEvents] = useState(null);
+  const [selectedType, setSelectedType] = useState([]);
+
 
   const snapPoints = ["20%", "80%"];
 
@@ -90,6 +93,8 @@ const MapScreen = ({ navigation }) => {
       openPanel();
     }, [])
   );
+
+
 
   return (
     <GestureHandlerRootView style={styles.container}>
