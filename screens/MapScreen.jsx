@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback } from "react";
+import React, { useRef, useState, useEffect, useCallback, use } from "react";
 import { useSelector } from "react-redux";
 
 import {
@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  SafeAreaView,
 } from "react-native";
 import CardEvent from "../components/CardEvent";
 
@@ -25,9 +26,22 @@ const MapScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.value);
   const token = user.user.token;
 
+  const types = [
+    { label: "Concert" },
+    { label: "Soirée" },
+    { label: "Exposition" },
+    { label: "Conférence" },
+    { label: "Atelier" },
+    { label: "Festival" },
+    { label: "Spectacle" },
+    { label: "Cinéma" },
+    { label: "Théâtre" },
+    { label: "Sport" },
+    { label: "Jeux" },
+  ];
+
   //LIKE
   const [postLiked, setPostLiked] = useState(null);
-
   const bottomSheetRef = useRef(null);
   const [region, setRegion] = useState(null);
   const [allEvents, setAllEvents] = useState(null);
@@ -36,7 +50,7 @@ const MapScreen = ({ navigation }) => {
   const snapPoints = ["20%", "80%"];
 
   const openPanel = () => {
-    bottomSheetRef.current?.snapToIndex(0);
+    bottomSheetRef.current?.expand();
   };
 
   useEffect(() => {
@@ -83,6 +97,40 @@ const MapScreen = ({ navigation }) => {
       });
   };
 
+  // Select types
+  const handleEventType = (type) => {
+    if (selectedType.includes(type)) {
+      setSelectedType(
+        selectedType.filter((item) => item.toLowerCase() !== type.toLowerCase())
+      );
+      const filteredEvents = [...allEvents].filter((event) =>
+        event.categories.includes(type)
+      );
+      openPanel();
+      setAllEvents(filteredEvents);
+    } else {
+      setSelectedType([...selectedType, type]);
+      const filteredEvents = [...allEvents].filter((event) =>
+        event.categories.includes(type)
+      );
+      openPanel();
+      setAllEvents(filteredEvents);
+    }
+  };
+
+  // Reset types
+  const handleReset = () => {
+    setSelectedType([]);
+    fetchEvents();
+    openPanel();
+  };
+
+  useEffect(() => {
+    if (selectedType.length === 0) {
+      fetchEvents();
+    }
+  }, [selectedType]);
+
   //useFOCUS
   useFocusEffect(
     useCallback(() => {
@@ -112,6 +160,39 @@ const MapScreen = ({ navigation }) => {
             />
           ))}
       </MapView>
+
+      <SafeAreaView style={styles.filters}>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+          <TouchableOpacity
+            style={
+              selectedType.length === 0
+                ? { ...styles.filterTag, backgroundColor: colors.purple }
+                : styles.filterTag
+            }
+            onPress={() => handleReset()}
+          >
+            <Text style={styles.filterText}>Tous</Text>
+          </TouchableOpacity>
+          {types.map((type, index) => (
+            <TouchableOpacity
+              key={index}
+              style={
+                selectedType.includes(type.label)
+                  ? { ...styles.filterTag, backgroundColor: colors.purple }
+                  : styles.filterTag
+              }
+            >
+              <Text
+                style={styles.filterText}
+                onPress={() => handleEventType(type.label)}
+              >
+                {type.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </SafeAreaView>
+
       <BottomSheet
         ref={bottomSheetRef}
         index={1}
@@ -140,7 +221,7 @@ const MapScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
   },
   button: {
@@ -163,6 +244,31 @@ const styles = StyleSheet.create({
 
   drawer: {
     paddingHorizontal: 20,
+  },
+
+  filters: {
+    top: "7%",
+    width: "100%",
+
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    height: 40,
+  },
+
+  filterTag: {
+    borderWidth: 1,
+    paddingLeft: 24,
+    paddingRight: 24,
+    backgroundColor: colors.light,
+    borderColor: colors.dark,
+    borderWidth: 1,
+    borderRadius: 15,
+    marginStart: 10,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100%",
   },
 });
 
