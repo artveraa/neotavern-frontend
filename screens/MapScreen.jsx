@@ -25,8 +25,6 @@ const MapScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.value);
   const token = user.user.token;
 
-  console.log("IIIIIIIIIIIIIIIIIIIIuser", user);
-
   //LIKE
   const [postLiked, setPostLiked] = useState(null);
 
@@ -34,7 +32,6 @@ const MapScreen = ({ navigation }) => {
   const [region, setRegion] = useState(null);
   const [allEvents, setAllEvents] = useState(null);
   const [selectedType, setSelectedType] = useState([]);
-
 
   const snapPoints = ["20%", "80%"];
 
@@ -94,12 +91,10 @@ const MapScreen = ({ navigation }) => {
     }, [])
   );
 
-
-
   return (
     <GestureHandlerRootView style={styles.container}>
       <MapView
-        style={StyleSheet.absoluteFillObject} 
+        style={StyleSheet.absoluteFillObject}
         setUserLocationEnabled={true}
         showsUserLocation={true}
         initialRegion={region}
@@ -126,14 +121,16 @@ const MapScreen = ({ navigation }) => {
       >
         <BottomSheetScrollView style={styles.scrollContainer}>
           {allEvents &&
-            allEvents.map((event) => (
-              <CardEvent
-                key={event._id}
-                event={event}
-                handleLike={handleLike}
-                navigation={navigation}
-              />
-            ))}
+            allEvents
+              .sort((a, b) => new Date(a.date) - new Date(b.date))
+              .map((event) => (
+                <CardEvent
+                  key={event._id}
+                  event={event}
+                  handleLike={handleLike}
+                  navigation={navigation}
+                />
+              ))}
         </BottomSheetScrollView>
       </BottomSheet>
     </GestureHandlerRootView>
