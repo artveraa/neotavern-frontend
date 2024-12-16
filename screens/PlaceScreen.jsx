@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import TextAppS from "../styleComponents/TextAppS";
 import TagL from "../styleComponents/TagL";
 import TextAppTitle from "../styleComponents/TextAppTitle";
@@ -25,7 +27,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 const PlaceScreen = ({ route, navigation }) => {
   const { place } = route.params;
 
-  console.log(place);
+  const [categories, setCategories] = useState([]);
 
   const handleBackMap = () => {
     navigation.navigate("TabNavigator", { screen: "MapScreen" });
@@ -49,6 +51,18 @@ const PlaceScreen = ({ route, navigation }) => {
       )
       .join("\n");
   };
+
+  useEffect(() => {
+    const placeTypes = place.type.split(";");
+    if (place.vegetarian) {
+      placeTypes.push("végétarien");
+    }
+
+    if (place.vegan) {
+      placeTypes.push("vegan");
+    }
+    setCategories(placeTypes);
+  }, [place]);
 
   return (
     <>
@@ -98,32 +112,30 @@ const PlaceScreen = ({ route, navigation }) => {
         </View>
 
         <View style={styles.placeContainer}>
-          <TouchableOpacity onPress={() => handlePlace(place?.place)}>
-            <TextAppTitle>{place?.place?.name}</TextAppTitle>
-          </TouchableOpacity>
-
-          <View>
-            <TextAppBold>{place?.hour}</TextAppBold>
-            <TextApp></TextApp>
+          <View style={styles.scheduleWrap}>
+            {place?.date && (
+              <TagL>
+                {/* <Image
+                  source={require("../assets/clock.png")}
+                  style={styles.tagIcon}
+                /> */}
+                <Text>{formatDate(place?.date)}</Text>
+              </TagL>
+            )}
           </View>
 
           <View style={styles.tagWrap}>
-            <TagL>
-              <Image
-                source={require("../assets/clock.png")}
-                style={styles.tagIcon}
-              />
-              <Text>{formatDate(place?.date)}</Text>
-            </TagL>
-            {place?.categories?.map((category, index) => (
-              <TagL key={index}>
-                <Image
+            {categories.length > 0 &&
+              categories.map((category, index) => (
+                <TagL key={index}>
+                  {/* <Image
                   source={require("../assets/date.png")}
                   style={styles.tagIcon}
-                />
-                {category}
-              </TagL>
-            ))}
+                /> */}
+
+                  {category[0]?.toUpperCase() + category?.slice(1)}
+                </TagL>
+              ))}
           </View>
         </View>
 
@@ -205,15 +217,19 @@ const styles = StyleSheet.create({
     paddingLeft: 28,
     paddingRight: 28,
   },
+
+  placeContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
   //->title et date
   titleContainer: {
     flexDirection: "row",
-
     justifyContent: "space-between",
     alignItems: "stretch",
     gap: 12,
     maxWidth: "100%",
-
     top: "-6%",
   },
   borderStyle: {
@@ -224,7 +240,6 @@ const styles = StyleSheet.create({
   },
   txtWrap: {
     justifyContent: "center",
-
     padding: 24,
     width: "72%",
     maxWidth: "72%",
@@ -232,27 +247,31 @@ const styles = StyleSheet.create({
   dateWrap: {
     justifyContent: "center",
     alignItems: "center",
-
     width: "22%",
     padding: 12,
   },
-  //tag wrap
+
   tagWrap: {
     flexDirection: "row",
     gap: 12,
     flexWrap: "wrap",
-    paddingTop: 24,
-    paddingBottom: 24,
+    paddingVertical: 12,
+    width: "48%",
   },
+
+  scheduleWrap: {
+    width: "48%",
+    paddingVertical: 12,
+  },
+
   tagIcon: {
     width: 14,
     height: 14,
   },
-  //
+
   mapWrap: {
     height: 200,
     widht: "100%",
-
     borderRadius: 15,
     overflow: "hidden",
   },
