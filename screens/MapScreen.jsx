@@ -10,6 +10,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import CardEvent from "../components/CardEvent";
+import HeaderSearch from "../components/SearchHeader";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, {
@@ -50,7 +51,7 @@ const MapScreen = ({ navigation }) => {
   const [allEvents, setAllEvents] = useState(null);
   const [selectedType, setSelectedType] = useState([]);
 
-  const snapPoints = ["20%", "80%"];
+  const snapPoints = ["20%", "65%"];
 
   const openPanel = () => {
     bottomSheetRef.current?.expand();
@@ -148,12 +149,14 @@ const MapScreen = ({ navigation }) => {
 
   return (
     <GestureHandlerRootView style={styles.container}>
+
       <MapView
         style={StyleSheet.absoluteFillObject}
         setUserLocationEnabled={true}
         showsUserLocation={true}
         initialRegion={region}
       >
+
         {allEvents &&
           allEvents.map((event) => (
             <Marker
@@ -167,6 +170,10 @@ const MapScreen = ({ navigation }) => {
             />
           ))}
       </MapView>
+
+      <SafeAreaView style={styles.searchbar}>
+        <HeaderSearch/>
+      </SafeAreaView>
 
       <SafeAreaView style={styles.filters}>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
@@ -253,8 +260,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
 
+  searchbar: {
+    paddingHorizontal:24,
+    top: "6%",
+    width: "100%",
+  },
+
   filters: {
-    top: "7%",
+    top: "8%",
     width: "100%",
 
     display: "flex",
