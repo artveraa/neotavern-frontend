@@ -24,7 +24,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import colors from "../styleConstants/colors";
 
 const MapScreen = ({ navigation }) => {
-
   const user = useSelector((state) => state.user.value);
   const token = user.user.token;
 
@@ -43,9 +42,7 @@ const MapScreen = ({ navigation }) => {
   ];
 
   //LIKE
-  const [postLiked, setPostLiked] = useState(false);
-  const likedEvents = user.user.likedEvents
-
+  const [postLiked, setPostLiked] = useState(null);
   const bottomSheetRef = useRef(null);
   const [region, setRegion] = useState(null);
   const [allEvents, setAllEvents] = useState(null);
@@ -76,33 +73,11 @@ const MapScreen = ({ navigation }) => {
   const fetchEvents = async () => {
     try {
       const events = await getAllEvents();
+      console.log('EVENTSSS:', events)
       setAllEvents(events);
     } catch (error) {
       console.error(error);
     }
-  };
-
-  // LIKed 
-  const handleLike = (event_Id) => {
-    //ici le fetch event pour actualisé l'incrémentation du compteur like.
-    //ne s'actualise pour le moment que au changement de page
-    fetchEvents()
-    //-> je pousse les evenements likés dans le tableau likedEvents du user +
-    // je set un état en true (pour mettre en props pour le style)
-    fetch(
-      `http://neotavern-backend.vercel.app/events/like/${token}/${event_Id}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(),
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        if (data) {
-          setPostLiked(true);
-        }
-      });
   };
 
   // Select types
@@ -131,6 +106,25 @@ const MapScreen = ({ navigation }) => {
     setSelectedType([]);
     fetchEvents();
     openPanel();
+  };
+
+  // Like
+  const handleLike = async (eventId) => {
+    console.log(token);
+
+    try {
+      const response = await fetch(
+        `https://neotavern-backend.vercel.app/events/like/${token}/${eventId}`,
+        {
+          method: "POST",
+        }
+      );
+
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {

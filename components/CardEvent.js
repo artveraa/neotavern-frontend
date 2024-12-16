@@ -8,23 +8,31 @@ import {
   TouchableOpacity,
 } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 
 const CardEvent = ({ event, navigation, handleLike }) => {
+  const user = useSelector((state) => state.user.value);
+  const [isLiked, setIsLiked] = useState(false);
   // navigation -> avec route de paramêtres à pousser
   const handleEvent = (event) => {
-    navigation.push('Event', {
+    navigation.push("Event", {
       event,
-      handleLike
-    })
-  }
+      handleLike,
+    });
+  };
 
   // LIKED
   const handleClick = () => {
-    handleLike(event._id)
-  }
+    handleLike(event._id);
+    if (user.user.likedEvents.includes(event._id)) {
+      setIsLiked(true);
+    } else {
+      setIsLiked(false);
+    }
+  };
 
-
-  
+  // DATE FORMATAGE
   const formatDate = (date) => {
     if (new Date(date).toDateString() === new Date().toDateString()) {
       return "Aujourd'hui";
@@ -40,30 +48,38 @@ const CardEvent = ({ event, navigation, handleLike }) => {
 
   return (
     <View style={styles.container}>
-    <TouchableOpacity  onPress={() => handleEvent(event) }>
-      <View style={styles.card}>
+      <TouchableOpacity onPress={() => handleEvent(event)}>
+        <View style={styles.card}>
           <View style={styles.imgContainer}>
             <Image style={styles.image} source={{ uri: event?.photo }} />
             <TouchableOpacity
               style={styles.likeBtn}
               onPress={() => handleClick()}
             >
-              <FontAwesome name="heart" size={15} color="#EDA0FF" />
+              <FontAwesome
+                name="heart"
+                size={15}
+                style={isLiked ? { color: "red" } : { color: "#EDA0FF" }}
+              />
             </TouchableOpacity>
           </View>
-        <View style={styles.textContainer}>
-          <Text>{event?.place?.name}</Text>
-          {event?.place?.name && <Text style={styles.separator}></Text>}
-          <Text>{event?.name}</Text>
-          <View style={styles.cardFooter}>
-            <View style={styles.likes}>
-              <FontAwesome name="heart" size={14} color="#333" />
-              <Text>{event?.likes}</Text>
+          <View style={styles.textContainer}>
+            <Text>{event?.place?.name}</Text>
+            {event?.place?.name && <Text style={styles.separator}></Text>}
+            <Text>{event?.name}</Text>
+            <View style={styles.cardFooter}>
+              <View style={styles.likes}>
+                <FontAwesome
+                  name="heart"
+                  size={14}
+                  style={isLiked ? { color: "#EDA0FF" } : { color: "#333" }}
+                />
+                <Text>{event?.likes}</Text>
+              </View>
+              <Text>{formatDate(event?.date)}</Text>
             </View>
-            <Text>{formatDate(event?.date)}</Text>
           </View>
         </View>
-      </View>
       </TouchableOpacity>
     </View>
   );
