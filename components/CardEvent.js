@@ -22,6 +22,8 @@ const CardEvent = ({ event, navigation, handleLike }) => {
   const handleClick = () => {
     handleLike(event._id)
   }
+
+
   
   const formatDate = (date) => {
     if (new Date(date).toDateString() === new Date().toDateString()) {

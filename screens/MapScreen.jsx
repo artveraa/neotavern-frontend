@@ -1,6 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
-
 import {
   View,
   Text,
@@ -25,10 +24,8 @@ const MapScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.value);
   const token = user.user.token;
 
-  console.log("IIIIIIIIIIIIIIIIIIIIuser", user);
-
   //LIKE
-  const [postLiked, setPostLiked] = useState(null);
+  const [postLiked, setPostLiked] = useState(false);
 
   const bottomSheetRef = useRef(null);
   const [region, setRegion] = useState(null);
@@ -69,6 +66,7 @@ const MapScreen = ({ navigation }) => {
 
   // LIKed
   const handleLike = (event_Id) => {
+    console.log('clic')
     fetch(
       `http://neotavern-backend.vercel.app/events/like/${token}/${event_Id}`,
       {
@@ -81,7 +79,7 @@ const MapScreen = ({ navigation }) => {
       .then((data) => console.log("----->", data))
       .then((data) => {
         if (data) {
-          setPostLiked(data);
+          setPostLiked(true);
         }
       });
   };

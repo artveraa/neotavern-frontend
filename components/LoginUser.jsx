@@ -40,6 +40,7 @@ const LoginUser = ({ navigation }) => {
               token: userData?.token,
               nickname: userData?.nickname,
               email: userData?.nickname,
+              likedEvents: userData?.likedEvents,
               role: userData?.role,
               id: userData?.id,
               badges: userData?.badges,

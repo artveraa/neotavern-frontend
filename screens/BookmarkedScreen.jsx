@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+
 import { useDispatch, useSelector } from "react-redux";
+import CardEvent from "../components/CardEvent";
 
 import {
   SafeAreaView,
@@ -23,11 +26,28 @@ import TextAppBold from "../styleComponents/TextAppBold";
 import TextApp from "../styleComponents/TextApp";
 import colors from "../styleConstants/colors";
 
-const BookmarkedScreen = () => {
+const BookmarkedScreen = ({navigation, handleLike}) => {
   const user = useSelector((state) => state.user.value); 
   const name = user.user.nickname
+  const likedEvents = user.user.likedEvents
 
-  console.log(name)
+  const [likedEvent, setLikedEvent] = useState ([])
+  console.log('liked==============>',likedEvents)
+  console.log('liked====usestate==>',likedEvent)
+
+
+
+  //useFOCUS
+  useFocusEffect(
+    useCallback(() => {
+      
+      setLikedEvent(likedEvents)
+    }, [])
+  );
+
+
+  
+
   return (
     <>
     <View style={styles.heroContainer}>
@@ -38,9 +58,16 @@ const BookmarkedScreen = () => {
     
     <View style={styles.container}>
       <TextAppTitle>Mes évènements</TextAppTitle>
-
       <View style={styles.likedContainer}>
-        
+        {likedEvent &&
+          likedEvent.map((event) => (
+            <CardEvent
+            key={event._id}
+            event={event}
+            handleLike={handleLike}
+            navigation={navigation}
+            />
+          ))}
       </View>
     </View>
     </>
@@ -64,7 +91,7 @@ heroContent:{
   padding:28,
   fontFamily:'Lexend_300Light',
   color:colors.dark,
-  fontSize:30,
+  fontSize:24,
 },
 borderStyle:{
   backgroundColor:colors.light,
@@ -77,15 +104,23 @@ container: {
   flex: 4,
   alignItems:'center',
   backgroundColor: colors.ligth,
+
+  width:'100%',
   
-  width: "100%",
-  height:'100%',
-  
-  paddingLeft:28,
-  paddingRight:28,
+  paddingRight:12,
+  paddingLeft:12,
+    
 },
 // card
   likedContainer:{
+    backgroundColor:'white',
+    borderRadius: 15,
+    width:'100%',
+
+    overflow:'hidden',
+
+    marginTop:24,
+    padding:12,
 }
 });
 
