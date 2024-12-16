@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   View,
   Text,
@@ -18,6 +18,7 @@ import TextApp from "../styleComponents/TextApp";
 import TextAppBold from "../styleComponents/TextAppBold";
 import * as ImagePicker from "expo-image-picker";
 import { useFocusEffect } from "@react-navigation/native";
+import { createEvent } from "../reducers/user";
 
 const AddEventScreen = ({ navigation }) => {
   const [eventName, setEventName] = useState("");
@@ -31,6 +32,7 @@ const AddEventScreen = ({ navigation }) => {
   const [isUploading, setIsUploading] = useState(false);
 
   const user = useSelector((state) => state.user.value);
+  const dispatch = useDispatch();
 
   // SELECTION DE L'IMAGE VIA UPLOAD
   const pickImage = async () => {
@@ -245,6 +247,7 @@ const AddEventScreen = ({ navigation }) => {
       .then((data) => {
         console.log("Tâche ajoutée avec succès :", data);
         navigation.navigate("MapScreen");
+        dispatch(createEvent(data))
       })
       .catch((error) => {
         console.error("Erreur:", error);
