@@ -15,6 +15,7 @@ import BookmarkedScreen from "./screens/BookmarkedScreen";
 import MapScreen from "./screens/MapScreen";
 import AddEventScreen from "./screens/AddEventScreen";
 import ProfileScreen from "./screens/ProfileScreen";
+import PlaceScreen from "./screens/PlaceScreen";
 
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
@@ -104,6 +105,7 @@ export default function App() {
           {/* <Stack.Screen name="Home" component={HomeScreen}  /> */}
           <Stack.Screen name="Welcome" component={WelcomeScreen} />
           <Stack.Screen name="Event" component={EventScreen} />
+          <Stack.Screen name="Place" component={PlaceScreen} />
 
           <Stack.Screen name="TabNavigator" component={TabNavigator} />
         </Stack.Navigator>

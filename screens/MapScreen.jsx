@@ -1,6 +1,5 @@
-import React, { useRef, useState, useEffect, useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { likeEvent } from "../reducers/user";
+import React, { useRef, useState, useEffect, useCallback, use } from "react";
+import { useSelector } from "react-redux";
 
 import {
   View,
@@ -8,6 +7,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  SafeAreaView,
 } from "react-native";
 import CardEvent from "../components/CardEvent";
 
@@ -28,6 +28,20 @@ const MapScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.value);
   const token = user.user.token;
 
+  const types = [
+    { label: "Concert" },
+    { label: "Soirée" },
+    { label: "Exposition" },
+    { label: "Conférence" },
+    { label: "Atelier" },
+    { label: "Festival" },
+    { label: "Spectacle" },
+    { label: "Cinéma" },
+    { label: "Théâtre" },
+    { label: "Sport" },
+    { label: "Jeux" },
+  ];
+
   //LIKE
   const [postLiked, setPostLiked] = useState(false);
   const likedEvents = user.user.likedEvents
@@ -37,11 +51,10 @@ const MapScreen = ({ navigation }) => {
   const [allEvents, setAllEvents] = useState(null);
   const [selectedType, setSelectedType] = useState([]);
 
-
   const snapPoints = ["20%", "80%"];
 
   const openPanel = () => {
-    bottomSheetRef.current?.snapToIndex(0);
+    bottomSheetRef.current?.expand();
   };
 
   useEffect(() => {
@@ -92,6 +105,40 @@ const MapScreen = ({ navigation }) => {
       });
   };
 
+  // Select types
+  const handleEventType = (type) => {
+    if (selectedType.includes(type)) {
+      setSelectedType(
+        selectedType.filter((item) => item.toLowerCase() !== type.toLowerCase())
+      );
+      const filteredEvents = [...allEvents].filter((event) =>
+        event.categories.find((category) => category === type)
+      );
+      openPanel();
+      setAllEvents(filteredEvents);
+    } else {
+      setSelectedType([...selectedType, type]);
+      const filteredEvents = [...allEvents].filter((event) =>
+        event.categories.find((category) => category === type)
+      );
+      openPanel();
+      setAllEvents(filteredEvents);
+    }
+  };
+
+  // Reset types
+  const handleReset = () => {
+    setSelectedType([]);
+    fetchEvents();
+    openPanel();
+  };
+
+  useEffect(() => {
+    if (selectedType.length === 0) {
+      fetchEvents();
+    }
+  }, [selectedType]);
+
   //useFOCUS
   useFocusEffect(
     useCallback(() => {
@@ -100,12 +147,10 @@ const MapScreen = ({ navigation }) => {
     }, [])
   );
 
-
-
   return (
     <GestureHandlerRootView style={styles.container}>
       <MapView
-        style={StyleSheet.absoluteFillObject} 
+        style={StyleSheet.absoluteFillObject}
         setUserLocationEnabled={true}
         showsUserLocation={true}
         initialRegion={region}
@@ -123,6 +168,39 @@ const MapScreen = ({ navigation }) => {
             />
           ))}
       </MapView>
+
+      <SafeAreaView style={styles.filters}>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+          <TouchableOpacity
+            style={
+              selectedType.length === 0
+                ? { ...styles.filterTag, backgroundColor: colors.darkGreen }
+                : styles.filterTag
+            }
+            onPress={() => handleReset()}
+          >
+            <Text style={styles.filterText}>Tous</Text>
+          </TouchableOpacity>
+          {types.map((type, index) => (
+            <TouchableOpacity
+              key={index}
+              style={
+                selectedType.includes(type.label)
+                  ? { ...styles.filterTag, backgroundColor: colors.darkGreen }
+                  : styles.filterTag
+              }
+            >
+              <Text
+                style={styles.filterText}
+                onPress={() => handleEventType(type.label)}
+              >
+                {type.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </SafeAreaView>
+
       <BottomSheet
         ref={bottomSheetRef}
         index={1}
@@ -132,14 +210,16 @@ const MapScreen = ({ navigation }) => {
       >
         <BottomSheetScrollView style={styles.scrollContainer}>
           {allEvents &&
-            allEvents.map((event) => (
-              <CardEvent
-                key={event._id}
-                event={event}
-                handleLike={handleLike}
-                navigation={navigation}
-              />
-            ))}
+            allEvents
+              .sort((a, b) => new Date(a.date) - new Date(b.date))
+              .map((event) => (
+                <CardEvent
+                  key={event._id}
+                  event={event}
+                  handleLike={handleLike}
+                  navigation={navigation}
+                />
+              ))}
         </BottomSheetScrollView>
       </BottomSheet>
     </GestureHandlerRootView>
@@ -149,7 +229,7 @@ const MapScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
   },
   button: {
@@ -172,6 +252,31 @@ const styles = StyleSheet.create({
 
   drawer: {
     paddingHorizontal: 20,
+  },
+
+  filters: {
+    top: "7%",
+    width: "100%",
+
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    height: 40,
+  },
+
+  filterTag: {
+    borderWidth: 1,
+    paddingLeft: 24,
+    paddingRight: 24,
+    backgroundColor: colors.light,
+    borderColor: colors.dark,
+    borderWidth: 1,
+    borderRadius: 15,
+    marginStart: 10,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100%",
   },
 });
 
