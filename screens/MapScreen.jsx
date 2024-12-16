@@ -22,13 +22,12 @@ import { useFocusEffect } from "@react-navigation/native";
 
 const MapScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.value);
-  const token = user.user.token;
-
-  console.log('IIIIIIIIIIIIIIIIIIIIuser',user)
+  const token='fRC4Oj9wVGnIVM5p1ASRzVhrg7RVhFVv'
+  // const token = user.user.token;
 
   //LIKE
-  const [postLiked, setPostLiked] = useState(null);
-
+  const [postLiked, setPostLiked] = useState(false);
+  
   const bottomSheetRef = useRef(null);
   const [region, setRegion] = useState(null);
   const [allEvents, setAllEvents] = useState(null);
@@ -68,6 +67,7 @@ const MapScreen = ({ navigation }) => {
   const handleLike = (event_Id) => {
 
     fetch(
+      // `exp://fia1ztk-anonymous-8081.exp.direct:3000/events/like/${token}/${event_Id}`,
       `http://neotavern-backend.vercel.app/events/like/${token}/${event_Id}`,
       {
         method: "POST",
@@ -79,8 +79,7 @@ const MapScreen = ({ navigation }) => {
       .then((data) => console.log("----->",data))
       .then((data)=> {
         if (data){
-          
-          setPostLiked(data)
+          setPostLiked(true)
         }
       })  
   };

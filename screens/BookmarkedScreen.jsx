@@ -22,12 +22,17 @@ import TextAppTitle from "../styleComponents/TextAppTitle";
 import TextAppBold from "../styleComponents/TextAppBold";
 import TextApp from "../styleComponents/TextApp";
 import colors from "../styleConstants/colors";
+import CardEvent from "../components/CardEvent";
 
 const BookmarkedScreen = () => {
   const user = useSelector((state) => state.user.value); 
   const name = user.user.nickname
+  const likedEvents = user.user.likedEvents
 
-  console.log(name)
+  console.log('------------------>USER',user.user.likedEvents)
+  
+  
+
   return (
     <>
     <View style={styles.heroContainer}>
@@ -40,7 +45,16 @@ const BookmarkedScreen = () => {
       <TextAppTitle>Mes évènements</TextAppTitle>
 
       <View style={styles.likedContainer}>
-        
+      {likedEvents &&
+      likedEvents.map((event)=>{
+        <CardEvent
+        key={event._id}
+        event={event}
+        handleLike={handleLike}
+        navigation={navigation}
+      />
+      })
+      }
       </View>
     </View>
     </>
