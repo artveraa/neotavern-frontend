@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
 } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
@@ -29,24 +30,24 @@ import colors from "../styleConstants/colors";
 const BookmarkedScreen = ({navigation, handleLike}) => {
   const user = useSelector((state) => state.user.value); 
   const name = user.user.nickname
-  const likedEvents = user.user.likedEvents
+  const id = user.user.id
+  // const likedEvents = user.user.likedEvents
 
-  const [likedEvent, setLikedEvent] = useState ([])
-  console.log('liked==============>',likedEvents)
-  console.log('liked====usestate==>',likedEvent)
+  const [likedEvent, setLikedEvent] = useState ()
 
-
-
-  //useFOCUS
+  //useFOCUS -> je get mes evenements likés, je les set dans un tableau
   useFocusEffect(
     useCallback(() => {
-      
-      setLikedEvent(likedEvents)
+      fetch(
+            `http://neotavern-backend.vercel.app/events//liked-events/${id}`,)
+            .then((response) => response.json())
+            .then((data) => {
+              if (data) {
+                setLikedEvent(data.likedEvents)
+              }
+            });
     }, [])
   );
-
-
-  
 
   return (
     <>
@@ -58,7 +59,8 @@ const BookmarkedScreen = ({navigation, handleLike}) => {
     
     <View style={styles.container}>
       <TextAppTitle>Mes évènements</TextAppTitle>
-      <View style={styles.likedContainer}>
+      <ScrollView style={styles.likedContainer}>
+      
         {likedEvent &&
           likedEvent.map((event) => (
             <CardEvent
@@ -68,7 +70,9 @@ const BookmarkedScreen = ({navigation, handleLike}) => {
             navigation={navigation}
             />
           ))}
-      </View>
+
+      </ScrollView>
+      
     </View>
     </>
   );
@@ -116,8 +120,7 @@ container: {
     backgroundColor:'white',
     borderRadius: 15,
     width:'100%',
-
-    overflow:'hidden',
+    height:'100%',
 
     marginTop:24,
     padding:12,

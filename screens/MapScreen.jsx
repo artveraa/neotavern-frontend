@@ -1,5 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { likeEvent } from "../reducers/user";
+
 import {
   View,
   Text,
@@ -21,11 +23,14 @@ import { useFocusEffect } from "@react-navigation/native";
 import colors from "../styleConstants/colors";
 
 const MapScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
+
   const user = useSelector((state) => state.user.value);
   const token = user.user.token;
 
   //LIKE
   const [postLiked, setPostLiked] = useState(false);
+  const likedEvents = user.user.likedEvents
 
   const bottomSheetRef = useRef(null);
   const [region, setRegion] = useState(null);
@@ -64,9 +69,13 @@ const MapScreen = ({ navigation }) => {
     }
   };
 
-  // LIKed
+  // LIKed 
   const handleLike = (event_Id) => {
-    console.log('clic')
+    //ici le fetch event pour actualisé l'incrémentation du compteur like.
+    //ne s'actualise pour le moment que au changement de page
+    fetchEvents()
+    //-> je pousse les evenements likés dans le tableau likedEvents du user +
+    // je set un état en true (pour mettre en props pour le style)
     fetch(
       `http://neotavern-backend.vercel.app/events/like/${token}/${event_Id}`,
       {
@@ -76,7 +85,6 @@ const MapScreen = ({ navigation }) => {
       }
     )
       .then((response) => response.json())
-      .then((data) => console.log("----->", data))
       .then((data) => {
         if (data) {
           setPostLiked(true);

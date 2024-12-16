@@ -41,7 +41,6 @@ const CardEvent = ({ event, navigation, handleLike }) => {
   return (
     <View style={styles.container}>
     <TouchableOpacity  onPress={() => handleEvent(event) }>
-
       <View style={styles.card}>
           <View style={styles.imgContainer}>
             <Image style={styles.image} source={{ uri: event?.photo }} />
