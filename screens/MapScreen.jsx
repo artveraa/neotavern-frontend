@@ -104,14 +104,14 @@ const MapScreen = ({ navigation }) => {
         selectedType.filter((item) => item.toLowerCase() !== type.toLowerCase())
       );
       const filteredEvents = [...allEvents].filter((event) =>
-        event.categories.includes(type)
+        event.categories.find((category) => category === type)
       );
       openPanel();
       setAllEvents(filteredEvents);
     } else {
       setSelectedType([...selectedType, type]);
       const filteredEvents = [...allEvents].filter((event) =>
-        event.categories.includes(type)
+        event.categories.find((category) => category === type)
       );
       openPanel();
       setAllEvents(filteredEvents);
@@ -166,7 +166,7 @@ const MapScreen = ({ navigation }) => {
           <TouchableOpacity
             style={
               selectedType.length === 0
-                ? { ...styles.filterTag, backgroundColor: colors.purple }
+                ? { ...styles.filterTag, backgroundColor: colors.darkGreen }
                 : styles.filterTag
             }
             onPress={() => handleReset()}
@@ -178,7 +178,7 @@ const MapScreen = ({ navigation }) => {
               key={index}
               style={
                 selectedType.includes(type.label)
-                  ? { ...styles.filterTag, backgroundColor: colors.purple }
+                  ? { ...styles.filterTag, backgroundColor: colors.darkGreen }
                   : styles.filterTag
               }
             >

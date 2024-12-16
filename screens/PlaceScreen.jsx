@@ -1,5 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import TextAppS from "../styleComponents/TextAppS";
+import TagL from "../styleComponents/TagL";
+import TextAppTitle from "../styleComponents/TextAppTitle";
+import TextAppBold from "../styleComponents/TextAppBold";
+import TextApp from "../styleComponents/TextApp";
+import colors from "../styleConstants/colors";
 
 import {
   SafeAreaView,
@@ -10,71 +14,47 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Linking,
 } from "react-native";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 
-import TextAppS from "../styleComponents/TextAppS";
-import TagL from "../styleComponents/TagL";
-import TextAppTitle from "../styleComponents/TextAppTitle";
-import TextAppBold from "../styleComponents/TextAppBold";
-import TextApp from "../styleComponents/TextApp";
-import colors from "../styleConstants/colors";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
-const EventScreen = ({ navigation, route }) => {
-  const user = useSelector((state) => state.user.value);
-  //map localisation user pour le moment
-  const [region, setRegion] = useState(null);
+const PlaceScreen = ({ route, navigation }) => {
+  const { place } = route.params;
 
-  // navigation -> get params event
-  const { handleLike, event } = route.params;
+  console.log(place);
 
-  // navigation -> back map screen
   const handleBackMap = () => {
     navigation.navigate("TabNavigator", { screen: "MapScreen" });
   };
 
-  //date formatage
-  const formatDate = (date) => {
-    if (new Date(date).toDateString() === new Date().toDateString()) {
-      return "Aujourd'hui";
-    }
-    const options = {
-      // weekday: "long",
-      month: "numeric",
-      day: "numeric",
+  const formatDate = (dateString) => {
+    const days = {
+      Mo: "Lundi",
+      Tu: "Mardi",
+      We: "Mercredi",
+      Th: "Jeudi",
+      Fr: "Vendredi",
+      Sa: "Samedi",
+      Su: "Dimanche",
     };
-    return new Date(date).toLocaleDateString("fr-FR", options);
+
+    return dateString
+      .split(";")
+      .map((item) =>
+        item.replace(/Mo|Tu|We|Th|Fr|Sa|Su/g, (matched) => days[matched])
+      )
+      .join("\n");
   };
-
-  const handlePlace = (place) => {
-    navigation.navigate("Place", { place });
-  };
-
-  //map
-  useEffect(() => {
-    (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-
-      if (status === "granted") {
-        const location = await Location.getCurrentPositionAsync({});
-        setRegion({
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        });
-      }
-    })();
-  }, []);
 
   return (
     <>
       {/* HERO */}
       <View style={styles.heroContainer}>
-        <Image source={{ uri: event?.photo }} style={styles.image} />
+        <Image source={require("../assets/default.jpg")} style={styles.image} />
 
         <TouchableOpacity
           style={[styles.backWrap, styles.borderStyle]}
@@ -94,7 +74,7 @@ const EventScreen = ({ navigation, route }) => {
               paddingRight={6}
             />
           </TouchableOpacity>
-          <TextAppS>{event?.likes}</TextAppS>
+          <TextAppS>{place?.likes}</TextAppS>
         </View>
       </View>
 
@@ -102,36 +82,40 @@ const EventScreen = ({ navigation, route }) => {
       <View style={styles.container}>
         <View style={styles.titleContainer}>
           <View style={[styles.txtWrap, styles.borderStyle]}>
-            <TextAppTitle>{event?.name}</TextAppTitle>
+            <TextAppTitle>{place?.name}</TextAppTitle>
           </View>
           <View style={[styles.dateWrap, styles.borderStyle]}>
-            <Image
-              source={require("../assets/date.png")}
-              style={{ width: 24, height: 24 }}
+            <FontAwesome
+              name="external-link"
+              size={24}
+              color={colors.dark}
+              onPress={() => {
+                place?.website && Linking.openURL(place?.website);
+              }}
             />
-            <TextAppBold>{formatDate(event?.date)}</TextAppBold>
+            {/* <TextAppBold>{formatDate(place?.date)}</TextAppBold> */}
           </View>
         </View>
 
-        <View style={styles.eventContainer}>
-          <TouchableOpacity onPress={() => handlePlace(event?.place)}>
-            <TextAppTitle>{event?.place?.name}</TextAppTitle>
+        <View style={styles.placeContainer}>
+          <TouchableOpacity onPress={() => handlePlace(place?.place)}>
+            <TextAppTitle>{place?.place?.name}</TextAppTitle>
           </TouchableOpacity>
 
           <View>
-            <TextAppBold>{event?.hour}</TextAppBold>
+            <TextAppBold>{place?.hour}</TextAppBold>
             <TextApp></TextApp>
           </View>
 
           <View style={styles.tagWrap}>
             <TagL>
               <Image
-                source={require("../assets/date.png")}
+                source={require("../assets/clock.png")}
                 style={styles.tagIcon}
               />
-              {event?.infosTags?.price}
+              <Text>{formatDate(place?.date)}</Text>
             </TagL>
-            {event?.categories?.map((category, index) => (
+            {place?.categories?.map((category, index) => (
               <TagL key={index}>
                 <Image
                   source={require("../assets/date.png")}
@@ -149,19 +133,19 @@ const EventScreen = ({ navigation, route }) => {
             setUserLocationEnabled={true}
             showsUserLocation={true}
             region={{
-              latitude: event?.place?.latitude,
-              longitude: event?.place?.longitude,
+              latitude: place?.latitude,
+              longitude: place?.longitude,
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
             }}
           >
             <Marker
               coordinate={{
-                latitude: event?.place?.latitude,
-                longitude: event?.place?.longitude,
+                latitude: place?.latitude,
+                longitude: place?.longitude,
               }}
-              title={event?.place?.name}
-              description={event?.place?.address}
+              title={place?.name}
+              description={place?.address}
             />
           </MapView>
         </View>
@@ -274,4 +258,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EventScreen;
+export default PlaceScreen;
