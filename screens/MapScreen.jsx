@@ -23,7 +23,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import colors from "../styleConstants/colors";
 
 const MapScreen = ({ navigation }) => {
-  const dispatch = useDispatch();
 
   const user = useSelector((state) => state.user.value);
   const token = user.user.token;
