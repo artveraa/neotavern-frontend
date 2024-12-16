@@ -14,6 +14,8 @@ import {
 } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import colors from "../styleConstants/colors";
+import TextApp from "../styleComponents/TextApp";
+import TextAppBold from "../styleComponents/TextAppBold";
 import * as ImagePicker from "expo-image-picker";
 import { useFocusEffect } from "@react-navigation/native";
 
@@ -346,7 +348,7 @@ const AddEventScreen = ({ navigation }) => {
         {/* Recherche de lieu */}
 
         <View style={styles.searchSection}>
-          <Text style={styles.label}>Lieu de l'événement</Text>
+          <TextAppBold style={styles.label}>Lieu de l'événement</TextAppBold>
           <TextInput
             placeholder="Rechercher un établissement"
             style={styles.input}
@@ -372,7 +374,7 @@ const AddEventScreen = ({ navigation }) => {
         {/* Nom de l'événement */}
 
         <View>
-          <Text style={styles.label}>Nom de l'événement:</Text>
+          <TextAppBold style={styles.label}>Nom de l'événement:</TextAppBold>
           <TextInput
             placeholder="Soirée du nouvel an"
             style={styles.input}
@@ -391,21 +393,21 @@ const AddEventScreen = ({ navigation }) => {
             )
           ) : (
             <View style={styles.placeholder}>
-              <Text style={styles.label}>
+              <TextAppBold style={styles.label}>
                 Séléctionnez une image de présentation de l'événement
-              </Text>
+              </TextAppBold>
             </View>
           )}
 
           <TouchableOpacity style={styles.btn4} onPress={pickImage}>
-            <Text style={styles.txtBtn}>Upload ta photo</Text>
+            <TextApp style={styles.txtBtn}>Upload ta photo</TextApp>
           </TouchableOpacity>
         </View>
 
         {/* Types d'événement */}
 
         <View style={styles.picker}>
-          <Text style={styles.label}>Type d'événement:</Text>
+          <TextAppBold style={styles.label}>Type d'événement:</TextAppBold>
           <View style={styles.tags}>
             {types.map((type, i) => (
               <TouchableOpacity
@@ -417,7 +419,7 @@ const AddEventScreen = ({ navigation }) => {
                     : styles.tagItem
                 }
               >
-                <Text>{type.label}</Text>
+                <TextApp>{type.label}</TextApp>
               </TouchableOpacity>
             ))}
           </View>
@@ -426,7 +428,7 @@ const AddEventScreen = ({ navigation }) => {
         {/* Description de l'événement */}
 
         <View>
-          <Text style={styles.label}>Description:</Text>
+          <TextAppBold style={styles.label}>Description:</TextAppBold>
 
           <TextInput
             placeholder="Décrire l'événement"
@@ -441,13 +443,13 @@ const AddEventScreen = ({ navigation }) => {
         {/* Date de l'évènement */}
 
         <View style={styles.picker}>
-          <Text style={styles.label}>Date de l'événement:</Text>
+          <TextAppBold style={styles.label}>Date de l'événement:</TextAppBold>
           <View style={styles.dateInput}>
-            <Text style={styles.label}>
+            <TextApp style={styles.label}>
               {new Date(eventDate).toLocaleDateString()}
-            </Text>
+            </TextApp>
             <TouchableOpacity style={styles.btn} onPress={showDatePicker}>
-              <Text style={styles.txtBtn}>Choisir une date</Text>
+              <TextApp style={styles.txtBtn}>Choisir une date</TextApp>
             </TouchableOpacity>
           </View>
           <DateTimePickerModal
@@ -462,11 +464,11 @@ const AddEventScreen = ({ navigation }) => {
         {/* Horaire de l'événement */}
 
         <View style={styles.picker}>
-          <Text style={styles.label}>Horaire de l'événement:</Text>
+          <TextAppBold style={styles.label}>Horaire de l'événement:</TextAppBold>
           <View style={styles.dateInput}>
-            <Text style={styles.label}>{eventHour}</Text>
+            <TextApp style={styles.label}>{eventHour}</TextApp>
             <TouchableOpacity style={styles.btn} onPress={showTimePicker}>
-              <Text style={styles.txtBtn}>Choisir une heure</Text>
+              <TextApp style={styles.txtBtn}>Choisir une heure</TextApp>
             </TouchableOpacity>
             <DateTimePickerModal
               isVisible={isTimeVisible}
@@ -480,7 +482,7 @@ const AddEventScreen = ({ navigation }) => {
         {/* Tarif de l'événement */}
 
         <View style={styles.picker}>
-          <Text style={styles.label}>Tarif de l'événement:</Text>
+          <TextAppBold style={styles.label}>Tarif de l'événement:</TextAppBold>
           <View style={styles.togglePrice}>
             <TouchableOpacity
               onPress={() => handlePayment("free")}
@@ -491,7 +493,7 @@ const AddEventScreen = ({ navigation }) => {
                   : { backgroundColor: "#F5F5F5" },
               ]}
             >
-              <Text style={styles.label}>Gratuit</Text>
+              <TextApp style={styles.label}>Gratuit</TextApp>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -503,7 +505,7 @@ const AddEventScreen = ({ navigation }) => {
                   : { backgroundColor: "#F5F5F5" },
               ]}
             >
-              <Text style={styles.label}>Payant</Text>
+              <TextApp style={styles.label}>Payant</TextApp>
             </TouchableOpacity>
           </View>
         </View>
@@ -511,7 +513,7 @@ const AddEventScreen = ({ navigation }) => {
         {/* Boissons */}
 
         <View style={styles.picker}>
-          <Text style={styles.label}>Boissons:</Text>
+          <TextAppBold style={styles.label}>Boissons:</TextAppBold>
           <View style={styles.tags}>
             {drinks.map((drink, i) => (
               <TouchableOpacity
@@ -523,7 +525,7 @@ const AddEventScreen = ({ navigation }) => {
                     : styles.tagItem
                 }
               >
-                <Text>{drink.label}</Text>
+                <TextApp>{drink.label}</TextApp>
               </TouchableOpacity>
             ))}
           </View>
@@ -531,7 +533,7 @@ const AddEventScreen = ({ navigation }) => {
 
         {/* Nourriture */}
         <View style={styles.picker}>
-          <Text style={styles.label}>Nourriture:</Text>
+          <TextAppBold style={styles.label}>Nourriture:</TextAppBold>
           <View style={styles.tags}>
             {food.map((food, i) => (
               <TouchableOpacity
@@ -543,14 +545,16 @@ const AddEventScreen = ({ navigation }) => {
                     : styles.tagItem
                 }
               >
-                <Text>{food.label}</Text>
+                <TextApp>{food.label}</TextApp>
               </TouchableOpacity>
             ))}
           </View>
         </View>
+        <View style={styles.containerCreateEvent}>
         <TouchableOpacity style={styles.btn3} onPress={() => handleCreate()}>
-          <Text style={styles.txtBtn}>Créer l'événement !</Text>
+          <TextAppBold style={styles.txtBtn}>Créer l'événement !</TextAppBold>
         </TouchableOpacity>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -558,6 +562,16 @@ const AddEventScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: colors.light,
+    color: colors.dark,
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    paddingRight: 28,
+    paddingLeft: 28,
+  },
+  containerCreateEvent: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
@@ -578,10 +592,11 @@ const styles = StyleSheet.create({
   label: {
     fontFamily: "Lexend_700Bold",
     color: "#333333",
-    justifyContent: "center",
   },
   txtBtn: {
     fontWeight: "bold",
+    textAlign: "center",
+    fontSize: 16,
   },
   picker: {
     width: "100%",
@@ -601,38 +616,43 @@ const styles = StyleSheet.create({
   dateInput: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: 'center',
   },
   btn: {
-    borderWidth: 1,
     marginLeft: 20,
     marginBottom: 10,
-    padding: 5,
-    borderRadius: 8,
+    padding: 12,
+    borderRadius: 15,
     backgroundColor: colors.green,
   },
   btn2: {
     width: 90,
-    borderWidth: 1,
     marginBottom: 10,
-    borderRadius: 8,
-    padding: 5,
+    borderRadius: 15,
+    padding: 12,
     backgroundColor: colors.green,
   },
   btn3: {
-    borderWidth: 1,
-    marginLeft: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+
+    width: "100%",
+    height: 60,
+    padding: 4,
+    marginTop: 12,
     marginBottom: 40,
-    padding: 5,
-    borderRadius: 8,
+
+    fontSize: 16,
     backgroundColor: colors.green,
+    borderRadius: 15,
   },
   btn4: {
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 1,
-    padding: 5,
-    borderRadius: 8,
-    backgroundColor: colors.yellow,
+    padding: 12,
+    borderRadius: 15,
+    backgroundColor: colors.green,
   },
 
   checkbox: {
@@ -644,12 +664,15 @@ const styles = StyleSheet.create({
   },
 
   mainTitle: {
-    fontSize: 24,
-    paddingVertical: 20,
+    fontSize: 18,
+    fontFamily: 'Lexend_500Medium',
+    paddingTop: 60,
+    paddingBottom: 20,
     width: "100%",
     textAlign: "center",
     borderBottomWidth: 1,
     borderBottomColor: "#333",
+    color: '#333333'
   },
 
   // Search section
@@ -677,12 +700,10 @@ const styles = StyleSheet.create({
   },
 
   tagItem: {
-    borderWidth: 1,
-    paddingLeft: 24,
-    paddingRight: 24,
+    padding: 12,
     backgroundColor: colors.light,
     borderColor: colors.dark,
-    borderWidth: 1,
+    borderWidth: 0.3,
     borderRadius: 15,
   },
 
@@ -711,7 +732,6 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f0f0f0",
     borderRadius: 5,
     marginBottom: 10,
   },
