@@ -24,7 +24,7 @@ const MapScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.value);
   const token = user.user.token;
 
-  console.log('IIIIIIIIIIIIIIIIIIIIuser',user)
+  console.log("IIIIIIIIIIIIIIIIIIIIuser", user);
 
   //LIKE
   const [postLiked, setPostLiked] = useState(null);
@@ -66,7 +66,6 @@ const MapScreen = ({ navigation }) => {
 
   // LIKed
   const handleLike = (event_Id) => {
-
     fetch(
       `http://neotavern-backend.vercel.app/events/like/${token}/${event_Id}`,
       {
@@ -76,15 +75,13 @@ const MapScreen = ({ navigation }) => {
       }
     )
       .then((response) => response.json())
-      .then((data) => console.log("----->",data))
-      .then((data)=> {
-        if (data){
-          
-          setPostLiked(data)
+      .then((data) => console.log("----->", data))
+      .then((data) => {
+        if (data) {
+          setPostLiked(data);
         }
-      })  
+      });
   };
-
 
   //useFOCUS
   useFocusEffect(
@@ -97,10 +94,10 @@ const MapScreen = ({ navigation }) => {
   return (
     <GestureHandlerRootView style={styles.container}>
       <MapView
-        style={StyleSheet.absoluteFillObject}
+        style={StyleSheet.absoluteFillObject} 
         setUserLocationEnabled={true}
         showsUserLocation={true}
-        region={region}
+        initialRegion={region}
       >
         {allEvents &&
           allEvents.map((event) => (
