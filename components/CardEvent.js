@@ -22,6 +22,8 @@ const CardEvent = ({ event, navigation, handleLike }) => {
   const handleClick = () => {
     handleLike(event._id)
   }
+
+
   
   const formatDate = (date) => {
     if (new Date(date).toDateString() === new Date().toDateString()) {
@@ -39,7 +41,6 @@ const CardEvent = ({ event, navigation, handleLike }) => {
   return (
     <View style={styles.container}>
     <TouchableOpacity  onPress={() => handleEvent(event) }>
-
       <View style={styles.card}>
           <View style={styles.imgContainer}>
             <Image style={styles.image} source={{ uri: event?.photo }} />

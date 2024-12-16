@@ -25,7 +25,6 @@ import colors from "../styleConstants/colors";
 
 const EventScreen = ({ navigation, route }) => {
   const user = useSelector((state) => state.user.value);
-  //map localisation user pour le moment
   const [region, setRegion] = useState(null);
 
   // navigation -> get params event

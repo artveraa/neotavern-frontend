@@ -27,7 +27,6 @@ const LoginUser = ({ navigation }) => {
 
   const handleLoginUser = () => {
     fetch('http://neotavern-backend.vercel.app/users/login', {
-    // fetch("http://192.168.251.129:3000/users/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ password: pass, email: mail }),
@@ -40,6 +39,7 @@ const LoginUser = ({ navigation }) => {
               token: userData?.token,
               nickname: userData?.nickname,
               email: userData?.nickname,
+              likedEvents: userData?.likedEvents,
               role: userData?.role,
               id: userData?.id,
               badges: userData?.badges,
