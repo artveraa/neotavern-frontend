@@ -1,5 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+
+import TextAppS from "../styleComponents/TextAppS";
+import TagL from "../styleComponents/TagL";
+import TextAppTitle from "../styleComponents/TextAppTitle";
+import TextAppBold from "../styleComponents/TextAppBold";
+import TextApp from "../styleComponents/TextApp";
+import colors from "../styleConstants/colors";
 
 import {
   SafeAreaView,
@@ -10,70 +16,59 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Linking,
 } from "react-native";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 
-import TextAppS from "../styleComponents/TextAppS";
-import TagL from "../styleComponents/TagL";
-import TextAppTitle from "../styleComponents/TextAppTitle";
-import TextAppBold from "../styleComponents/TextAppBold";
-import TextApp from "../styleComponents/TextApp";
-import colors from "../styleConstants/colors";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
-const EventScreen = ({ navigation, route }) => {
-  const user = useSelector((state) => state.user.value);
-  const [region, setRegion] = useState(null);
+const PlaceScreen = ({ route, navigation }) => {
+  const { place } = route.params;
 
-  // navigation -> get params event
-  const { handleLike, event } = route.params;
+  const [categories, setCategories] = useState([]);
 
-  // navigation -> back map screen
   const handleBackMap = () => {
     navigation.navigate("TabNavigator", { screen: "MapScreen" });
   };
 
-  //date formatage
-  const formatDate = (date) => {
-    if (new Date(date).toDateString() === new Date().toDateString()) {
-      return "Aujourd'hui";
-    }
-    const options = {
-      // weekday: "long",
-      month: "numeric",
-      day: "numeric",
+  const formatDate = (dateString) => {
+    const days = {
+      Mo: "Lundi",
+      Tu: "Mardi",
+      We: "Mercredi",
+      Th: "Jeudi",
+      Fr: "Vendredi",
+      Sa: "Samedi",
+      Su: "Dimanche",
     };
-    return new Date(date).toLocaleDateString("fr-FR", options);
+
+    return dateString
+      .split(";")
+      .map((item) =>
+        item.replace(/Mo|Tu|We|Th|Fr|Sa|Su/g, (matched) => days[matched])
+      )
+      .join("\n");
   };
 
-  const handlePlace = (place) => {
-    navigation.navigate("Place", { place });
-  };
-
-  //map
   useEffect(() => {
-    (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
+    const placeTypes = place.type.split(";");
+    if (place.vegetarian) {
+      placeTypes.push("végétarien");
+    }
 
-      if (status === "granted") {
-        const location = await Location.getCurrentPositionAsync({});
-        setRegion({
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        });
-      }
-    })();
-  }, []);
+    if (place.vegan) {
+      placeTypes.push("vegan");
+    }
+    setCategories(placeTypes);
+  }, [place]);
 
   return (
     <>
       {/* HERO */}
       <View style={styles.heroContainer}>
-        <Image source={{ uri: event?.photo }} style={styles.image} />
+        <Image source={require("../assets/default.jpg")} style={styles.image} />
 
         <TouchableOpacity
           style={[styles.backWrap, styles.borderStyle]}
@@ -93,7 +88,7 @@ const EventScreen = ({ navigation, route }) => {
               paddingRight={6}
             />
           </TouchableOpacity>
-          <TextAppS>{event?.likes}</TextAppS>
+          <TextAppS>{place?.likes}</TextAppS>
         </View>
       </View>
 
@@ -101,44 +96,46 @@ const EventScreen = ({ navigation, route }) => {
       <View style={styles.container}>
         <View style={styles.titleContainer}>
           <View style={[styles.txtWrap, styles.borderStyle]}>
-            <TextAppTitle>{event?.name}</TextAppTitle>
+            <TextAppTitle>{place?.name}</TextAppTitle>
           </View>
           <View style={[styles.dateWrap, styles.borderStyle]}>
-            <Image
-              source={require("../assets/date.png")}
-              style={{ width: 24, height: 24 }}
+            <FontAwesome
+              name="external-link"
+              size={24}
+              color={colors.dark}
+              onPress={() => {
+                place?.website && Linking.openURL(place?.website);
+              }}
             />
-            <TextAppBold>{formatDate(event?.date)}</TextAppBold>
+            {/* <TextAppBold>{formatDate(place?.date)}</TextAppBold> */}
           </View>
         </View>
 
-        <View style={styles.eventContainer}>
-          <TouchableOpacity onPress={() => handlePlace(event?.place)}>
-            <TextAppTitle>{event?.place?.name}</TextAppTitle>
-          </TouchableOpacity>
-
-          <View>
-            <TextAppBold>{event?.hour}</TextAppBold>
-            <TextApp></TextApp>
+        <View style={styles.placeContainer}>
+          <View style={styles.scheduleWrap}>
+            {place?.date && (
+              <TagL>
+                {/* <Image
+                  source={require("../assets/clock.png")}
+                  style={styles.tagIcon}
+                /> */}
+                <Text>{formatDate(place?.date)}</Text>
+              </TagL>
+            )}
           </View>
 
           <View style={styles.tagWrap}>
-            <TagL>
-              <Image
-                source={require("../assets/date.png")}
-                style={styles.tagIcon}
-              />
-              {event?.infosTags?.price}
-            </TagL>
-            {event?.categories?.map((category, index) => (
-              <TagL key={index}>
-                <Image
+            {categories.length > 0 &&
+              categories.map((category, index) => (
+                <TagL key={index}>
+                  {/* <Image
                   source={require("../assets/date.png")}
                   style={styles.tagIcon}
-                />
-                {category}
-              </TagL>
-            ))}
+                /> */}
+
+                  {category[0]?.toUpperCase() + category?.slice(1)}
+                </TagL>
+              ))}
           </View>
         </View>
 
@@ -148,19 +145,19 @@ const EventScreen = ({ navigation, route }) => {
             setUserLocationEnabled={true}
             showsUserLocation={true}
             region={{
-              latitude: event?.place?.latitude,
-              longitude: event?.place?.longitude,
+              latitude: place?.latitude,
+              longitude: place?.longitude,
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
             }}
           >
             <Marker
               coordinate={{
-                latitude: event?.place?.latitude,
-                longitude: event?.place?.longitude,
+                latitude: place?.latitude,
+                longitude: place?.longitude,
               }}
-              title={event?.place?.name}
-              description={event?.place?.address}
+              title={place?.name}
+              description={place?.address}
             />
           </MapView>
         </View>
@@ -220,15 +217,19 @@ const styles = StyleSheet.create({
     paddingLeft: 28,
     paddingRight: 28,
   },
+
+  placeContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
   //->title et date
   titleContainer: {
     flexDirection: "row",
-
     justifyContent: "space-between",
     alignItems: "stretch",
     gap: 12,
     maxWidth: "100%",
-
     top: "-6%",
   },
   borderStyle: {
@@ -239,7 +240,6 @@ const styles = StyleSheet.create({
   },
   txtWrap: {
     justifyContent: "center",
-
     padding: 24,
     width: "72%",
     maxWidth: "72%",
@@ -247,30 +247,34 @@ const styles = StyleSheet.create({
   dateWrap: {
     justifyContent: "center",
     alignItems: "center",
-
     width: "22%",
     padding: 12,
   },
-  //tag wrap
+
   tagWrap: {
     flexDirection: "row",
     gap: 12,
     flexWrap: "wrap",
-    paddingTop: 24,
-    paddingBottom: 24,
+    paddingVertical: 12,
+    width: "48%",
   },
+
+  scheduleWrap: {
+    width: "48%",
+    paddingVertical: 12,
+  },
+
   tagIcon: {
     width: 14,
     height: 14,
   },
-  //
+
   mapWrap: {
     height: 200,
     widht: "100%",
-
     borderRadius: 15,
     overflow: "hidden",
   },
 });
 
-export default EventScreen;
+export default PlaceScreen;

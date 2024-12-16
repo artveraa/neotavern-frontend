@@ -461,13 +461,16 @@ const AddEventScreen = ({ navigation }) => {
             onConfirm={handleConfirmDate}
             onCancel={hideDatePicker}
             minimumDate={new Date()}
+            locale="fr_FR"
           />
         </View>
 
         {/* Horaire de l'événement */}
 
         <View style={styles.picker}>
-          <TextAppBold style={styles.label}>Horaire de l'événement:</TextAppBold>
+          <TextAppBold style={styles.label}>
+            Horaire de l'événement:
+          </TextAppBold>
           <View style={styles.dateInput}>
             <TextApp style={styles.label}>{eventHour}</TextApp>
             <TouchableOpacity style={styles.btn} onPress={showTimePicker}>
@@ -478,6 +481,7 @@ const AddEventScreen = ({ navigation }) => {
               mode="time"
               onConfirm={handleValid}
               onCancel={hideTimePicker}
+              locale="fr_FR"
             />
           </View>
         </View>
@@ -554,9 +558,9 @@ const AddEventScreen = ({ navigation }) => {
           </View>
         </View>
         <View style={styles.containerCreateEvent}>
-        <TouchableOpacity style={styles.btn3} onPress={() => handleCreate()}>
-          <TextAppBold style={styles.txtBtn}>Créer l'événement !</TextAppBold>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.btn3} onPress={() => handleCreate()}>
+            <TextAppBold style={styles.txtBtn}>Créer l'événement !</TextAppBold>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -619,7 +623,7 @@ const styles = StyleSheet.create({
   dateInput: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: 'center',
+    alignItems: "center",
   },
   btn: {
     marginLeft: 20,
@@ -668,14 +672,14 @@ const styles = StyleSheet.create({
 
   mainTitle: {
     fontSize: 18,
-    fontFamily: 'Lexend_500Medium',
+    fontFamily: "Lexend_500Medium",
     paddingTop: 60,
     paddingBottom: 20,
     width: "100%",
     textAlign: "center",
     borderBottomWidth: 1,
     borderBottomColor: "#333",
-    color: '#333333'
+    color: "#333333",
   },
 
   // Search section

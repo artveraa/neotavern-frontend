@@ -39,7 +39,7 @@ const RegisterUser = ({ navigation }) => {
         if (userData.error === `Champs manquants ou vides`) {
           setEmptyErr({ emptyErr: true });
         } else if (userData.error === `Ce mail est déjà existant`) {
-          setNameErr(!nameErr);
+          setMailErr(mailErr);
         } else if (!mailPattern.test(mail)) {
           setMailErr(mailErr);
         } else if (pass != confirmationPass) {
@@ -50,6 +50,8 @@ const RegisterUser = ({ navigation }) => {
               token: userData?.token,
               nickname: userData?.nickname,
               email: userData?.nickname,
+              likedEvents: userData?.likedEvents,
+              
               role: userData?.role,
               id: userData?.id,
               badges: userData?.badges,
