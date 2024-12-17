@@ -10,10 +10,10 @@ export const getAllEvents = async () => {
   }
 };
 
-export const getLikedEvents = async (id) => {
+export const getLikedEvents = async (token) => {
   try {
     const response = await fetch(
-      `http://neotavern-backend.vercel.app/events/liked-events/${id}`
+      `http://neotavern-backend.vercel.app/events/likedEvents/${token}`
     );
     return await response.json();
   } catch (error) {

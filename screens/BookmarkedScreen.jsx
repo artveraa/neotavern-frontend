@@ -42,14 +42,13 @@ const BookmarkedScreen = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       fetchLikedEvents();
-      console.log(likedEvents);
     }, [])
   );
 
   const fetchLikedEvents = async () => {
     try {
-      const events = await getLikedEvents(id);
-      setLikedEvents(events.likedEvents);
+      const response = await getLikedEvents(token);
+      setLikedEvents(response.likedEvents.map((event) => event));
     } catch (error) {
       console.error(error);
     }
@@ -76,15 +75,18 @@ const BookmarkedScreen = ({ navigation }) => {
         <TextAppTitle>Mes évènements</TextAppTitle>
         <ScrollView style={styles.likedContainer}>
           {likedEvents &&
-            likedEvents.map((event) => (
-              <CardEvent
-                key={event._id}
-                event={event}
-                navigation={navigation}
-                handleLike={handleLike}
-                isLiked={likedEvents.includes(event._id)}
-              />
-            ))}
+            likedEvents
+              .sort((a, b) => new Date(a.date) - new Date(b.date))
+              .map((event) => (
+                <CardEvent
+                  key={event._id}
+                  event={event}
+                  navigation={navigation}
+                  handleLike={handleLike}
+                  inBookmarkedScreen={true}
+                  // isLiked={likedEvents.some((e) => e._id === event._id)}
+                />
+              ))}
         </ScrollView>
       </View>
     </>

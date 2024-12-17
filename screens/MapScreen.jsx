@@ -81,7 +81,7 @@ const MapScreen = ({ navigation }) => {
 
   const fetchLikedEvents = async () => {
     try {
-      const response = await getLikedEvents(userId);
+      const response = await getLikedEvents(token);
       setLikedEvents(response.likedEvents.map((event) => event._id));
     } catch (error) {
       console.error(error);
@@ -130,7 +130,6 @@ const MapScreen = ({ navigation }) => {
     }
   }, [selectedType]);
 
-  
   // Select Date
   const today = new Date();
   const startOfWeek = today.getDate() - today.getDay(); // Début de semaine
@@ -294,6 +293,7 @@ const MapScreen = ({ navigation }) => {
                   navigation={navigation}
                   handleLike={handleLike}
                   isLiked={likedEvents.includes(event._id)}
+                  inBookmarkedScreen={false}
                 />
               ))}
         </BottomSheetScrollView>
