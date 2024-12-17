@@ -11,6 +11,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
+import TextApp from "../styleComponents/TextApp";
 
 const CardEvent = ({ event, navigation, handleLike, isLiked }) => {
   const user = useSelector((state) => state.user.value);

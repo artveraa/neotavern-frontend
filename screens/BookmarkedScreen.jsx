@@ -4,6 +4,8 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import CardEvent from "../components/CardEvent";
 
+import { getLikedEvents, likeAnEvent } from "../fetchers/events";
+
 import {
   SafeAreaView,
   View,
@@ -26,7 +28,6 @@ import TextAppTitle from "../styleComponents/TextAppTitle";
 import TextAppBold from "../styleComponents/TextAppBold";
 import TextApp from "../styleComponents/TextApp";
 import colors from "../styleConstants/colors";
-import { getLikedEvents } from "../fetchers/events";
 
 const BookmarkedScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.value);
@@ -54,6 +55,15 @@ const BookmarkedScreen = ({ navigation }) => {
     }
   };
 
+  const handleLike = async (eventId) => {
+    try {
+      await likeAnEvent(token, eventId);
+      fetchLikedEvents();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <>
       <View style={styles.heroContainer}>
@@ -71,6 +81,8 @@ const BookmarkedScreen = ({ navigation }) => {
                 key={event._id}
                 event={event}
                 navigation={navigation}
+                handleLike={handleLike}
+                isLiked={likedEvents.includes(event._id)}
               />
             ))}
         </ScrollView>
