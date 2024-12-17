@@ -23,9 +23,6 @@ export const userSlice = createSlice({
     likeEvent: (state, action) => {
       state.value.user.likedArray.push(action.payload)
     },
-    createEvent: (state, action) => {
-      state.value.user.events.push(action.payload);
-    },
   },
 });
 

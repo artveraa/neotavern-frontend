@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -17,52 +17,59 @@ import TextAppBold from "../styleComponents/TextAppBold";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
 
-const HeaderSearch = ({ eventDay, eventWeek, eventWeekend, onSelectPlace, onReset}) => {
+const HeaderSearch = ({
+  eventDay,
+  eventWeek,
+  eventWeekend,
+  onSelectPlace,
+  onReset,
+}) => {
   // const [search, setSearch] = useState("");
   const [dateActive, setDateActive] = useState(false);
   const [filterDate, setFilterDate] = useState("Date");
 
   const [placesList, setPlacesList] = useState([]);
-    const [placesResult, setPlacesResult] = useState([]);
-    const [placeSearch, setPlaceSearch] = useState("");
-  
-    useEffect(() => {
-      fetch("https://neotavern-backend.vercel.app/places/allPlaces")
-        .then((response) => response.json())
-        .then((data) => {
-          setPlacesList(data.data);
-        });
-    }, []);
-  
-    const handleSearch = (text) => {
-      setPlaceSearch(text);
-  
-      if (text === "") {
-        setPlacesResult([]);
-        return;
-      }
-  
-      const filteredPlaces = placesList.filter((place) => {
-        return place.name.toLowerCase().includes(text.toLowerCase());
+  const [placesResult, setPlacesResult] = useState([]);
+  const [placeSearch, setPlaceSearch] = useState("");
+
+  useEffect(() => {
+    fetch("https://neotavern-backend.vercel.app/places/allPlaces")
+      .then((response) => response.json())
+      .then((data) => {
+        setPlacesList(data.data);
       });
-  
-      setPlacesResult(filteredPlaces);
-    };
-  
-    const chooseResult = (placeName, placeId) => {
-      setPlaceSearch(placeName);
+  }, []);
+
+  const handleSearch = (text) => {
+    setPlaceSearch(text);
+
+    if (text === "") {
       setPlacesResult([]);
-      onSelectPlace(placeId)
-    };
+      return;
+    }
+
+    const filteredPlaces = placesList.filter((place) => {
+      return place.name.toLowerCase().includes(text.toLowerCase());
+    });
+
+    setPlacesResult(filteredPlaces);
+  };
+
+  const chooseResult = (placeName, placeId) => {
+    setPlaceSearch(placeName);
+    setPlacesResult([]);
+    onSelectPlace(placeId);
+  };
 
   const handleDate = () => {
     setDateActive(!dateActive);
   };
 
+  // reset la recherche d'établissement sur mapscreen
   const handleDelete = () => {
-    onReset()
-    setPlaceSearch('');
-  }
+    onReset();
+    setPlaceSearch("");
+  };
 
   const handleClickDay = () => {
     eventDay();
@@ -81,9 +88,8 @@ const HeaderSearch = ({ eventDay, eventWeek, eventWeekend, onSelectPlace, onRese
   };
 
   return (
-      <View style={styles.borderStyle}>
-
-        <View  style={styles.contentSearch}>
+    <View style={styles.borderStyle}>
+      <View style={styles.contentSearch}>
         {/* <View style={styles.wrap}>
           <FontAwesome name="search" size={24} color="#EDA0FF" />
           <TextInput
@@ -93,29 +99,38 @@ const HeaderSearch = ({ eventDay, eventWeek, eventWeekend, onSelectPlace, onRese
           />
         </View> */}
 
-          <View style={styles.wrap}>
+        <View style={styles.wrap}>
           <FontAwesome name="search" size={24} color="#EDA0FF" />
-            <TextInput
-              placeholder="Rechercher un établissement"
-              value={placeSearch}
-              onChangeText={handleSearch}
-            />
-            {placesResult.length > 0 && (
-              <View style={styles.resultsList}>
-                {placesResult.map((place) => (
-                  <Text
-                    style={styles.resultItem}
-                    onPress={() => chooseResult(place.name, place._id)}
-                    key={place._id}
-                  >
-                    {place.name}
-                  </Text>
-                ))}
-              </View>
-            )}
-            <View style={styles.searchResult}></View>
+          <TextInput
+            placeholder="Rechercher un établissement"
+            value={placeSearch}
+            onChangeText={handleSearch}
+          />
+          {placesResult.length > 0 && (
+            <View style={styles.resultsList}>
+              {placesResult.map((place) => (
+                <Text
+                  style={styles.resultItem}
+                  onPress={() => chooseResult(place.name, place._id)}
+                  key={place._id}
+                >
+                  {place.name}
+                </Text>
+              ))}
+            </View>
+          )}
+          <View style={styles.searchResult}></View>
         </View>
-          <FontAwesome name="close" size={20} color="#EDA0FF" onPress={ () => handleDelete()}/>
+        {placeSearch ? (
+          <></>
+        ) : (
+          <FontAwesome
+            name="close"
+            size={20}
+            color="#EDA0FF"
+            onPress={() => handleDelete()}
+          />
+        )}
 
         <View>
           <TextApp>
