@@ -1,4 +1,4 @@
-import React, { use } from "react";
+import React, { useCallback } from "react";
 import {
   View,
   Text,
@@ -10,26 +10,22 @@ import {
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useFocusEffect } from "@react-navigation/native";
+import TextApp from "../styleComponents/TextApp";
 
-const CardEvent = ({ event, navigation, handleLike }) => {
+const CardEvent = ({ event, navigation, handleLike, isLiked }) => {
   const user = useSelector((state) => state.user.value);
-  const [isLiked, setIsLiked] = useState(false);
+
   // navigation -> avec route de paramêtres à pousser
   const handleEvent = (event) => {
     navigation.push("Event", {
       event,
-      handleLike,
     });
   };
 
   // LIKED
-  const handleClick = () => {
+  const handleClick = async () => {
     handleLike(event._id);
-    if (user.user.likedEvents.includes(event._id)) {
-      setIsLiked(true);
-    } else {
-      setIsLiked(false);
-    }
   };
 
   // DATE FORMATAGE
@@ -64,16 +60,12 @@ const CardEvent = ({ event, navigation, handleLike }) => {
             </TouchableOpacity>
           </View>
           <View style={styles.textContainer}>
-            <Text>{event?.place?.name}</Text>
+            <TextApp>{event?.place?.name}</TextApp>
             {event?.place?.name && <Text style={styles.separator}></Text>}
-            <Text>{event?.name}</Text>
+            <TextApp>{event?.name}</TextApp>
             <View style={styles.cardFooter}>
               <View style={styles.likes}>
-                <FontAwesome
-                  name="heart"
-                  size={14}
-                  style={isLiked ? { color: "#EDA0FF" } : { color: "#333" }}
-                />
+                <FontAwesome name="heart" size={14} />
                 <Text>{event?.likes}</Text>
               </View>
               <Text>{formatDate(event?.date)}</Text>

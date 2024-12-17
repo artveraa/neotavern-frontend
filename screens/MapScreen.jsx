@@ -1,6 +1,5 @@
-import React, { useRef, useState, useEffect, useCallback, use } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
-
 import {
   View,
   Text,
@@ -11,24 +10,19 @@ import {
 } from "react-native";
 import CardEvent from "../components/CardEvent";
 import HeaderSearch from "../components/SearchHeader";
-
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import BottomSheet, {
-  BottomSheetScrollView,
-  BottomSheetSectionList,
-} from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
-import getAllEvents from "../fetchers/events";
+import { getAllEvents, getLikedEvents, likeAnEvent } from "../fetchers/events";
 import { useFocusEffect } from "@react-navigation/native";
 import colors from "../styleConstants/colors";
+import TextApp from "../styleComponents/TextApp";
 
 const MapScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.value);
   const token = user.user.token;
-  console.log("EMAIL Reducer:", user.user.email);
-
- 
+  const userId = user.user.id;
 
   const types = [
     { label: "Concert" },
@@ -44,19 +38,21 @@ const MapScreen = ({ navigation }) => {
     { label: "Jeux" },
   ];
 
-  //LIKE
-  const [postLiked, setPostLiked] = useState(null);
+  const [likedEvents, setLikedEvents] = useState([]);
   const bottomSheetRef = useRef(null);
   const [region, setRegion] = useState(null);
   const [allEvents, setAllEvents] = useState(null);
   const [selectedType, setSelectedType] = useState([]);
+  const [selectedDate, setSelectedDate] = useState([]);
 
-  const snapPoints = ["20%", "65%"];
+  const snapPoints = ["20%", "68%"];
 
+  //drawer
   const openPanel = () => {
     bottomSheetRef.current?.expand();
   };
 
+  //map
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -73,17 +69,35 @@ const MapScreen = ({ navigation }) => {
     })();
   }, []);
 
+  //events
   const fetchEvents = async () => {
     try {
       const events = await getAllEvents();
-      // console.log('EVENTS:', events)
       setAllEvents(events);
     } catch (error) {
       console.error(error);
     }
   };
 
-  // Select types
+  const fetchLikedEvents = async () => {
+    try {
+      const response = await getLikedEvents(userId);
+      setLikedEvents(response.likedEvents.map((event) => event._id));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleLike = async (eventId) => {
+    try {
+      await likeAnEvent(token, eventId);
+      fetchEvents();
+      fetchLikedEvents();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleEventType = (type) => {
     if (selectedType.includes(type)) {
       setSelectedType(
@@ -104,7 +118,6 @@ const MapScreen = ({ navigation }) => {
     }
   };
 
-  // Reset types
   const handleReset = () => {
     setSelectedType([]);
     fetchEvents();
@@ -121,35 +134,92 @@ const MapScreen = ({ navigation }) => {
   };
 
 
-  // Like
-  const handleLike = async (eventId) => {
-    console.log(token);
-
-    try {
-      const response = await fetch(
-        `https://neotavern-backend.vercel.app/events/like/${token}/${eventId}`,
-        {
-          method: "POST",
-        }
-      );
-
-      const data = await response.json();
-      console.log(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   useEffect(() => {
     if (selectedType.length === 0) {
       fetchEvents();
     }
   }, [selectedType]);
 
-  //useFOCUS
+  
+  // Select Date
+  const today = new Date();
+  const startOfWeek = today.getDate() - today.getDay(); // Début de semaine
+  const startOfWeekDate = new Date(today.setDate(startOfWeek)); // Début de la semaine en cours
+  const endOfWeekDate = new Date(today.setDate(startOfWeek + 6)); // Dimanche de la semaine en cours
+  const friday = new Date(today.setDate(startOfWeek + 4)); // Vendredi de la semaine en cours
+
+  //by day
+  const eventDay = () => {
+    const today = new Date();
+    const filtered = allEvents.filter((event) => {
+      const eventDate = new Date(event.date); //date events filtrés
+      return eventDate.toDateString() === today.toDateString();
+    });
+    openPanel();
+    setAllEvents(filtered);
+  };
+  //by week
+  const eventWeek = () => {
+    const filtered = [...allEvents].filter((event) => {
+      const eventDate = new Date(event.date); //date de.s l'event.s filtrés
+      return eventDate >= startOfWeekDate && eventDate <= endOfWeekDate;
+    });
+    openPanel();
+    setAllEvents(filtered);
+  };
+  //by weekend
+  const eventWeekend = () => {
+    handleReset;
+
+    const filtered = allEvents.filter((event) => {
+      const eventDate = new Date(event.date); //date de.s l'event.s filtrés
+      return eventDate >= friday && eventDate <= endOfWeekDate;
+    });
+    openPanel();
+    setAllEvents(filtered);
+  };
+  //
+  //=====> WITH SWITCH => penser à changer la props avec handleEventDate de {searchHeader}
+  //
+  // const handleEventDate = (condition) => {
+  //     switch (condition) {
+  //       case 'today':
+  //           const today = new Date()
+  //           const filteredDay = [...allEvents].filter(event => {
+  //           const eventDate = new Date(event.date); //date de.s l'event.s filtrés
+  //           return eventDate.toDateString() === today.toDateString();
+  //         });
+  //         openPanel();
+  //         setAllEvents(filteredDay);  // je mets à jour avec les events filtrés
+  //         break;
+
+  //       case 'week':
+  //         const filteredWeek = [...allEvents].filter(event => {
+  //           const eventDate = new Date(event.date); //date de.s l'event.s filtrés
+  //           return eventDate >= startOfWeekDate && eventDate <= endOfWeekDate;
+  //         });
+  //         openPanel();
+  //         console.log("filteredWeek", filteredWeek.length)
+  //          setAllEvents(filteredWeek );  // je mets à jour avec les events filtrés
+  //         break;
+
+  //         case 'weekend':
+  //           const filteredWeekend = [...allEvents].filter(event => {
+  //           const eventDate = new Date(event.date); //date de.s l'event.s filtrés
+  //           return eventDate >= friday && eventDate <= endOfWeekDate;
+  //         });
+  //         openPanel();
+  //         setAllEvents(filteredWeekend);  // je mets à jour avec les events filtrés
+  //         console.log('all events filtered to weekend only', allEvents.length)
+  //         break;
+  //     }
+
+  //   };
+
   useFocusEffect(
     useCallback(() => {
       fetchEvents();
+      fetchLikedEvents();
       openPanel();
     }, [])
   );
@@ -177,7 +247,11 @@ const MapScreen = ({ navigation }) => {
       </MapView>
 
       <SafeAreaView style={styles.searchbar}>
-        <HeaderSearch onSelectPlace={handleSelectPlace} onReset={handleReset}/>
+        <HeaderSearch onSelectPlace={handleSelectPlace} onReset={handleReset}
+          eventDay={eventDay}
+          eventWeek={eventWeek}
+          eventWeekend={eventWeekend}
+        />
       </SafeAreaView>
 
       <SafeAreaView style={styles.filters}>
@@ -227,8 +301,9 @@ const MapScreen = ({ navigation }) => {
                 <CardEvent
                   key={event._id}
                   event={event}
-                  handleLike={handleLike}
                   navigation={navigation}
+                  handleLike={handleLike}
+                  isLiked={likedEvents.includes(event._id)}
                 />
               ))}
         </BottomSheetScrollView>
@@ -266,7 +341,7 @@ const styles = StyleSheet.create({
   },
 
   searchbar: {
-    paddingHorizontal: 24,
+    paddingHorizontal: 12,
     top: "6%",
     width: "100%",
   },

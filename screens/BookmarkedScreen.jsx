@@ -4,6 +4,8 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import CardEvent from "../components/CardEvent";
 
+import { getLikedEvents, likeAnEvent } from "../fetchers/events";
+
 import {
   SafeAreaView,
   View,
@@ -27,104 +29,114 @@ import TextAppBold from "../styleComponents/TextAppBold";
 import TextApp from "../styleComponents/TextApp";
 import colors from "../styleConstants/colors";
 
-const BookmarkedScreen = ({navigation, handleLike}) => {
-  const user = useSelector((state) => state.user.value); 
-  const name = user.user.nickname
-  const id = user.user.id
+const BookmarkedScreen = ({ navigation }) => {
+  const user = useSelector((state) => state.user.value);
+  const name = user.user.nickname;
+  const id = user.user.id;
+  const token = user.user.token;
   // const likedEvents = user.user.likedEvents
 
-  const [likedEvent, setLikedEvent] = useState ()
+  const [likedEvents, setLikedEvents] = useState();
 
   //useFOCUS -> je get mes evenements likés, je les set dans un tableau
   useFocusEffect(
     useCallback(() => {
-      fetch(
-            `http://neotavern-backend.vercel.app/events//liked-events/${id}`,)
-            .then((response) => response.json())
-            .then((data) => {
-              if (data) {
-                setLikedEvent(data.likedEvents)
-              }
-            });
+      fetchLikedEvents();
+      console.log(likedEvents);
     }, [])
   );
 
+  const fetchLikedEvents = async () => {
+    try {
+      const events = await getLikedEvents(id);
+      setLikedEvents(events.likedEvents);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleLike = async (eventId) => {
+    try {
+      await likeAnEvent(token, eventId);
+      fetchLikedEvents();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <>
-    <View style={styles.heroContainer}>
-      <View style={[styles.heroWrap, styles.borderStyle]}>
-        <Text style={styles.heroContent}>Bienvenue, {name}&nbsp;!</Text>
+      <View style={styles.heroContainer}>
+        <View style={[styles.heroWrap, styles.borderStyle]}>
+          <Text style={styles.heroContent}>Bienvenue, {name}&nbsp;!</Text>
+        </View>
       </View>
-    </View>
-    
-    <View style={styles.container}>
-      <TextAppTitle>Mes évènements</TextAppTitle>
-      <ScrollView style={styles.likedContainer}>
-      
-        {likedEvent &&
-          likedEvent.map((event) => (
-            <CardEvent
-            key={event._id}
-            event={event}
-            handleLike={handleLike}
-            navigation={navigation}
-            />
-          ))}
 
-      </ScrollView>
-      
-    </View>
+      <View style={styles.container}>
+        <TextAppTitle>Mes évènements</TextAppTitle>
+        <ScrollView style={styles.likedContainer}>
+          {likedEvents &&
+            likedEvents.map((event) => (
+              <CardEvent
+                key={event._id}
+                event={event}
+                navigation={navigation}
+                handleLike={handleLike}
+                isLiked={likedEvents.includes(event._id)}
+              />
+            ))}
+        </ScrollView>
+      </View>
     </>
   );
 };
 
 const styles = StyleSheet.create({
   //image hero
-heroContainer:{
-  flex: 1,
-  padding:28,
-},
-heroWrap:{
-  alignItems:'center',
-  justifyContent:'center',
+  heroContainer: {
+    flex: 1,
+    padding: 28,
+  },
+  heroWrap: {
+    alignItems: "center",
+    justifyContent: "center",
 
-  width:'100%',
-  height:'100%',
-},
-heroContent:{
-  padding:28,
-  fontFamily:'Lexend_300Light',
-  color:colors.dark,
-  fontSize:24,
-},
-borderStyle:{
-  backgroundColor:colors.light,
-  borderColor:colors.dark,
-  borderWidth:1,
-  borderRadius:15,
-},
-  //main
-container: {
-  flex: 4,
-  alignItems:'center',
-  backgroundColor: colors.ligth,
-
-  width:'100%',
-  
-  paddingRight:12,
-  paddingLeft:12,
-    
-},
-// card
-  likedContainer:{
-    backgroundColor:'white',
+    width: "100%",
+    height: "100%",
+  },
+  heroContent: {
+    padding: 28,
+    fontFamily: "Lexend_300Light",
+    color: colors.dark,
+    fontSize: 24,
+  },
+  borderStyle: {
+    backgroundColor: colors.light,
+    borderColor: colors.dark,
+    borderWidth: 1,
     borderRadius: 15,
-    width:'100%',
-    height:'100%',
+  },
+  //main
+  container: {
+    flex: 4,
+    alignItems: "center",
+    backgroundColor: colors.ligth,
 
-    marginTop:24,
-    padding:12,
-}
+    width: "100%",
+
+    paddingRight: 12,
+    paddingLeft: 12,
+  },
+  // card
+  likedContainer: {
+    backgroundColor: "white",
+    borderRadius: 15,
+    width: "100%",
+    height: "100%",
+
+    marginTop: 24,
+    padding: 12,
+  },
 });
 
 export default BookmarkedScreen;

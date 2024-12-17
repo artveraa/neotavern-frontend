@@ -14,7 +14,7 @@ export const userSlice = createSlice({
     login: (state, action) => {
       state.value.user.token = action.payload.token;
       state.value.user.email = action.payload.email;
-      state.value.user.likedEvents = action.payload.likedEvents
+      state.value.user.likedEvents = action.payload.likedEvents;
       state.value.user.role = action.payload.role;
       state.value.user.nickname = action.payload.nickname;
       state.value.user.id = action.payload.id;
@@ -22,7 +22,10 @@ export const userSlice = createSlice({
     },
     likeEvent: (state, action) => {
       state.value.user.likedArray.push(action.payload)
-    }
+    },
+    createEvent: (state, action) => {
+      state.value.user.events.push(action.payload);
+    },
   },
 });
 

@@ -26,7 +26,7 @@ const LoginUser = ({ navigation }) => {
   const [error, setError] = useState(false);
 
   const handleLoginUser = () => {
-    fetch('http://neotavern-backend.vercel.app/users/login', {
+    fetch("http://neotavern-backend.vercel.app/users/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ password: pass, email: mail }),
@@ -46,7 +46,6 @@ const LoginUser = ({ navigation }) => {
             })
           );
           navigation.navigate("TabNavigator", { screen: "MapScreen" });
-          console.log('email login:', userData.email)
         } else {
           setError(!error);
         }
