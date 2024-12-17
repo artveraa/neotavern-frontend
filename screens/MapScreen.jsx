@@ -25,7 +25,6 @@ import colors from "../styleConstants/colors";
 import TextApp from "../styleComponents/TextApp";
 
 const MapScreen = ({ navigation }) => {
-
   const user = useSelector((state) => state.user.value);
   const token = user.user.token;
 
@@ -45,13 +44,13 @@ const MapScreen = ({ navigation }) => {
 
   //LIKE
   const [postLiked, setPostLiked] = useState(false);
-  const likedEvents = user.user.likedEvents
+  const likedEvents = user.user.likedEvents;
 
   const bottomSheetRef = useRef(null);
   const [region, setRegion] = useState(null);
   const [allEvents, setAllEvents] = useState(null);
   const [selectedType, setSelectedType] = useState([]);
-  const [dayFilteredEvents, setDayFilteredEvents] = useState ([])
+  const [selectedDate, setSelectedDate] = useState([]);
 
   const snapPoints = ["20%", "68%"];
 
@@ -87,11 +86,10 @@ const MapScreen = ({ navigation }) => {
     }
   };
 
-  // LIKed 
+  // LIKed
   const handleLike = (event_Id) => {
     //ici le fetch event pour actualisé l'incrémentation du compteur like.
-    //ne s'actualise pour le moment que au changement de page
-    fetchEvents()
+    fetchEvents();
     //-> je pousse les evenements likés dans le tableau likedEvents du user +
     // je set un état en true (pour mettre en props pour le style)
     fetch(
@@ -145,27 +143,83 @@ const MapScreen = ({ navigation }) => {
   }, [selectedType]);
 
   
+  // Select Date
+  const today = new Date();
+  const startOfWeek = today.getDate() - today.getDay(); // Début de semaine
+  const startOfWeekDate = new Date(today.setDate(startOfWeek)); // Début de la semaine en cours
+  const endOfWeekDate = new Date(today.setDate(startOfWeek + 6)); // Dimanche de la semaine en cours
+  const friday = new Date(today.setDate(startOfWeek + 4)); // Vendredi de la semaine en cours
 
-  // Date filter
-  const getTodayStart = () => {
+  //by day
+  const eventDay = () => {
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return today;
+    const filtered = allEvents.filter((event) => {
+      const eventDate = new Date(event.date); //date events filtrés
+      return eventDate.toDateString() === today.toDateString();
+    });
+    openPanel();
+    setAllEvents(filtered);
   };
+  //by week
+  const eventWeek = () => {
+    const filtered = [...allEvents].filter((event) => {
+      const eventDate = new Date(event.date); //date de.s l'event.s filtrés
+      return eventDate >= startOfWeekDate && eventDate <= endOfWeekDate;
+    });
+    openPanel();
+    setAllEvents(filtered);
+  };
+  //by weekend
+  const eventWeekend = () => {
+    handleReset;
 
-  const handleDay = () => {
-    console.log('day')
-        const todayStart = getTodayStart();
-        const filtered = allEvents.filter((event) => {
-          const eventDate = new Date(event.date);
-          return eventDate >= todayStart && eventDate < todayStart.setDate(todayStart.getDate()+1);
-        });
-        openPanel();
-        setAllEvents(filtered);
-    }
+    const filtered = allEvents.filter((event) => {
+      const eventDate = new Date(event.date); //date de.s l'event.s filtrés
+      return eventDate >= friday && eventDate <= endOfWeekDate;
+    });
+    openPanel();
+    setAllEvents(filtered);
+  };
+  //
+  //=====> WITH SWITCH => penser à changer la props avec handleEventDate de {searchHeader}
+  //
+  // const handleEventDate = (condition) => {
+  //     switch (condition) {
+  //       case 'today':
+  //           const today = new Date()
+  //           const filteredDay = [...allEvents].filter(event => {
+  //           const eventDate = new Date(event.date); //date de.s l'event.s filtrés
+  //           return eventDate.toDateString() === today.toDateString();
+  //         });
+  //         openPanel();
+  //         setAllEvents(filteredDay);  // je mets à jour avec les events filtrés
+  //         break;
 
+  //       case 'week':
+  //         const filteredWeek = [...allEvents].filter(event => {
+  //           const eventDate = new Date(event.date); //date de.s l'event.s filtrés
+  //           return eventDate >= startOfWeekDate && eventDate <= endOfWeekDate;
+  //         });
+  //         openPanel();
+  //         console.log("filteredWeek", filteredWeek.length)
+  //          setAllEvents(filteredWeek );  // je mets à jour avec les events filtrés
+  //         break;
+
+  //         case 'weekend':
+  //           const filteredWeekend = [...allEvents].filter(event => {
+  //           const eventDate = new Date(event.date); //date de.s l'event.s filtrés
+  //           return eventDate >= friday && eventDate <= endOfWeekDate;
+  //         });
+  //         openPanel();
+  //         setAllEvents(filteredWeekend);  // je mets à jour avec les events filtrés
+  //         console.log('all events filtered to weekend only', allEvents.length)
+  //         break;
+  //     }
+
+  //   };
 
   //useFOCUS
+
   useFocusEffect(
     useCallback(() => {
       fetchEvents();
@@ -175,14 +229,12 @@ const MapScreen = ({ navigation }) => {
 
   return (
     <GestureHandlerRootView style={styles.container}>
-
       <MapView
         style={StyleSheet.absoluteFillObject}
         setUserLocationEnabled={true}
         showsUserLocation={true}
         initialRegion={region}
       >
-
         {allEvents &&
           allEvents.map((event) => (
             <Marker
@@ -198,7 +250,11 @@ const MapScreen = ({ navigation }) => {
       </MapView>
 
       <SafeAreaView style={styles.searchbar}>
-        <HeaderSearch handleDay={handleDay}/>
+        <HeaderSearch
+          eventDay={eventDay}
+          eventWeek={eventWeek}
+          eventWeekend={eventWeekend}
+        />
       </SafeAreaView>
 
       <SafeAreaView style={styles.filters}>
@@ -211,7 +267,7 @@ const MapScreen = ({ navigation }) => {
             }
             onPress={() => handleReset()}
           >
-            <TextApp style={styles.filterText}>Tous</TextApp>
+            <Text style={styles.filterText}>Tous</Text>
           </TouchableOpacity>
           {types.map((type, index) => (
             <TouchableOpacity
@@ -287,7 +343,7 @@ const styles = StyleSheet.create({
   },
 
   searchbar: {
-    paddingHorizontal:12,
+    paddingHorizontal: 12,
     top: "6%",
     width: "100%",
   },

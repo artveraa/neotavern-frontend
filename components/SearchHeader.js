@@ -16,7 +16,7 @@ import TextAppS from "../styleComponents/TextAppS";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
 
-const HeaderSearch = ({ handleDay }) => {
+const HeaderSearch = ({ eventDay, eventWeek, eventWeekend }) => {
   const [search, setSearch] = useState("");
   const [dateActive, setDateActive] = useState(false);
   const [filterDate, setFilterDate] = useState("Date");
@@ -26,19 +26,19 @@ const HeaderSearch = ({ handleDay }) => {
   };
 
   const handleClickDay = () => {
-    handleDay();
+    eventDay();
     setDateActive(!dateActive);
     setFilterDate(`Aujourd'hui`);
   };
   const handleClickWeek = () => {
-    handleDay();
+    eventWeek();
     setDateActive(!dateActive);
     setFilterDate(`Semaine`);
   };
   const handleClickWeekend = () => {
-    handleDay();
+    eventWeekend();
     setDateActive(!dateActive);
-    setFilterDate(`Weekend`);
+    setFilterDate(`Week-end`);
   };
 
   return (
@@ -53,6 +53,14 @@ const HeaderSearch = ({ handleDay }) => {
           />
         </View>
 
+        <View>
+          <TextApp>
+            {filterDate != `Date` && (
+              <FontAwesome name="refresh" size={18} color="#D9D9D9" />
+            )}
+          </TextApp>
+        </View>
+
         <View style={styles.separator}></View>
 
         <TouchableOpacity style={styles.btnDate} onPress={() => handleDate()}>
@@ -62,23 +70,30 @@ const HeaderSearch = ({ handleDay }) => {
 
       {dateActive && (
         <View style={styles.tagWrap}>
-       
+          <TouchableOpacity
+            style={styles.tagBorder}
+            onPress={() => handleClickDay()}
+          >
+            <FontAwesome name="calendar-check-o" size={24} color="#EDA0FF" />
+            <TextAppS>Aujourd'hui</TextAppS>
+          </TouchableOpacity>
 
-            <TouchableOpacity style={styles.tagBorder} onPress={() => handleClickDay()}>
-              <FontAwesome name="calendar-check-o" size={24} color="#EDA0FF" />
-              <TextAppS>Aujourd'hui</TextAppS>
-            </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.tagBorder}
+            onPress={() => handleClickWeek()}
+          >
+            <FontAwesome name="calendar-check-o" size={24} color="#EDA0FF" />
+            <TextAppS>Semaine</TextAppS>
+          </TouchableOpacity>
 
-  
-            <TouchableOpacity style={styles.tagBorder} onPress={() => handleClickWeek()}>
-              <FontAwesome name="calendar-check-o" size={24} color="#EDA0FF" />
-              <TextAppS>Semaine</TextAppS>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.tagBorder} onPress={() => handleClickWeekend()}>
-              <FontAwesome name="calendar-check-o" size={24} color="#EDA0FF" />
+          <TouchableOpacity
+            style={styles.tagBorder}
+            onPress={() => handleClickWeekend()}
+          >
+            <FontAwesome name="calendar-check-o" size={24} color="#EDA0FF" />
 
-              <TextAppS>Week-end</TextAppS>
-            </TouchableOpacity>
+            <TextAppS>Week-end</TextAppS>
+          </TouchableOpacity>
         </View>
       )}
     </View>
@@ -105,15 +120,17 @@ const styles = StyleSheet.create({
   wrap: {
     flexDirection: "row",
     alignItems: "center",
-    width: "70%",
+    width: "65%",
   },
   separator: {
     height: 28,
     width: 1,
+
+    paddingVertical: 12,
     backgroundColor: colors.dark,
   },
   tagWrap: {
-    justifyContent:'center',
+    justifyContent: "center",
     flexDirection: "row",
     width: "100%",
     gap: 12,
@@ -121,10 +138,10 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   tagBorder: {
-    alignItems:'center',
-    gap:4,
+    alignItems: "center",
+    gap: 4,
 
-    paddingVertical:16,
+    paddingVertical: 16,
     paddingHorizontal: 12,
 
     backgroundColor: colors.light,
