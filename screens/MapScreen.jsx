@@ -26,7 +26,9 @@ import colors from "../styleConstants/colors";
 const MapScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.value);
   const token = user.user.token;
-  console.log('EMAIL Reducer:', user.user.email)
+  console.log("EMAIL Reducer:", user.user.email);
+
+ 
 
   const types = [
     { label: "Concert" },
@@ -109,6 +111,16 @@ const MapScreen = ({ navigation }) => {
     openPanel();
   };
 
+ 
+   // Search
+   // Selection de l'établissement dans la barre de recherche (récuperation de l'ID)
+   const handleSelectPlace = (placeId) => {
+      const filteredEvents = [...allEvents].filter((event) =>
+        event.place._id === placeId);
+      setAllEvents(filteredEvents)
+  };
+
+
   // Like
   const handleLike = async (eventId) => {
     console.log(token);
@@ -144,14 +156,12 @@ const MapScreen = ({ navigation }) => {
 
   return (
     <GestureHandlerRootView style={styles.container}>
-
       <MapView
         style={StyleSheet.absoluteFillObject}
         setUserLocationEnabled={true}
         showsUserLocation={true}
         initialRegion={region}
       >
-
         {allEvents &&
           allEvents.map((event) => (
             <Marker
@@ -167,7 +177,7 @@ const MapScreen = ({ navigation }) => {
       </MapView>
 
       <SafeAreaView style={styles.searchbar}>
-        <HeaderSearch/>
+        <HeaderSearch onSelectPlace={handleSelectPlace} onReset={handleReset}/>
       </SafeAreaView>
 
       <SafeAreaView style={styles.filters}>
@@ -256,7 +266,7 @@ const styles = StyleSheet.create({
   },
 
   searchbar: {
-    paddingHorizontal:24,
+    paddingHorizontal: 24,
     top: "6%",
     width: "100%",
   },
