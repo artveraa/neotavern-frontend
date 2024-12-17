@@ -49,7 +49,7 @@ const RegisterUser = ({ navigation }) => {
             login({
               token: userData?.token,
               nickname: userData?.nickname,
-              email: userData?.nickname,
+              email: mail,
               likedEvents: userData?.likedEvents,
               
               role: userData?.role,
@@ -58,6 +58,7 @@ const RegisterUser = ({ navigation }) => {
             })
           )
           navigation.navigate("TabNavigator", { screen: "MapScreen" })
+          console.log('email register:', userData.email)
         }    
       });
   };

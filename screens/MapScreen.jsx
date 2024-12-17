@@ -68,6 +68,7 @@ const MapScreen = ({ navigation }) => {
   const fetchEvents = async () => {
     try {
       const events = await getAllEvents();
+      console.log('EVENTSSS:', events)
       setAllEvents(events);
     } catch (error) {
       console.error(error);

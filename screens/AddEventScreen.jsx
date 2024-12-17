@@ -18,7 +18,6 @@ import TextApp from "../styleComponents/TextApp";
 import TextAppBold from "../styleComponents/TextAppBold";
 import * as ImagePicker from "expo-image-picker";
 import { useFocusEffect } from "@react-navigation/native";
-import { createEvent } from "../reducers/user";
 
 const AddEventScreen = ({ navigation }) => {
   const [eventName, setEventName] = useState("");
@@ -32,7 +31,6 @@ const AddEventScreen = ({ navigation }) => {
   const [isUploading, setIsUploading] = useState(false);
 
   const user = useSelector((state) => state.user.value);
-  const dispatch = useDispatch();
 
   // SELECTION DE L'IMAGE VIA UPLOAD
   const pickImage = async () => {
@@ -47,7 +45,7 @@ const AddEventScreen = ({ navigation }) => {
 
     // console.log("USER/", user);
 
-    console.log("resultat de l image upload: ", result);
+    // console.log("resultat de l image upload: ", result);
 
     if (!result.canceled) {
       setIsUploading(false); // Terminer l'upload
@@ -73,9 +71,9 @@ const AddEventScreen = ({ navigation }) => {
         { method: "POST", body: formData }
       );
       const data = await response.json();
-      console.log("CLOUDINARY:", data);
+      // console.log("CLOUDINARY:", data);
       if (data && data.url) {
-        console.log(data.url);
+        // console.log(data.url);
 
         setPhotoUrl(data.url);
         setIsUploading(false);
@@ -134,7 +132,7 @@ const AddEventScreen = ({ navigation }) => {
   // clique sur la date souhaitée et fermeture du calendrier
 
   const handleConfirmDate = (e) => {
-    console.log(e);
+    // console.log(e);
 
     setEventDate(e);
     hideDatePicker();
@@ -157,7 +155,6 @@ const AddEventScreen = ({ navigation }) => {
       hour: "2-digit",
       minute: "2-digit",
     });
-    console.log(formattedHour);
 
     setEventHour(formattedHour);
     hideTimePicker();
@@ -247,7 +244,6 @@ const AddEventScreen = ({ navigation }) => {
       .then((data) => {
         console.log("Tâche ajoutée avec succès :", data);
         navigation.navigate("MapScreen");
-        dispatch(createEvent(data))
       })
       .catch((error) => {
         console.error("Erreur:", error);
