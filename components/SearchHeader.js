@@ -121,7 +121,7 @@ const HeaderSearch = ({
           )}
           <View style={styles.searchResult}></View>
         </View>
-        {placeSearch ? (
+        {!placeSearch ? (
           <></>
         ) : (
           <FontAwesome

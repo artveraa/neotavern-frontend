@@ -17,7 +17,7 @@ import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import TextApp from "../styleComponents/TextApp";
 import TextAppBold from "../styleComponents/TextAppBold";
 import TextAppTitle from "../styleComponents/TextAppTitle";
-import getAllEvents from "../fetchers/events";
+import { getAllEvents } from "../fetchers/events";
 import CardEvent from "../components/CardEvent";
 import colors from "../styleConstants/colors";
 
@@ -43,7 +43,6 @@ const ProfileScreen = ({ navigation }) => {
   const fetchEvents = async () => {
     try {
       const events = await getAllEvents();
-      console.log('EVENTS:', events)
 
       if (user) {
         // Vérifie si `user` n'est pas nul
@@ -51,7 +50,6 @@ const ProfileScreen = ({ navigation }) => {
           (event) => event.user && event.user.token === token
         );
         setUserEvents(myEvents);
-        console.log(myEvents)
       }
     } catch (error) {
       console.error(error);
