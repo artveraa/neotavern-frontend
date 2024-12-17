@@ -90,7 +90,6 @@ const ProfileScreen = ({ navigation }) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        token
       }),
     })
       .then((response) => response.json()) // Conversion de la réponse en JSON
@@ -155,7 +154,7 @@ const ProfileScreen = ({ navigation }) => {
               ))}
         </ScrollView>
           )}
-        <TouchableOpacity style={styles.buttonDelete}>
+        <TouchableOpacity style={styles.buttonDelete} onPress={() => handleDeleteUser(token)}>
           <TextApp>Supprimer mon compte</TextApp>
         </TouchableOpacity>
       </View>
