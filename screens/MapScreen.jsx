@@ -1,6 +1,5 @@
-import React, { useRef, useState, useEffect, useCallback, use } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
-
 import {
   View,
   Text,
@@ -11,21 +10,18 @@ import {
 } from "react-native";
 import CardEvent from "../components/CardEvent";
 import HeaderSearch from "../components/SearchHeader";
-
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import BottomSheet, {
-  BottomSheetScrollView,
-  BottomSheetSectionList,
-} from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
-import getAllEvents from "../fetchers/events";
+import { getAllEvents, getLikedEvents, likeAnEvent } from "../fetchers/events";
 import { useFocusEffect } from "@react-navigation/native";
 import colors from "../styleConstants/colors";
 
 const MapScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.value);
   const token = user.user.token;
+  const userId = user.user.id;
 
   const types = [
     { label: "Concert" },
@@ -41,8 +37,7 @@ const MapScreen = ({ navigation }) => {
     { label: "Jeux" },
   ];
 
-  //LIKE
-  const [postLiked, setPostLiked] = useState(null);
+  const [likedEvents, setLikedEvents] = useState([]);
   const bottomSheetRef = useRef(null);
   const [region, setRegion] = useState(null);
   const [allEvents, setAllEvents] = useState(null);
@@ -73,14 +68,31 @@ const MapScreen = ({ navigation }) => {
   const fetchEvents = async () => {
     try {
       const events = await getAllEvents();
-      console.log('EVENTSSS:', events)
       setAllEvents(events);
     } catch (error) {
       console.error(error);
     }
   };
 
-  // Select types
+  const fetchLikedEvents = async () => {
+    try {
+      const response = await getLikedEvents(userId);
+      setLikedEvents(response.likedEvents.map((event) => event._id));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleLike = async (eventId) => {
+    try {
+      await likeAnEvent(token, eventId);
+      fetchEvents();
+      fetchLikedEvents();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleEventType = (type) => {
     if (selectedType.includes(type)) {
       setSelectedType(
@@ -101,30 +113,10 @@ const MapScreen = ({ navigation }) => {
     }
   };
 
-  // Reset types
   const handleReset = () => {
     setSelectedType([]);
     fetchEvents();
     openPanel();
-  };
-
-  // Like
-  const handleLike = async (eventId) => {
-    console.log(token);
-
-    try {
-      const response = await fetch(
-        `https://neotavern-backend.vercel.app/events/like/${token}/${eventId}`,
-        {
-          method: "POST",
-        }
-      );
-
-      const data = await response.json();
-      console.log(data);
-    } catch (error) {
-      console.error(error);
-    }
   };
 
   useEffect(() => {
@@ -133,24 +125,22 @@ const MapScreen = ({ navigation }) => {
     }
   }, [selectedType]);
 
-  //useFOCUS
   useFocusEffect(
     useCallback(() => {
       fetchEvents();
+      fetchLikedEvents();
       openPanel();
     }, [])
   );
 
   return (
     <GestureHandlerRootView style={styles.container}>
-
       <MapView
         style={StyleSheet.absoluteFillObject}
         setUserLocationEnabled={true}
         showsUserLocation={true}
         initialRegion={region}
       >
-
         {allEvents &&
           allEvents.map((event) => (
             <Marker
@@ -166,7 +156,7 @@ const MapScreen = ({ navigation }) => {
       </MapView>
 
       <SafeAreaView style={styles.searchbar}>
-        <HeaderSearch/>
+        <HeaderSearch />
       </SafeAreaView>
 
       <SafeAreaView style={styles.filters}>
@@ -216,8 +206,9 @@ const MapScreen = ({ navigation }) => {
                 <CardEvent
                   key={event._id}
                   event={event}
-                  handleLike={handleLike}
                   navigation={navigation}
+                  handleLike={handleLike}
+                  isLiked={likedEvents.includes(event._id)}
                 />
               ))}
         </BottomSheetScrollView>
@@ -255,7 +246,7 @@ const styles = StyleSheet.create({
   },
 
   searchbar: {
-    paddingHorizontal:24,
+    paddingHorizontal: 24,
     top: "6%",
     width: "100%",
   },

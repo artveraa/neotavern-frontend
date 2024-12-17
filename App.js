@@ -5,12 +5,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
-import SplashScreen from "./screens/SplashScreen";
 import WelcomeScreen from "./screens/WelcomeScreen";
 import EventScreen from "./screens/EventScreen";
-import LoginScreen from "./screens/LoginScreen";
-import RegisterScreen from "./screens/RegisterScreen";
-import HomeScreen from "./screens/HomeScreen";
 import BookmarkedScreen from "./screens/BookmarkedScreen";
 import MapScreen from "./screens/MapScreen";
 import AddEventScreen from "./screens/AddEventScreen";
@@ -98,15 +94,9 @@ export default function App() {
           initialRouteName="Welcome"
           screenOptions={{ headerShown: false }}
         >
-          {/* <Stack.Screen name="Splash" component={SplashScreen} /> */}
-          {/* <Stack.Screen name="MapScreen" component={MapScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Register" component={RegisterScreen} /> */}
-          {/* <Stack.Screen name="Home" component={HomeScreen}  /> */}
           <Stack.Screen name="Welcome" component={WelcomeScreen} />
           <Stack.Screen name="Event" component={EventScreen} />
           <Stack.Screen name="Place" component={PlaceScreen} />
-
           <Stack.Screen name="TabNavigator" component={TabNavigator} />
         </Stack.Navigator>
       </NavigationContainer>
