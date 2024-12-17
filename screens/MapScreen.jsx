@@ -124,6 +124,16 @@ const MapScreen = ({ navigation }) => {
     openPanel();
   };
 
+ 
+   // Search
+   // Selection de l'établissement dans la barre de recherche (récuperation de l'ID)
+   const handleSelectPlace = (placeId) => {
+      const filteredEvents = [...allEvents].filter((event) =>
+        event.place._id === placeId);
+      setAllEvents(filteredEvents)
+  };
+
+
   useEffect(() => {
     if (selectedType.length === 0) {
       fetchEvents();
@@ -236,7 +246,7 @@ const MapScreen = ({ navigation }) => {
       </MapView>
 
       <SafeAreaView style={styles.searchbar}>
-        <HeaderSearch
+        <HeaderSearch onSelectPlace={handleSelectPlace} onReset={handleReset}
           eventDay={eventDay}
           eventWeek={eventWeek}
           eventWeekend={eventWeekend}
