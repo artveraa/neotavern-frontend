@@ -38,7 +38,7 @@ const LoginUser = ({ navigation }) => {
             login({
               token: userData?.token,
               nickname: userData?.nickname,
-              email: userData?.nickname,
+              email: mail,
               likedEvents: userData?.likedEvents,
               role: userData?.role,
               id: userData?.id,
@@ -46,6 +46,7 @@ const LoginUser = ({ navigation }) => {
             })
           );
           navigation.navigate("TabNavigator", { screen: "MapScreen" });
+          console.log('email login:', userData.email)
         } else {
           setError(!error);
         }

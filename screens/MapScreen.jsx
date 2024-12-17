@@ -26,6 +26,7 @@ import colors from "../styleConstants/colors";
 const MapScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.value);
   const token = user.user.token;
+  console.log('EMAIL Reducer:', user.user.email)
 
   const types = [
     { label: "Concert" },
