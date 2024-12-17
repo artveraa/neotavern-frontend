@@ -12,10 +12,8 @@ const TagL = ({ children }) => {
 
 const styles = StyleSheet.create({
   tagBorder: {
-    paddingTop: 12,
-    paddingBottom: 12,
-    paddingLeft: 24,
-    paddingRight: 24,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
 
     width: "100%",
 

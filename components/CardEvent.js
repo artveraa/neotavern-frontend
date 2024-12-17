@@ -10,6 +10,8 @@ import {
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import TextApp from "../styleComponents/TextApp";
+import TextAppS from "../styleComponents/TextAppS";
 
 const CardEvent = ({ event, navigation, handleLike }) => {
   const user = useSelector((state) => state.user.value);
@@ -64,9 +66,9 @@ const CardEvent = ({ event, navigation, handleLike }) => {
             </TouchableOpacity>
           </View>
           <View style={styles.textContainer}>
-            <Text>{event?.place?.name}</Text>
+            <TextApp>{event?.place?.name}</TextApp>
             {event?.place?.name && <Text style={styles.separator}></Text>}
-            <Text>{event?.name}</Text>
+            <TextApp>{event?.name}</TextApp>
             <View style={styles.cardFooter}>
               <View style={styles.likes}>
                 <FontAwesome
@@ -74,7 +76,7 @@ const CardEvent = ({ event, navigation, handleLike }) => {
                   size={14}
                   style={isLiked ? { color: "#EDA0FF" } : { color: "#333" }}
                 />
-                <Text>{event?.likes}</Text>
+                <TextAppS>{event?.likes}</TextAppS>
               </View>
               <Text>{formatDate(event?.date)}</Text>
             </View>
