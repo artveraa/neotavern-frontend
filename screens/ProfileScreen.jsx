@@ -63,7 +63,7 @@ const ProfileScreen = ({ navigation }) => {
   );
   // console.log("recup des events:", userEvents);
 
-  const handleDelete = (eventId) => {
+  const handleDeleteEvent = (eventId) => {
     fetch(`https://neotavern-backend.vercel.app/events/deleteEvent/${token}`, {
       method: "DELETE",
       headers: {
@@ -76,9 +76,27 @@ const ProfileScreen = ({ navigation }) => {
       .then((response) => response.json()) // Conversion de la réponse en JSON
       .then((data) => {
         console.log("Tâche supprimée avec succès :", data);
-        console.log(eventId);
         fetchEvents();
-        // setUserEvents(prevEvents => prevEvents.filter(event => event._id !== eventId));
+      })
+      .catch((error) => {
+        console.error("Erreur:", error);
+      });
+  };
+
+  const handleDeleteUser = (token) => {
+    fetch(`https://neotavern-backend.vercel.app/users/deleteUser/${token}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token
+      }),
+    })
+      .then((response) => response.json()) // Conversion de la réponse en JSON
+      .then((data) => {
+        console.log("Utilisateur supprimé avec succès :", data);
+        navigation.navigate("Welcome");
       })
       .catch((error) => {
         console.error("Erreur:", error);
@@ -93,9 +111,9 @@ const ProfileScreen = ({ navigation }) => {
         <View style={styles.userInfo}>
           <TextApp>Surnom: {nickname}</TextApp>
           <TextApp>Email: {email}</TextApp>
-          <TouchableOpacity style={styles.buttonReset}>
+          {/* <TouchableOpacity style={styles.buttonReset}>
             <TextApp>Réinitialiser mon mot de passe</TextApp>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
       {/* <View style={styles.blockBadges}>
@@ -120,7 +138,7 @@ const ProfileScreen = ({ navigation }) => {
               .sort((a, b) => new Date(a.date) - new Date(b.date))
               .map((event) => (
                 <View key={event._id} style={styles.card}>
-                  <TouchableOpacity onPress={() => handleDelete(event._id)}>
+                  <TouchableOpacity onPress={() => handleDeleteEvent(event._id)}>
                     <FontAwesome
                       name="minus-circle"
                       size={20}
@@ -150,7 +168,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.light,
     color: colors.dark,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
     width: "100%",
     paddingRight: 28,
@@ -173,6 +191,8 @@ const styles = StyleSheet.create({
   },
   blockInfo: {
     justifyContent: "flex-start",
+    alignItems: 'center',
+    width: '100%',
     marginTop: 20,
     padding: 40,
     borderWidth: 0.3,
