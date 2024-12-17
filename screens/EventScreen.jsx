@@ -41,7 +41,6 @@ const EventScreen = ({ navigation, route }) => {
       return "Aujourd'hui";
     }
     const options = {
-      // weekday: "long",
       month: "numeric",
       day: "numeric",
     };

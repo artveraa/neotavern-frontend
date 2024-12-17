@@ -1,6 +1,5 @@
-import React, { useRef, useState, useEffect, useCallback, use } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
-
 import {
   View,
   Text,
@@ -11,15 +10,11 @@ import {
 } from "react-native";
 import CardEvent from "../components/CardEvent";
 import HeaderSearch from "../components/SearchHeader";
-
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import BottomSheet, {
-  BottomSheetScrollView,
-  BottomSheetSectionList,
-} from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
-import getAllEvents from "../fetchers/events";
+import { getAllEvents, getLikedEvents, likeAnEvent } from "../fetchers/events";
 import { useFocusEffect } from "@react-navigation/native";
 import colors from "../styleConstants/colors";
 import TextApp from "../styleComponents/TextApp";
@@ -27,6 +22,7 @@ import TextApp from "../styleComponents/TextApp";
 const MapScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.value);
   const token = user.user.token;
+  const userId = user.user.id;
 
   const types = [
     { label: "Concert" },
@@ -42,10 +38,7 @@ const MapScreen = ({ navigation }) => {
     { label: "Jeux" },
   ];
 
-  //LIKE
-  const [postLiked, setPostLiked] = useState(false);
-  const likedEvents = user.user.likedEvents;
-
+  const [likedEvents, setLikedEvents] = useState([]);
   const bottomSheetRef = useRef(null);
   const [region, setRegion] = useState(null);
   const [allEvents, setAllEvents] = useState(null);
@@ -86,29 +79,25 @@ const MapScreen = ({ navigation }) => {
     }
   };
 
-  // LIKed
-  const handleLike = (event_Id) => {
-    //ici le fetch event pour actualisé l'incrémentation du compteur like.
-    fetchEvents();
-    //-> je pousse les evenements likés dans le tableau likedEvents du user +
-    // je set un état en true (pour mettre en props pour le style)
-    fetch(
-      `http://neotavern-backend.vercel.app/events/like/${token}/${event_Id}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(),
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        if (data) {
-          setPostLiked(true);
-        }
-      });
+  const fetchLikedEvents = async () => {
+    try {
+      const response = await getLikedEvents(userId);
+      setLikedEvents(response.likedEvents.map((event) => event._id));
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  // Select types
+  const handleLike = async (eventId) => {
+    try {
+      await likeAnEvent(token, eventId);
+      fetchEvents();
+      fetchLikedEvents();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleEventType = (type) => {
     if (selectedType.includes(type)) {
       setSelectedType(
@@ -129,7 +118,6 @@ const MapScreen = ({ navigation }) => {
     }
   };
 
-  // Reset types
   const handleReset = () => {
     setSelectedType([]);
     fetchEvents();
@@ -218,11 +206,10 @@ const MapScreen = ({ navigation }) => {
 
   //   };
 
-  //useFOCUS
-
   useFocusEffect(
     useCallback(() => {
       fetchEvents();
+      fetchLikedEvents();
       openPanel();
     }, [])
   );
@@ -304,8 +291,9 @@ const MapScreen = ({ navigation }) => {
                 <CardEvent
                   key={event._id}
                   event={event}
-                  handleLike={handleLike}
                   navigation={navigation}
+                  handleLike={handleLike}
+                  isLiked={likedEvents.includes(event._id)}
                 />
               ))}
         </BottomSheetScrollView>

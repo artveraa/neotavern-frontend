@@ -26,7 +26,7 @@ const LoginUser = ({ navigation }) => {
   const [error, setError] = useState(false);
 
   const handleLoginUser = () => {
-    fetch('http://neotavern-backend.vercel.app/users/login', {
+    fetch("http://neotavern-backend.vercel.app/users/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ password: pass, email: mail }),
@@ -38,7 +38,7 @@ const LoginUser = ({ navigation }) => {
             login({
               token: userData?.token,
               nickname: userData?.nickname,
-              email: userData?.nickname,
+              email: mail,
               likedEvents: userData?.likedEvents,
               role: userData?.role,
               id: userData?.id,
