@@ -54,7 +54,7 @@ const MapScreen = ({ navigation }) => {
 
   const closePanel = () => {
     bottomSheetRef.current?.collapse();
-  };  
+  };
 
   //map
   useEffect(() => {
@@ -82,6 +82,7 @@ const MapScreen = ({ navigation }) => {
       console.error(error);
     }
   };
+
 
   const fetchLikedEvents = async () => {
     try {
@@ -131,7 +132,7 @@ const MapScreen = ({ navigation }) => {
   const handleClean = () => {
     setSelectedType([]);
     fetchEvents();
-  }
+  };
 
   // Search
   // Selection de l'établissement dans la barre de recherche (récuperation de l'ID)
@@ -142,6 +143,15 @@ const MapScreen = ({ navigation }) => {
     setAllEvents(filteredEvents);
   };
 
+  // Selection de l'evenement dans la barre de recherche (récuperation de l'ID)
+  const handleSelectEvent = (eventId) => {
+    const filteredEvents = [...allEvents].filter(
+      (event) => event._id === eventId
+    );
+    setAllEvents(filteredEvents);
+  };
+
+
   useEffect(() => {
     if (selectedType.length === 0) {
       fetchEvents();
@@ -150,37 +160,36 @@ const MapScreen = ({ navigation }) => {
 
   // Select Date
   const handleEventDate = (date) => {
-    const today = new Date()
+    const today = new Date();
     const startOfWeek = today.getDate() - today.getDay(); // Début
     const startOfWeekDate = new Date(today.setDate(startOfWeek)); // Début en cours
     const endOfWeekDate = new Date(today.setDate(startOfWeek + 6)); // Dimanche en cours
     const friday = new Date(today.setDate(startOfWeek + 4)); // Vendredi en cours
 
-        if (date === `Aujourd'hui`){
-            const filtered = [...allEvents].filter(event => {
-            const today = new Date()
-            const eventDate = new Date(event.date);
-            return eventDate.toDateString() === today.toDateString();
-            });
-            setFilteredDate(filtered);            
-        }else if (date === `Semaine`){
-            const filtered = [...allEvents].filter(event => {
-            const eventDate = new Date(event.date); 
-            return eventDate >= startOfWeekDate && eventDate <= endOfWeekDate;
-          });
-          setFilteredDate(filtered);
-        }else if(date === `Week-end`){
-          const filtered = [...allEvents].filter(event => {
-          const eventDate = new Date(event.date);
-          return eventDate >= friday && eventDate <= endOfWeekDate;
-          })
-          setFilteredDate(filtered);  // je mets un état avec tableau filtré
-        }else{
-          setFilteredDate(allEvents)
-        }
-        setAllEvents(filteredDate)
-      }
-
+    if (date === `Aujourd'hui`) {
+      const filtered = [...allEvents].filter((event) => {
+        const today = new Date();
+        const eventDate = new Date(event.date);
+        return eventDate.toDateString() === today.toDateString();
+      });
+      setFilteredDate(filtered);
+    } else if (date === `Semaine`) {
+      const filtered = [...allEvents].filter((event) => {
+        const eventDate = new Date(event.date);
+        return eventDate >= startOfWeekDate && eventDate <= endOfWeekDate;
+      });
+      setFilteredDate(filtered);
+    } else if (date === `Week-end`) {
+      const filtered = [...allEvents].filter((event) => {
+        const eventDate = new Date(event.date);
+        return eventDate >= friday && eventDate <= endOfWeekDate;
+      });
+      setFilteredDate(filtered); // je mets un état avec tableau filtré
+    } else {
+      setFilteredDate(allEvents);
+    }
+    setAllEvents(filteredDate);
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -213,8 +222,13 @@ const MapScreen = ({ navigation }) => {
       </MapView>
 
       <SafeAreaView style={styles.searchbar}>
-        <HeaderSearch onSelectPlace={handleSelectPlace} onReset={handleClean}
-          handleEventDate={handleEventDate} onClose={closePanel}
+        <HeaderSearch
+          onSelectPlace={handleSelectPlace}
+          onSelectEvent={handleSelectEvent}
+          onReset={handleClean}
+          handleEventDate={handleEventDate}
+          onClose={closePanel}
+          allEvents={allEvents}
         />
       </SafeAreaView>
 

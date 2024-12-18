@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   TextInput,
   SafeAreaView,
-  ScrollView
+  ScrollView,
 } from "react-native";
 import colors from "../styleConstants/colors";
 import TextApp from "../styleComponents/TextApp";
@@ -18,51 +18,58 @@ import TextAppBold from "../styleComponents/TextAppBold";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
 
-const HeaderSearch = ({
-  handleEventDate,
-  onSelectPlace,
-  onReset,
-  onClose
-}) => {
+const HeaderSearch = ({ handleEventDate, onSelectPlace, onSelectEvent, onReset, onClose, allEvents }) => {
   // const [search, setSearch] = useState("");
   const [dateActive, setDateActive] = useState(false);
   const [filterDate, setFilterDate] = useState("Date");
 
   const [placesList, setPlacesList] = useState([]);
   const [placesResult, setPlacesResult] = useState([]);
+  const [eventsResult, setEventsResult] = useState([]);
   const [placeSearch, setPlaceSearch] = useState("");
 
   const [filterDay, setFilterDay] = useState([]);
-  const [searchArea, setSearchArea] = useState(false)
-
 
   useEffect(() => {
-    fetch("https://neotavern-backend.vercel.app/places/allPlaces")
-      .then((response) => response.json())
-      .then((data) => {
-        setPlacesList(data.data);
-      });
-  }, []);
+    setPlacesList(allEvents);
+  }, [allEvents]);
 
   const handleSearch = (text) => {
     setPlaceSearch(text);
 
     if (text === "") {
       setPlacesResult([]);
+      setEventsResult([]);
+      onReset();
       return;
     }
 
-    const filteredPlaces = placesList.filter((place) => {
-      return place.name.toLowerCase().includes(text.toLowerCase());
+    const filteredPlaces = allEvents.filter((place) => {
+      return place.place.name.toLowerCase().includes(text.toLowerCase());
     });
 
     setPlacesResult(filteredPlaces);
+
+    const filteredEvents = allEvents.filter((event) => {
+      return event.name.toLowerCase().includes(text.toLowerCase());
+    });
+
+    setEventsResult(filteredEvents);
   };
+
 
   const chooseResult = (placeName, placeId) => {
     setPlaceSearch(placeName);
     setPlacesResult([]);
+    setEventsResult([]);
     onSelectPlace(placeId);
+  };
+
+  const chooseEvent = (eventName, eventId) => {
+    setPlaceSearch(eventName);
+    setEventsResult([]);
+    setPlacesResult([]);
+    onSelectEvent(eventId);
   };
 
   const handleDate = () => {
@@ -76,51 +83,42 @@ const HeaderSearch = ({
   };
 
   //
-  handleFilterDate = (date) =>{
-    handleEventDate(date)
+  handleFilterDate = (date) => {
+    handleEventDate(date);
     setDateActive(!dateActive);
     setFilterDate(date);
-    if(filterDate === date){
-    
-      setFilterDate('Date');
+    if (filterDate === date) {
+      setFilterDate("Date");
     }
-  }
+  };
 
   const searchPlace = () => {
-    onClose()
-  }
-  
+    onClose();
+  };
+
   return (
     <View style={styles.borderStyle}>
       <View style={styles.contentSearch}>
-        {/* <View style={styles.wrap}>
+        <View style={styles.searchSection}>
           <FontAwesome name="search" size={24} color="#EDA0FF" />
           <TextInput
-          placeholder="Quoi de prévu par ici ?"
-          onChangeText={(value) => setSearch(value)}
-          value={search}
+            placeholder="Quoi de neuf aujourd'hui ?"
+            style={styles.input}
+            value={placeSearch}
+            onChangeText={handleSearch}
+            onPress={() => searchPlace()}
           />
-          </View> */}
-          <View style={styles.searchSection}>
-            <FontAwesome name="search" size={24} color="#EDA0FF" />
-            <TextInput
-              placeholder="Rechercher un établissement"
-              style={styles.input}
-              value={placeSearch}
-              onChangeText={handleSearch}
-              onPress={ () => searchPlace()}
-              />
-          </View>
-            {!placeSearch ? (
-              <></>
-            ) : (
-              <FontAwesome
-              name="close"
-              size={20}
-              color="#EDA0FF"
-              onPress={() => handleDelete()}
-              />
-            )}
+        </View>
+        {!placeSearch ? (
+          <></>
+        ) : (
+          <FontAwesome
+            name="close"
+            size={20}
+            color="#EDA0FF"
+            onPress={() => handleDelete()}
+          />
+        )}
 
         <View>
           <TextApp>
@@ -136,29 +134,55 @@ const HeaderSearch = ({
           <TextApp>{filterDate}</TextApp>
         </TouchableOpacity>
       </View>
-      
+
       <ScrollView style={styles.scrollSearch}>
-      {placesResult.length > 0 && (
-        <View style={styles.resultsList}>
-          {placesResult.map((place) => (
-           <View style={styles.etablissement}>
-            <Text
-            style={styles.resultItem}
-            onPress={() => chooseResult(place.name, place._id)}
-            key={place._id}
-            >
-           <FontAwesome
-            name="map-marker"
-            size={20}
-            color="#EDA0FF"
-            onPress={() => handleDelete()}
-            />
-              {'  '}{place.name}
-            </Text>
-           </View>
-          ))}
-        </View>
-      )}
+        {placesResult.length > 0 && (
+          <View style={styles.resultsList}>
+            <TextAppBold>Etablissements:</TextAppBold>
+            {placesResult.map((place) => (
+              <View style={styles.etablissement} key={place._id}>
+                <TouchableOpacity onPress={() => chooseResult(place.place.name, place.place._id)}  >  
+                <TextApp
+                  style={styles.resultItem}
+                >
+                  
+                  <FontAwesome
+                    name="map-marker"
+                    size={20}
+                    color={colors.purple}
+                    onPress={() => handleDelete()}
+                  />
+                  {"  "}
+                  {place.place.name}
+                </TextApp>
+                  </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+        )}
+        {eventsResult.length > 0 && (
+          <View style={styles.resultsList}>
+            <TextAppBold>Evenements:</TextAppBold>
+            {eventsResult.map((event) => (
+              <View style={styles.etablissement} key={event._id}>
+                <TouchableOpacity onPress={() => chooseEvent(event.name, event._id)}>
+                <TextApp
+                  style={styles.resultItem}
+                >
+                  <FontAwesome
+                    name="ticket"
+                    size={20}
+                    color={colors.blue}
+                    onPress={() => handleDelete()}
+                  />
+                  {"  "}
+                  {event.name}
+                </TextApp>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+        )}
       </ScrollView>
 
       {dateActive && (
@@ -173,7 +197,7 @@ const HeaderSearch = ({
 
           <TouchableOpacity
             style={styles.tagBorder}
-            onPress={() => handleFilterDate('Semaine')}
+            onPress={() => handleFilterDate("Semaine")}
           >
             <FontAwesome name="calendar-check-o" size={24} color="#EDA0FF" />
             <TextAppS>Semaine</TextAppS>
@@ -248,19 +272,20 @@ const styles = StyleSheet.create({
     borderColor: "#333",
     backgroundColor: colors.light,
     borderRadius: 15,
-
   },
   resultItem: {
     padding: 10,
   },
   scrollSearch: {
-    borderRadius: 15
+    borderRadius: 15,
   },
   etablissement: {
+    paddingTop: 8,
+    paddingBottom: 8
   },
   searchSection: {
     flexDirection: "row",
-    alignItems: 'center',
+    alignItems: "center",
     width: "65%",
   },
   input: {
