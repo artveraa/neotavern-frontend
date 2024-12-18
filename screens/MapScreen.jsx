@@ -12,7 +12,8 @@ import CardEvent from "../components/CardEvent";
 import HeaderSearch from "../components/SearchHeader";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import MapView from "react-native-map-clustering";
+// import MapView from "react-native-map-clustering";
+import MapView from "react-native-maps";
 import { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { getAllEvents, getLikedEvents, likeAnEvent } from "../fetchers/events";
@@ -101,8 +102,6 @@ const MapScreen = ({ navigation }) => {
 
   // Date filter
 
-  const [activeDateFilter, setActiveDateFilter] = useState(null); // Nouvel état pour suivre le filtre actif
-
   const handleEventDate = async (dateFilter) => {
     try {
       if (!dateFilter) {
@@ -187,6 +186,12 @@ const MapScreen = ({ navigation }) => {
     setAllEvents(filteredEvents);
   };
 
+  const goToEventPage = (event) => {
+    navigation.push("Event", {
+      event,
+    });
+  };
+
   useEffect(() => {
     if (selectedType.length === 0) {
       fetchEvents();
@@ -206,10 +211,14 @@ const MapScreen = ({ navigation }) => {
       {region ? (
         <MapView
           style={StyleSheet.absoluteFillObject}
-          setUserLocationEnabled={true}
           showsUserLocation={true}
-          initialRegion={region}
-          animationEnabled={false}
+          // clusterColor={colors.purpleBorder}
+          initialRegion={{
+            latitude: region.latitude,
+            longitude: region.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
         >
           {allEvents &&
             allEvents.map((event) => (
@@ -222,6 +231,7 @@ const MapScreen = ({ navigation }) => {
                 title={event.name}
                 description={event.place.name}
                 color={colors.darkGreen}
+                onPress={() => goToEventPage(event)}
               />
             ))}
         </MapView>
@@ -282,6 +292,7 @@ const MapScreen = ({ navigation }) => {
         <BottomSheetScrollView style={styles.scrollContainer}>
           {allEvents && allEvents.length > 0 ? (
             allEvents
+              // .filter((event) => new Date(event.date) >= new Date())
               .sort((a, b) => new Date(a.date) - new Date(b.date))
               .map((event) => (
                 <CardEvent
@@ -293,7 +304,9 @@ const MapScreen = ({ navigation }) => {
                 />
               ))
           ) : (
-            <TextApp>Aucun événement trouvé</TextApp>
+            <View style={styles.noEvents}>
+              <TextApp>Aucun événement trouvé</TextApp>
+            </View>
           )}
         </BottomSheetScrollView>
       </BottomSheet>
@@ -359,6 +372,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     height: "100%",
+  },
+
+  noEvents: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
