@@ -43,7 +43,7 @@ const MapScreen = ({ navigation }) => {
   const [region, setRegion] = useState(null);
   const [allEvents, setAllEvents] = useState(null);
   const [selectedType, setSelectedType] = useState([]);
-  const [selectedDate, setSelectedDate] = useState([]);
+  const [filteredDate, setFilteredDate] = useState([]);
 
   const snapPoints = ["20%", "68%"];
 
@@ -140,79 +140,38 @@ const MapScreen = ({ navigation }) => {
   }, [selectedType]);
 
   // Select Date
-  const today = new Date();
-  const startOfWeek = today.getDate() - today.getDay(); // Début de semaine
-  const startOfWeekDate = new Date(today.setDate(startOfWeek)); // Début de la semaine en cours
-  const endOfWeekDate = new Date(today.setDate(startOfWeek + 6)); // Dimanche de la semaine en cours
-  const friday = new Date(today.setDate(startOfWeek + 4)); // Vendredi de la semaine en cours
+  const handleEventDate = (date) => {
+    const today = new Date()
+    const startOfWeek = today.getDate() - today.getDay(); // Début
+    const startOfWeekDate = new Date(today.setDate(startOfWeek)); // Début en cours
+    const endOfWeekDate = new Date(today.setDate(startOfWeek + 6)); // Dimanche en cours
+    const friday = new Date(today.setDate(startOfWeek + 4)); // Vendredi en cours
 
-  //by day
-  const eventDay = () => {
-    const today = new Date();
-    const filtered = allEvents.filter((event) => {
-      const eventDate = new Date(event.date); //date events filtrés
-      return eventDate.toDateString() === today.toDateString();
-    });
-    openPanel();
-    setAllEvents(filtered);
-  };
-  //by week
-  const eventWeek = () => {
-    const filtered = [...allEvents].filter((event) => {
-      const eventDate = new Date(event.date); //date de.s l'event.s filtrés
-      return eventDate >= startOfWeekDate && eventDate <= endOfWeekDate;
-    });
-    openPanel();
-    setAllEvents(filtered);
-  };
-  //by weekend
-  const eventWeekend = () => {
-    handleReset;
+        if (date === `Aujourd'hui`){
+            const filtered = [...allEvents].filter(event => {
+            const today = new Date()
+            const eventDate = new Date(event.date);
+            return eventDate.toDateString() === today.toDateString();
+            });
+            setFilteredDate(filtered);            
+        }else if (date === `Semaine`){
+            const filtered = [...allEvents].filter(event => {
+            const eventDate = new Date(event.date); 
+            return eventDate >= startOfWeekDate && eventDate <= endOfWeekDate;
+          });
+          setFilteredDate(filtered);
+        }else if(date === `Week-end`){
+          const filtered = [...allEvents].filter(event => {
+          const eventDate = new Date(event.date);
+          return eventDate >= friday && eventDate <= endOfWeekDate;
+          })
+          setFilteredDate(filtered);  // je mets un état avec tableau filtré
+        }else{
+          setFilteredDate(allEvents)
+        }
+        setAllEvents(filteredDate)
+      }
 
-    const filtered = allEvents.filter((event) => {
-      const eventDate = new Date(event.date); //date de.s l'event.s filtrés
-      return eventDate >= friday && eventDate <= endOfWeekDate;
-    });
-    openPanel();
-    setAllEvents(filtered);
-  };
-  //
-  //=====> WITH SWITCH => penser à changer la props avec handleEventDate de {searchHeader}
-  //
-  // const handleEventDate = (condition) => {
-  //     switch (condition) {
-  //       case 'today':
-  //           const today = new Date()
-  //           const filteredDay = [...allEvents].filter(event => {
-  //           const eventDate = new Date(event.date); //date de.s l'event.s filtrés
-  //           return eventDate.toDateString() === today.toDateString();
-  //         });
-  //         openPanel();
-  //         setAllEvents(filteredDay);  // je mets à jour avec les events filtrés
-  //         break;
-
-  //       case 'week':
-  //         const filteredWeek = [...allEvents].filter(event => {
-  //           const eventDate = new Date(event.date); //date de.s l'event.s filtrés
-  //           return eventDate >= startOfWeekDate && eventDate <= endOfWeekDate;
-  //         });
-  //         openPanel();
-  //         console.log("filteredWeek", filteredWeek.length)
-  //          setAllEvents(filteredWeek );  // je mets à jour avec les events filtrés
-  //         break;
-
-  //         case 'weekend':
-  //           const filteredWeekend = [...allEvents].filter(event => {
-  //           const eventDate = new Date(event.date); //date de.s l'event.s filtrés
-  //           return eventDate >= friday && eventDate <= endOfWeekDate;
-  //         });
-  //         openPanel();
-  //         setAllEvents(filteredWeekend);  // je mets à jour avec les events filtrés
-  //         console.log('all events filtered to weekend only', allEvents.length)
-  //         break;
-  //     }
-
-  //   };
 
   useFocusEffect(
     useCallback(() => {
@@ -245,12 +204,8 @@ const MapScreen = ({ navigation }) => {
       </MapView>
 
       <SafeAreaView style={styles.searchbar}>
-        <HeaderSearch
-          onSelectPlace={handleSelectPlace}
-          onReset={handleReset}
-          eventDay={eventDay}
-          eventWeek={eventWeek}
-          eventWeekend={eventWeekend}
+        <HeaderSearch onSelectPlace={handleSelectPlace} onReset={handleReset}
+          handleEventDate={handleEventDate}
         />
       </SafeAreaView>
 
