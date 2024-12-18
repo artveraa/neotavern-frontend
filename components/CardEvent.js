@@ -13,13 +13,7 @@ import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import TextApp from "../styleComponents/TextApp";
 
-const CardEvent = ({
-  event,
-  navigation,
-  handleLike,
-  isLiked,
-  inBookmarkedScreen,
-}) => {
+const CardEvent = ({ event, navigation, handleLike, isLiked }) => {
   const user = useSelector((state) => state.user.value);
 
   // navigation -> avec route de paramêtres à pousser
@@ -61,7 +55,7 @@ const CardEvent = ({
               <FontAwesome
                 name="heart"
                 size={15}
-                color={isLiked || inBookmarkedScreen ? "red" : "#EDA0FF"}
+                color={isLiked ? "red" : "#EDA0FF"}
               />
             </TouchableOpacity>
           </View>
