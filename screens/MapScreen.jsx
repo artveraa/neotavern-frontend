@@ -321,9 +321,10 @@ const styles = StyleSheet.create({
   },
 
   searchbar: {
-    paddingHorizontal: 12,
+    position: "relative",
     top: "6%",
     width: "100%",
+    padding: 10,
   },
 
   filters: {

@@ -24,7 +24,6 @@ const HeaderSearch = ({ onSelectPlace, onReset, onFilterDate }) => {
   const [placesResult, setPlacesResult] = useState([]);
   const [placeSearch, setPlaceSearch] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
-  const [dateInfo, setDateInfo] = useState("Date");
 
   useEffect(() => {
     fetch("https://neotavern-backend.vercel.app/places/allPlaces")
@@ -69,30 +68,12 @@ const HeaderSearch = ({ onSelectPlace, onReset, onFilterDate }) => {
     } else {
       setSelectedDate(date);
       onFilterDate(date);
-      setDateActive(!dateActive);
-
-      if (date === "today") {
-        setDateInfo("Aujourd'hui");
-      } else if (date === "week") {
-        setDateInfo("Cette semaine");
-      } else if (date === "weekend") {
-        setDateInfo("Ce week-end");
-      }
     }
   };
 
   return (
     <View style={styles.borderStyle}>
       <View style={styles.contentSearch}>
-        {/* <View style={styles.wrap}>
-          <FontAwesome name="search" size={24} color="#EDA0FF" />
-          <TextInput
-            placeholder="Quoi de prévu par ici ?"
-            onChangeText={(value) => setSearch(value)}
-            value={search}
-          />
-        </View> */}
-
         <View style={styles.wrap}>
           <FontAwesome name="search" size={24} color="#EDA0FF" />
           <TextInput
@@ -132,7 +113,7 @@ const HeaderSearch = ({ onSelectPlace, onReset, onFilterDate }) => {
           style={styles.btnDate}
           onPress={() => setDateActive(!dateActive)}
         >
-          <TextApp>{dateInfo}</TextApp>
+          <TextApp>Date</TextApp>
         </TouchableOpacity>
       </View>
 
@@ -210,17 +191,19 @@ const styles = StyleSheet.create({
   borderStyle: {
     backgroundColor: colors.light,
     borderColor: colors.dark,
-
-    width: "100%",
     borderWidth: 1,
     borderRadius: 15,
+    marginHorizontal: 10,
   },
   contentSearch: {
+    display: "flex",
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
     height: 70,
-
+    width: "100%",
+    // marginHorizontal: 12,
+    // backgroundColor: "red",
     paddingHorizontal: 12,
   },
   wrap: {
@@ -228,6 +211,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "65%",
   },
+
   separator: {
     height: 28,
     width: 1,
