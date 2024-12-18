@@ -17,7 +17,7 @@ import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import TextApp from "../styleComponents/TextApp";
 import TextAppBold from "../styleComponents/TextAppBold";
 import TextAppTitle from "../styleComponents/TextAppTitle";
-import getAllEvents from "../fetchers/events";
+import { getAllEvents } from "../fetchers/events";
 import CardEvent from "../components/CardEvent";
 import colors from "../styleConstants/colors";
 
