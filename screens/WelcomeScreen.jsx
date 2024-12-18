@@ -37,90 +37,80 @@ const WelcomeScreen = ({ navigation }) => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
-        <Image source={require("../assets/logo.png")} style={styles.logo} />
+      <Image source={require("../assets/logo.png")} style={styles.logo} />
 
-        {!resgisterForm && (
-          <View style={styles.btnContainer}>
-            <TouchableOpacity
-              style={styles.btnPrimary}
-              onPress={() => navigation.navigate("TabNavigator")}
-            >
-              <Image
-                source={require("../assets/GoogleLogo.png")}
-                style={styles.logoG}
-              />
-              <TextApp style={[styles.l, styles.dark, styles.labelBtn]}>
-                Se connecter avec Google
-              </TextApp>
-            </TouchableOpacity>
+      {!resgisterForm && (
+        <View style={styles.btnContainer}>
+          <TouchableOpacity
+            style={styles.btnPrimary}
+            onPress={() => navigation.navigate("TabNavigator")}
+          >
+            <Image
+              source={require("../assets/GoogleLogo.png")}
+              style={styles.logoG}
+            />
+            <TextApp style={[styles.l, styles.dark, styles.labelBtn]}>
+              Se connecter avec Google
+            </TextApp>
+          </TouchableOpacity>
 
-            {loginForm ? (
-              <>
-                <LoginUser navigation={navigation} />
+          {loginForm ? (
+            <>
+              <LoginUser navigation={navigation} />
 
-                <TouchableOpacity
-                  style={styles.back}
-                  onPress={() => handleLoginForm()}
-                >
-                  <TextApp style={[styles.s, styles.dark, styles.labelBtn]}>
-                    &lt; retour
-                  </TextApp>
-                </TouchableOpacity>
-              </>
-            ) : (
               <TouchableOpacity
-                style={styles.btnPrimary}
+                style={styles.back}
                 onPress={() => handleLoginForm()}
               >
-                <TextApp style={[styles.l, styles.dark, styles.labelBtn]}>
-                  Se connecter avec son compte
+                <TextApp style={[styles.s, styles.dark, styles.labelBtn]}>
+                  &lt; retour
                 </TextApp>
               </TouchableOpacity>
-            )}
-          </View>
-        )}
-        {!loginForm && (
-          <View style={styles.btnContainer}>
-            <View style={styles.straight}></View>
-            <TextApp
-              style={[styles.s, styles.center, styles.dark, styles.labelBtn]}
+            </>
+          ) : (
+            <TouchableOpacity
+              style={styles.btnPrimary}
+              onPress={() => handleLoginForm()}
             >
-              Pas encore inscrit ?
-            </TextApp>
-            {resgisterForm ? (
-              <>
-                <RegisterUser navigation={navigation} />
-                <TouchableOpacity
-                  style={styles.back}
-                  onPress={() => handleSignupForm()}
-                >
-                  <TextApp style={[styles.s, styles.dark, styles.labelBtn]}>
-                    &lt; retour
-                  </TextApp>
-                </TouchableOpacity>
-              </>
-            ) : (
+              <TextApp style={[styles.l, styles.dark, styles.labelBtn]}>
+                Se connecter avec son compte
+              </TextApp>
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
+      {!loginForm && (
+        <View style={styles.btnContainer}>
+          <View style={styles.straight}></View>
+          <TextApp
+            style={[styles.s, styles.center, styles.dark, styles.labelBtn]}
+          >
+            Pas encore inscrit ?
+          </TextApp>
+          {resgisterForm ? (
+            <>
+              <RegisterUser navigation={navigation} />
               <TouchableOpacity
-                style={styles.btnSecondary}
+                style={styles.back}
                 onPress={() => handleSignupForm()}
               >
-                <TextApp style={[styles.l, styles.dark, styles.labelBtn]}>
-                  Créer un compte
+                <TextApp style={[styles.s, styles.dark, styles.labelBtn]}>
+                  &lt; retour
                 </TextApp>
               </TouchableOpacity>
-            )}
+            </>
+          ) : (
             <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("TabNavigator", {
-                  screen: "MapScreen",
-                })
-              }
+              style={styles.btnSecondary}
+              onPress={() => handleSignupForm()}
             >
-              <Text>Accéder à la map</Text>
+              <TextApp style={[styles.l, styles.dark, styles.labelBtn]}>
+                Créer un compte
+              </TextApp>
             </TouchableOpacity>
-          </View>
-        )}
-        
+          )}
+        </View>
+      )}
     </KeyboardAvoidingView>
   );
 };
@@ -131,7 +121,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.light,
     color: colors.dark,
     justifyContent: "center",
-    gap: '8%',
+    gap: "8%",
     alignItems: "center",
     width: "100%",
     paddingRight: 28,
