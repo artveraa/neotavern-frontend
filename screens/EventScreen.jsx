@@ -118,7 +118,7 @@ const EventScreen = ({ navigation, route }) => {
 
           <View>
             <TextAppBold>{event?.hour}</TextAppBold>
-            <TextApp></TextApp>
+            <TextApp>{event?.description}</TextApp>
           </View>
 
           <View style={styles.tagWrap}>
