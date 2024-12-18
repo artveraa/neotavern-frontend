@@ -24,6 +24,7 @@ const HeaderSearch = ({ onSelectPlace, onReset, onFilterDate }) => {
   const [placesResult, setPlacesResult] = useState([]);
   const [placeSearch, setPlaceSearch] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
+  const [dateInfo, setDateInfo] = useState("Date");
 
   useEffect(() => {
     fetch("https://neotavern-backend.vercel.app/places/allPlaces")
@@ -68,6 +69,15 @@ const HeaderSearch = ({ onSelectPlace, onReset, onFilterDate }) => {
     } else {
       setSelectedDate(date);
       onFilterDate(date);
+      setDateActive(!dateActive);
+
+      if (date === "today") {
+        setDateInfo("Aujourd'hui");
+      } else if (date === "week") {
+        setDateInfo("Cette semaine");
+      } else if (date === "weekend") {
+        setDateInfo("Ce week-end");
+      }
     }
   };
 
@@ -122,7 +132,7 @@ const HeaderSearch = ({ onSelectPlace, onReset, onFilterDate }) => {
           style={styles.btnDate}
           onPress={() => setDateActive(!dateActive)}
         >
-          <TextApp>Date</TextApp>
+          <TextApp>{dateInfo}</TextApp>
         </TouchableOpacity>
       </View>
 
