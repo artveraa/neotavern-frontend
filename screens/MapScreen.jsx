@@ -124,15 +124,14 @@ const MapScreen = ({ navigation }) => {
     openPanel();
   };
 
- 
-   // Search
-   // Selection de l'établissement dans la barre de recherche (récuperation de l'ID)
-   const handleSelectPlace = (placeId) => {
-      const filteredEvents = [...allEvents].filter((event) =>
-        event.place._id === placeId);
-      setAllEvents(filteredEvents)
+  // Search
+  // Selection de l'établissement dans la barre de recherche (récuperation de l'ID)
+  const handleSelectPlace = (placeId) => {
+    const filteredEvents = [...allEvents].filter(
+      (event) => event.place._id === placeId
+    );
+    setAllEvents(filteredEvents);
   };
-
 
   useEffect(() => {
     if (selectedType.length === 0) {
@@ -246,7 +245,9 @@ const MapScreen = ({ navigation }) => {
       </MapView>
 
       <SafeAreaView style={styles.searchbar}>
-        <HeaderSearch onSelectPlace={handleSelectPlace} onReset={handleReset}
+        <HeaderSearch
+          onSelectPlace={handleSelectPlace}
+          onReset={handleReset}
           eventDay={eventDay}
           eventWeek={eventWeek}
           eventWeekend={eventWeekend}
@@ -303,7 +304,6 @@ const MapScreen = ({ navigation }) => {
                   navigation={navigation}
                   handleLike={handleLike}
                   isLiked={likedEvents.includes(event._id)}
-                  inBookmarkedScreen={false}
                 />
               ))}
         </BottomSheetScrollView>

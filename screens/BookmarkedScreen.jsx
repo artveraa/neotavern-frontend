@@ -83,8 +83,7 @@ const BookmarkedScreen = ({ navigation }) => {
                   event={event}
                   navigation={navigation}
                   handleLike={handleLike}
-                  inBookmarkedScreen={true}
-                  // isLiked={likedEvents.some((e) => e._id === event._id)}
+                  isLiked={true}
                 />
               ))}
         </ScrollView>
