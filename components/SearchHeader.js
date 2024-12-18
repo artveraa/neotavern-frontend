@@ -17,21 +17,13 @@ import TextAppBold from "../styleComponents/TextAppBold";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
 
-const HeaderSearch = ({
-  handleEventDate,
-  onSelectPlace,
-  onReset,
-}) => {
+const HeaderSearch = ({ onSelectPlace, onReset, onFilterDate }) => {
   // const [search, setSearch] = useState("");
   const [dateActive, setDateActive] = useState(false);
-  const [filterDate, setFilterDate] = useState("Date");
-
   const [placesList, setPlacesList] = useState([]);
   const [placesResult, setPlacesResult] = useState([]);
   const [placeSearch, setPlaceSearch] = useState("");
-
-  const [filterDay, setFilterDay] = useState([]);
-
+  const [selectedDate, setSelectedDate] = useState(null);
 
   useEffect(() => {
     fetch("https://neotavern-backend.vercel.app/places/allPlaces")
@@ -62,10 +54,6 @@ const HeaderSearch = ({
     onSelectPlace(placeId);
   };
 
-  const handleDate = () => {
-    setDateActive(!dateActive);
-  };
-
   // reset la recherche d'établissement sur mapscreen
   const handleDelete = () => {
     onReset();
@@ -73,16 +61,16 @@ const HeaderSearch = ({
   };
 
   //
-  handleFilterDate = (date) =>{
-    handleEventDate(date)
-    setDateActive(!dateActive);
-    setFilterDate(date);
-    if(filterDate === date){
-    
-      setFilterDate('Date');
+  const handleFilterDate = (date) => {
+    if (selectedDate === date) {
+      setSelectedDate(null);
+      onFilterDate(null);
+    } else {
+      setSelectedDate(date);
+      onFilterDate(date);
     }
-  }
-  
+  };
+
   return (
     <View style={styles.borderStyle}>
       <View style={styles.contentSearch}>
@@ -128,45 +116,78 @@ const HeaderSearch = ({
           />
         )}
 
-        <View>
-          <TextApp>
-            {filterDate != `Date` && (
-              <FontAwesome name="refresh" size={18} color="#D9D9D9" />
-            )}
-          </TextApp>
-        </View>
-
         <View style={styles.separator}></View>
 
-        <TouchableOpacity style={styles.btnDate} onPress={() => handleDate()}>
-          <TextApp>{filterDate}</TextApp>
+        <TouchableOpacity
+          style={styles.btnDate}
+          onPress={() => setDateActive(!dateActive)}
+        >
+          <TextApp>Date</TextApp>
         </TouchableOpacity>
       </View>
 
       {dateActive && (
         <View style={styles.tagWrap}>
           <TouchableOpacity
-            style={styles.tagBorder}
-            onPress={() => handleFilterDate(`Aujourd'hui`)}
+            style={[
+              styles.tagBorder,
+              selectedDate === "today" && styles.activeDateFilter,
+            ]}
+            onPress={() => handleFilterDate("today")}
           >
             <FontAwesome name="calendar-check-o" size={24} color="#EDA0FF" />
+            {selectedDate === "today" && (
+              <View style={styles.checkIconWrapper}>
+                <FontAwesome
+                  name="check"
+                  style={styles.checkIcon}
+                  size={15}
+                  color="#F5F5F5"
+                />
+              </View>
+            )}
             <TextAppS>Aujourd'hui</TextAppS>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.tagBorder}
-            onPress={() => handleFilterDate('Semaine')}
+            style={[
+              styles.tagBorder,
+              selectedDate === "week" && styles.activeDateFilter,
+            ]}
+            onPress={() => handleFilterDate("week")}
           >
             <FontAwesome name="calendar-check-o" size={24} color="#EDA0FF" />
+            {selectedDate === "week" && (
+              <View style={styles.checkIconWrapper}>
+                <FontAwesome
+                  name="check"
+                  style={styles.checkIcon}
+                  size={15}
+                  color="#F5F5F5"
+                />
+              </View>
+            )}
             <TextAppS>Semaine</TextAppS>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.tagBorder}
-            onPress={() => handleFilterDate(`Week-end`)}
+            style={[
+              styles.tagBorder,
+              selectedDate === "weekend" && styles.activeDateFilter,
+            ]}
+            onPress={() => handleFilterDate("weekend")}
           >
             <FontAwesome name="calendar-check-o" size={24} color="#EDA0FF" />
-
+            {selectedDate === "weekend" && (
+              <View style={styles.checkIconWrapper}>
+                <FontAwesome
+                  name="check"
+                  style={styles.checkIcon}
+                  size={15}
+                  color="#F5F5F5"
+                />
+              </View>
+            )}
             <TextAppS>Week-end</TextAppS>
           </TouchableOpacity>
         </View>
@@ -213,8 +234,11 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   tagBorder: {
+    display: "flex",
+    justifyContent: "center",
     alignItems: "center",
     gap: 4,
+    aspectRatio: 1,
 
     paddingVertical: 16,
     paddingHorizontal: 12,
@@ -223,6 +247,23 @@ const styles = StyleSheet.create({
     borderColor: colors.dark,
     borderWidth: 1,
     borderRadius: 15,
+  },
+
+  activeDateFilter: {
+    borderColor: "#EDA0FF",
+  },
+
+  checkIconWrapper: {
+    backgroundColor: "#EDA0FF",
+    borderRadius: "100%",
+    width: 20,
+    height: 20,
+    position: "absolute",
+    right: -5,
+    top: -5,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
