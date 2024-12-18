@@ -18,9 +18,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
 
 const HeaderSearch = ({
-  eventDay,
-  eventWeek,
-  eventWeekend,
+  handleEventDate,
   onSelectPlace,
   onReset,
 }) => {
@@ -31,6 +29,9 @@ const HeaderSearch = ({
   const [placesList, setPlacesList] = useState([]);
   const [placesResult, setPlacesResult] = useState([]);
   const [placeSearch, setPlaceSearch] = useState("");
+
+  const [filterDay, setFilterDay] = useState([]);
+
 
   useEffect(() => {
     fetch("https://neotavern-backend.vercel.app/places/allPlaces")
@@ -71,22 +72,17 @@ const HeaderSearch = ({
     setPlaceSearch("");
   };
 
-  const handleClickDay = () => {
-    eventDay();
+  //
+  handleFilterDate = (date) =>{
+    handleEventDate(date)
     setDateActive(!dateActive);
-    setFilterDate(`Aujourd'hui`);
-  };
-  const handleClickWeek = () => {
-    eventWeek();
-    setDateActive(!dateActive);
-    setFilterDate(`Semaine`);
-  };
-  const handleClickWeekend = () => {
-    eventWeekend();
-    setDateActive(!dateActive);
-    setFilterDate(`Week-end`);
-  };
-
+    setFilterDate(date);
+    if(filterDate === date){
+    
+      setFilterDate('Date');
+    }
+  }
+  
   return (
     <View style={styles.borderStyle}>
       <View style={styles.contentSearch}>
@@ -151,7 +147,7 @@ const HeaderSearch = ({
         <View style={styles.tagWrap}>
           <TouchableOpacity
             style={styles.tagBorder}
-            onPress={() => handleClickDay()}
+            onPress={() => handleFilterDate(`Aujourd'hui`)}
           >
             <FontAwesome name="calendar-check-o" size={24} color="#EDA0FF" />
             <TextAppS>Aujourd'hui</TextAppS>
@@ -159,7 +155,7 @@ const HeaderSearch = ({
 
           <TouchableOpacity
             style={styles.tagBorder}
-            onPress={() => handleClickWeek()}
+            onPress={() => handleFilterDate('Semaine')}
           >
             <FontAwesome name="calendar-check-o" size={24} color="#EDA0FF" />
             <TextAppS>Semaine</TextAppS>
@@ -167,7 +163,7 @@ const HeaderSearch = ({
 
           <TouchableOpacity
             style={styles.tagBorder}
-            onPress={() => handleClickWeekend()}
+            onPress={() => handleFilterDate(`Week-end`)}
           >
             <FontAwesome name="calendar-check-o" size={24} color="#EDA0FF" />
 
