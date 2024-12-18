@@ -12,8 +12,9 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import TextApp from "../styleComponents/TextApp";
+import colors from "../styleConstants/colors";
 
-const CardEvent = ({ event, navigation, handleLike, isLiked }) => {
+const CardEventProfil = ({ event, navigation, handleDeleteEvent }) => {
   const user = useSelector((state) => state.user.value);
 
   // navigation -> avec route de paramêtres à pousser
@@ -48,15 +49,12 @@ const CardEvent = ({ event, navigation, handleLike, isLiked }) => {
         <View style={styles.card}>
           <View style={styles.imgContainer}>
             <Image style={styles.image} source={{ uri: event?.photo }} />
-            <TouchableOpacity
-              style={styles.likeBtn}
-              onPress={() => handleClick()}
-            >
-              <FontAwesome
-                name="heart"
-                size={15}
-                color={isLiked ? "red" : "#EDA0FF"}
-              />
+            <TouchableOpacity style={styles.absoluteTrash} onPress={() => handleDeleteEvent(event._id)}>
+                    <FontAwesome
+                      name="trash-o"
+                      size={20}
+                      color={colors.dark}
+                    />
             </TouchableOpacity>
           </View>
           <View style={styles.textContainer}>
@@ -65,7 +63,7 @@ const CardEvent = ({ event, navigation, handleLike, isLiked }) => {
             <TextApp>{event?.name}</TextApp>
             <View style={styles.cardFooter}>
               <View style={styles.likes}>
-                <FontAwesome name="heart" size={14} />
+                <FontAwesome name="heart" size={14} color={colors.dark} />
                 <TextApp>{event?.likes}</TextApp>
               </View>
               <Text style={styles.separator2}></Text>
@@ -107,11 +105,12 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     alignItems: "flex-end",
     position: "relative",
-    width: "40%",
+    width: "45%",
     height: 107,
     borderRadius: 15,
     overflow: "hidden",
   },
+
   image: {
     position: "absolute",
     width: "100%",
@@ -122,8 +121,8 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "flex-end",
     alignItems: "flex-start",
-    gap: 5,
-    width: "50%",
+    gap: 4,
+    width: "45%",
   },
 
   likes: {
@@ -133,25 +132,26 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  likeBtn: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5F5F5",
-    width: 40,
-    aspectRatio: 2 / 1,
-    borderRadius: 5,
-    marginRight: 10,
-    marginBottom: 10,
-  },
 
   cardFooter: {
     display: "flex",
-    gap:6,
     flexDirection: "row",
-    alignItems:'center',
+    alignItems: "center",
+
+    gap:8,
     width: "100%",
   },
+  absoluteTrash:{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.light,
+    width: 40,
+    borderRadius: 5,
+    marginRight: 10,
+    marginBottom: 10,
+    paddingVertical:2,
+  }
 });
 
-export default CardEvent;
+export default CardEventProfil;

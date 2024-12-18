@@ -65,15 +65,14 @@ const BookmarkedScreen = ({ navigation }) => {
 
   return (
     <>
-      <View style={styles.heroContainer}>
-        <View style={[styles.heroWrap, styles.borderStyle]}>
-          <Text style={styles.heroContent}>Bienvenue, {name}&nbsp;!</Text>
-        </View>
-      </View>
-
-      <View style={styles.container}>
-        <TextAppTitle>Mes évènements</TextAppTitle>
-        <ScrollView style={styles.likedContainer}>
+    <SafeAreaView style={styles.container}>
+        <Text style={styles.mainTitle}>Mes évènements</Text>
+        <ScrollView style={styles.scrollWrapper}>
+          
+          <View style={styles.likedContainer}>
+            <TextApp>
+              Vos évènements préférés à venir :)
+            </TextApp>
           {likedEvents &&
             likedEvents
               .sort((a, b) => new Date(a.date) - new Date(b.date))
@@ -85,58 +84,54 @@ const BookmarkedScreen = ({ navigation }) => {
                   handleLike={handleLike}
                   isLiked={true}
                 />
-              ))}
+              ))
+            }
+            </View>
         </ScrollView>
-      </View>
-    </>
+        </SafeAreaView>
+        </>
   );
 };
 
 const styles = StyleSheet.create({
-  //image hero
-  heroContainer: {
+  container: {
     flex: 1,
-    padding: 28,
-  },
-  heroWrap: {
-    alignItems: "center",
-    justifyContent: "center",
-
-    width: "100%",
-    height: "100%",
-  },
-  heroContent: {
-    padding: 28,
-    fontFamily: "Lexend_300Light",
-    color: colors.dark,
-    fontSize: 24,
-  },
-  borderStyle: {
     backgroundColor: colors.light,
-    borderColor: colors.dark,
-    borderWidth: 1,
-    borderRadius: 15,
+    color: colors.dark,
+    justifyContent: "flex-start",
+    alignItems: "center",
+    width: "100%",
+    paddingRight: 28,
+    paddingLeft: 28,
   },
   //main
-  container: {
-    flex: 4,
-    alignItems: "center",
-    backgroundColor: colors.ligth,
-
+    mainTitle: {
+    fontSize: 18,
+    fontFamily: "Lexend_500Medium",
+    paddingTop: 60,
+    paddingBottom: 20,
     width: "100%",
-
-    paddingRight: 12,
-    paddingLeft: 12,
+    textAlign: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: colors.dark,
+    color: colors.dark,
   },
+  
+  scrollWrapper: {
+    marginVertical: 24,
+    width:'100%'
+  },
+
   // card
-  likedContainer: {
-    backgroundColor: "white",
+    likedContainer: {
     borderRadius: 15,
     width: "100%",
-    height: "100%",
+    
+    alignItems:'center',
+    borderWidth:0.3,
+    borderColor:colors.dark,
 
-    marginTop: 24,
-    padding: 12,
+    padding:12,
   },
 });
 

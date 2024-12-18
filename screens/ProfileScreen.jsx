@@ -20,6 +20,7 @@ import TextAppTitle from "../styleComponents/TextAppTitle";
 import { getAllEvents } from "../fetchers/events";
 import CardEvent from "../components/CardEvent";
 import colors from "../styleConstants/colors";
+import CardEventProfil from "../components/CardEventProfil";
 
 const ProfileScreen = ({ navigation }) => {
   const [userEvents, setUserEvents] = useState([]);
@@ -132,26 +133,25 @@ const ProfileScreen = ({ navigation }) => {
             </View>
           ) : (
         <ScrollView style={styles.scrollWrapper}>
+          <View style={styles.eventContent}>
+          <TextApp>
+              Gérez vos évènements créés ici !
+            </TextApp>
+
             {userEvents &&
             userEvents
               .sort((a, b) => new Date(a.date) - new Date(b.date))
               .map((event) => (
                 <View key={event._id} style={styles.card}>
-                  <TouchableOpacity onPress={() => handleDeleteEvent(event._id)}>
-                    <FontAwesome
-                      name="minus-circle"
-                      size={20}
-                      color={colors.red}
-                      paddingRight={10}
-                    />
-                  </TouchableOpacity>
-                  <CardEvent
+                  <CardEventProfil
                     key={event._id}
                     event={event}
                     navigation={navigation}
+                    handleDeleteEvent={handleDeleteEvent}
                   />
                 </View>
               ))}
+          </View>
         </ScrollView>
           )}
         <TouchableOpacity style={styles.buttonDelete} onPress={() => handleDeleteUser(token)}>
@@ -160,15 +160,18 @@ const ProfileScreen = ({ navigation }) => {
       </View>
     </SafeAreaView>
   );
+  
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.light,
-    color: colors.dark,
     justifyContent: "flex-start",
     alignItems: "center",
+
+    backgroundColor: colors.light,
+    color: colors.dark,
+
     width: "100%",
     paddingRight: 28,
     paddingLeft: 28,
@@ -185,32 +188,27 @@ const styles = StyleSheet.create({
     width: "100%",
     textAlign: "center",
     borderBottomWidth: 1,
-    borderBottomColor: "#333",
-    color: "#333333",
+    borderBottomColor: colors.dark,
+    color: colors.dark,
   },
   blockInfo: {
     justifyContent: "flex-start",
     alignItems: 'center',
     width: '100%',
-    marginTop: 20,
-    padding: 40,
+    marginTop: 28,
+    padding: 28,
     borderWidth: 0.3,
-    borderRadius: 18,
+    borderRadius: 15,
   },
   userInfo: {
-    paddingTop: 15,
+    paddingTop: 12,
   },
-  blockBadges: {
-    paddingTop: 30,
-  },
+  // blockBadges: {
+  //   paddingTop: 30,
+  // },
   scrollWrapper: {
     minWidth: "100%",
-    marginTop: 30,
-    marginBottom: 10,
-    paddingHorizontal: 3,
-    paddingBottom: 10,
-    borderWidth: 0.3,
-    borderRadius: 18,
+    marginVertical: 28,
   },
   card: {
     flexDirection: "row",
@@ -219,8 +217,8 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   events: {
-    height: '500',
-    paddingTop: 40,
+    // flex:1,
+    paddingTop: 32,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -238,11 +236,22 @@ const styles = StyleSheet.create({
     backgroundColor: colors.red,
   },
   buttonReset: {
+    flex:1,
     marginTop: 10,
     marginLeft: 20,
     padding: 12,
     borderRadius: 15,
     backgroundColor: colors.green,
+  },
+  eventContent: {
+    borderRadius: 15,
+    width: "100%",
+    
+    alignItems:'center',
+    borderWidth:0.3,
+    borderColor:colors.dark,
+
+    padding:12,
   },
 });
 

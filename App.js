@@ -43,9 +43,8 @@ const TabNavigator = () => {
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
           let iconName = "";
-
           if (route.name === "Bookmarked") {
-            iconName = "bookmark-o";
+            iconName = "heart-o";
           } else if (route.name === "MapScreen") {
             iconName = "map-o";
           } else if (route.name === "AddEvent") {
@@ -56,8 +55,8 @@ const TabNavigator = () => {
 
           return <FontAwesome name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: "#2196f3",
-        tabBarInactiveTintColor: "gray",
+        tabBarActiveTintColor: "#EDA0FF",
+        tabBarInactiveTintColor: "#9B9B9B",
 
         headerShown: false,
       })}
