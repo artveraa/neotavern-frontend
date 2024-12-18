@@ -30,6 +30,7 @@
     "react-loader-spinner": "^6.1.6",
     "react-native": "0.76.3",
     "react-native-gesture-handler": "~2.20.2",
+    "react-native-map-clustering": "^3.4.2",
     "react-native-maps": "1.18.0",
     "react-native-maps-super-cluster": "^1.6.0",
     "react-native-modal-datetime-picker": "^18.0.0",

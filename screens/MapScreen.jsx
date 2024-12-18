@@ -12,7 +12,8 @@ import CardEvent from "../components/CardEvent";
 import HeaderSearch from "../components/SearchHeader";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import MapView, { Marker } from "react-native-maps";
+import MapView from "react-native-map-clustering";
+import { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { getAllEvents, getLikedEvents, likeAnEvent } from "../fetchers/events";
 import { useFocusEffect } from "@react-navigation/native";
@@ -43,7 +44,6 @@ const MapScreen = ({ navigation }) => {
   const [region, setRegion] = useState(null);
   const [allEvents, setAllEvents] = useState(null);
   const [selectedType, setSelectedType] = useState([]);
-  const [filteredDate, setFilteredDate] = useState([]);
 
   const snapPoints = ["20%", "68%"];
 
@@ -78,6 +78,7 @@ const MapScreen = ({ navigation }) => {
     try {
       const events = await getAllEvents();
       setAllEvents(events);
+      // console.log(allEvents);
     } catch (error) {
       console.error(error);
     }
@@ -100,6 +101,59 @@ const MapScreen = ({ navigation }) => {
       fetchLikedEvents();
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  // Date filter
+
+  const [activeDateFilter, setActiveDateFilter] = useState(null); // Nouvel état pour suivre le filtre actif
+
+  const handleEventDate = async (dateFilter) => {
+    try {
+      if (!dateFilter) {
+        // Si le filtre est désactivé, réafficher tous les événements
+        await fetchEvents();
+        return;
+      }
+
+      // Récupérer tous les événements pour appliquer le filtre
+      const events = await getAllEvents();
+
+      const now = new Date();
+      let filteredEvents = [];
+
+      if (dateFilter === "today") {
+        filteredEvents = events.filter((event) => {
+          const eventDate = new Date(event.date);
+          return eventDate.toDateString() === now.toDateString();
+        });
+      } else if (dateFilter === "week") {
+        const weekEndDate = new Date();
+        weekEndDate.setDate(now.getDate() + (7 - now.getDay()));
+
+        filteredEvents = events.filter((event) => {
+          const eventDate = new Date(event.date);
+          return eventDate >= now && eventDate <= weekEndDate;
+        });
+      } else if (dateFilter === "weekend") {
+        const weekendStart = new Date();
+        const weekendEnd = new Date();
+        weekendStart.setDate(now.getDate() + (6 - now.getDay()));
+        weekendEnd.setDate(now.getDate() + (7 - now.getDay()));
+
+        filteredEvents = events.filter((event) => {
+          const eventDate = new Date(event.date);
+          return (
+            eventDate.toDateString() === weekendStart.toDateString() ||
+            eventDate.toDateString() === weekendEnd.toDateString()
+          );
+        });
+      }
+
+      setAllEvents(filteredEvents);
+      openPanel(); // Ouvre le panneau des résultats après le filtrage
+    } catch (error) {
+      console.error("Erreur lors du filtrage des événements :", error);
     }
   };
 
@@ -158,39 +212,6 @@ const MapScreen = ({ navigation }) => {
     }
   }, [selectedType]);
 
-  // Select Date
-  const handleEventDate = (date) => {
-    const today = new Date();
-    const startOfWeek = today.getDate() - today.getDay(); // Début
-    const startOfWeekDate = new Date(today.setDate(startOfWeek)); // Début en cours
-    const endOfWeekDate = new Date(today.setDate(startOfWeek + 6)); // Dimanche en cours
-    const friday = new Date(today.setDate(startOfWeek + 4)); // Vendredi en cours
-
-    if (date === `Aujourd'hui`) {
-      const filtered = [...allEvents].filter((event) => {
-        const today = new Date();
-        const eventDate = new Date(event.date);
-        return eventDate.toDateString() === today.toDateString();
-      });
-      setFilteredDate(filtered);
-    } else if (date === `Semaine`) {
-      const filtered = [...allEvents].filter((event) => {
-        const eventDate = new Date(event.date);
-        return eventDate >= startOfWeekDate && eventDate <= endOfWeekDate;
-      });
-      setFilteredDate(filtered);
-    } else if (date === `Week-end`) {
-      const filtered = [...allEvents].filter((event) => {
-        const eventDate = new Date(event.date);
-        return eventDate >= friday && eventDate <= endOfWeekDate;
-      });
-      setFilteredDate(filtered); // je mets un état avec tableau filtré
-    } else {
-      setFilteredDate(allEvents);
-    }
-    setAllEvents(filteredDate);
-  };
-
   useFocusEffect(
     useCallback(() => {
       fetchEvents();
@@ -201,25 +222,33 @@ const MapScreen = ({ navigation }) => {
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      <MapView
-        style={StyleSheet.absoluteFillObject}
-        setUserLocationEnabled={true}
-        showsUserLocation={true}
-        initialRegion={region}
-      >
-        {allEvents &&
-          allEvents.map((event) => (
-            <Marker
-              key={event._id}
-              coordinate={{
-                latitude: event.place.latitude,
-                longitude: event.place.longitude,
-              }}
-              title={event.name}
-              description={event.place.name}
-            />
-          ))}
-      </MapView>
+      {region ? (
+        <MapView
+          style={StyleSheet.absoluteFillObject}
+          setUserLocationEnabled={true}
+          showsUserLocation={true}
+          initialRegion={region}
+          animationEnabled={false}
+        >
+          {allEvents &&
+            allEvents.map((event) => (
+              <Marker
+                key={event._id}
+                coordinate={{
+                  latitude: event.place.latitude,
+                  longitude: event.place.longitude,
+                }}
+                title={event.name}
+                description={event.place.name}
+                color={colors.darkGreen}
+              />
+            ))}
+        </MapView>
+      ) : (
+        <View style={styles.loadingContainer}>
+          <TextApp>Chargement de la carte...</TextApp>
+        </View>
+      )}
 
       <SafeAreaView style={styles.searchbar}>
         <HeaderSearch
@@ -229,6 +258,7 @@ const MapScreen = ({ navigation }) => {
           handleEventDate={handleEventDate}
           onClose={closePanel}
           allEvents={allEvents}
+          onFilterDate={handleEventDate}
         />
       </SafeAreaView>
 
@@ -272,7 +302,7 @@ const MapScreen = ({ navigation }) => {
         enableDynamicSizing={false}
       >
         <BottomSheetScrollView style={styles.scrollContainer}>
-          {allEvents &&
+          {allEvents && allEvents.length > 0 ? (
             allEvents
               .sort((a, b) => new Date(a.date) - new Date(b.date))
               .map((event) => (
@@ -283,7 +313,10 @@ const MapScreen = ({ navigation }) => {
                   handleLike={handleLike}
                   isLiked={likedEvents.includes(event._id)}
                 />
-              ))}
+              ))
+          ) : (
+            <TextApp>Aucun événement trouvé</TextApp>
+          )}
         </BottomSheetScrollView>
       </BottomSheet>
     </GestureHandlerRootView>
@@ -319,9 +352,10 @@ const styles = StyleSheet.create({
   },
 
   searchbar: {
-    paddingHorizontal: 12,
+    position: "relative",
     top: "6%",
     width: "100%",
+    padding: 10,
   },
 
   filters: {

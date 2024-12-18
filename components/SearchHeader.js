@@ -18,17 +18,14 @@ import TextAppBold from "../styleComponents/TextAppBold";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
 
-const HeaderSearch = ({ handleEventDate, onSelectPlace, onSelectEvent, onReset, onClose, allEvents }) => {
+const HeaderSearch = ({ handleEventDate, onSelectPlace, onSelectEvent, onReset, onClose, allEvents,onFilterDate }) => {
   // const [search, setSearch] = useState("");
   const [dateActive, setDateActive] = useState(false);
-  const [filterDate, setFilterDate] = useState("Date");
-
   const [placesList, setPlacesList] = useState([]);
   const [placesResult, setPlacesResult] = useState([]);
   const [eventsResult, setEventsResult] = useState([]);
   const [placeSearch, setPlaceSearch] = useState("");
-
-  const [filterDay, setFilterDay] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(null);
 
   useEffect(() => {
     setPlacesList(allEvents);
@@ -83,12 +80,13 @@ const HeaderSearch = ({ handleEventDate, onSelectPlace, onSelectEvent, onReset, 
   };
 
   //
-  handleFilterDate = (date) => {
-    handleEventDate(date);
-    setDateActive(!dateActive);
-    setFilterDate(date);
-    if (filterDate === date) {
-      setFilterDate("Date");
+  const handleFilterDate = (date) => {
+    if (selectedDate === date) {
+      setSelectedDate(null);
+      onFilterDate(null);
+    } else {
+      setSelectedDate(date);
+      onFilterDate(date);
     }
   };
 
@@ -120,18 +118,13 @@ const HeaderSearch = ({ handleEventDate, onSelectPlace, onSelectEvent, onReset, 
           />
         )}
 
-        <View>
-          <TextApp>
-            {filterDate != `Date` && (
-              <FontAwesome name="refresh" size={18} color="#D9D9D9" />
-            )}
-          </TextApp>
-        </View>
-
         <View style={styles.separator}></View>
 
-        <TouchableOpacity style={styles.btnDate} onPress={() => handleDate()}>
-          <TextApp>{filterDate}</TextApp>
+        <TouchableOpacity
+          style={styles.btnDate}
+          onPress={() => setDateActive(!dateActive)}
+        >
+          <TextApp>Date</TextApp>
         </TouchableOpacity>
       </View>
 
@@ -188,27 +181,65 @@ const HeaderSearch = ({ handleEventDate, onSelectPlace, onSelectEvent, onReset, 
       {dateActive && (
         <View style={styles.tagWrap}>
           <TouchableOpacity
-            style={styles.tagBorder}
-            onPress={() => handleFilterDate(`Aujourd'hui`)}
+            style={[
+              styles.tagBorder,
+              selectedDate === "today" && styles.activeDateFilter,
+            ]}
+            onPress={() => handleFilterDate("today")}
           >
             <FontAwesome name="calendar-check-o" size={24} color="#EDA0FF" />
+            {selectedDate === "today" && (
+              <View style={styles.checkIconWrapper}>
+                <FontAwesome
+                  name="check"
+                  style={styles.checkIcon}
+                  size={15}
+                  color="#F5F5F5"
+                />
+              </View>
+            )}
             <TextAppS>Aujourd'hui</TextAppS>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.tagBorder}
-            onPress={() => handleFilterDate("Semaine")}
+            style={[
+              styles.tagBorder,
+              selectedDate === "week" && styles.activeDateFilter,
+            ]}
+            onPress={() => handleFilterDate("week")}
           >
             <FontAwesome name="calendar-check-o" size={24} color="#EDA0FF" />
+            {selectedDate === "week" && (
+              <View style={styles.checkIconWrapper}>
+                <FontAwesome
+                  name="check"
+                  style={styles.checkIcon}
+                  size={15}
+                  color="#F5F5F5"
+                />
+              </View>
+            )}
             <TextAppS>Semaine</TextAppS>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.tagBorder}
-            onPress={() => handleFilterDate(`Week-end`)}
+            style={[
+              styles.tagBorder,
+              selectedDate === "weekend" && styles.activeDateFilter,
+            ]}
+            onPress={() => handleFilterDate("weekend")}
           >
             <FontAwesome name="calendar-check-o" size={24} color="#EDA0FF" />
-
+            {selectedDate === "weekend" && (
+              <View style={styles.checkIconWrapper}>
+                <FontAwesome
+                  name="check"
+                  style={styles.checkIcon}
+                  size={15}
+                  color="#F5F5F5"
+                />
+              </View>
+            )}
             <TextAppS>Week-end</TextAppS>
           </TouchableOpacity>
         </View>
@@ -221,17 +252,20 @@ const styles = StyleSheet.create({
   borderStyle: {
     backgroundColor: colors.light,
     borderColor: colors.dark,
-
-    width: "100%",
     borderWidth: 1,
     borderRadius: 15,
     maxHeight: 300,
+    marginHorizontal: 10,
   },
   contentSearch: {
+    display: "flex",
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
     height: 70,
+    width: "100%",
+    // marginHorizontal: 12,
+    // backgroundColor: "red",
     paddingHorizontal: 12,
   },
   wrap: {
@@ -239,6 +273,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "65%",
   },
+
   separator: {
     height: 28,
     width: 1,
@@ -255,8 +290,11 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   tagBorder: {
+    display: "flex",
+    justifyContent: "center",
     alignItems: "center",
     gap: 4,
+    aspectRatio: 1,
 
     paddingVertical: 16,
     paddingHorizontal: 12,
@@ -265,6 +303,23 @@ const styles = StyleSheet.create({
     borderColor: colors.dark,
     borderWidth: 1,
     borderRadius: 15,
+  },
+
+  activeDateFilter: {
+    borderColor: "#EDA0FF",
+  },
+
+  checkIconWrapper: {
+    backgroundColor: "#EDA0FF",
+    borderRadius: "100%",
+    width: 20,
+    height: 20,
+    position: "absolute",
+    right: -5,
+    top: -5,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   resultsList: {
     width: "100%",
