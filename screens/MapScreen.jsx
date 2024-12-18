@@ -52,6 +52,10 @@ const MapScreen = ({ navigation }) => {
     bottomSheetRef.current?.expand();
   };
 
+  const closePanel = () => {
+    bottomSheetRef.current?.collapse();
+  };  
+
   //map
   useEffect(() => {
     (async () => {
@@ -123,6 +127,11 @@ const MapScreen = ({ navigation }) => {
     fetchEvents();
     openPanel();
   };
+
+  const handleClean = () => {
+    setSelectedType([]);
+    fetchEvents();
+  }
 
   // Search
   // Selection de l'établissement dans la barre de recherche (récuperation de l'ID)
@@ -204,8 +213,8 @@ const MapScreen = ({ navigation }) => {
       </MapView>
 
       <SafeAreaView style={styles.searchbar}>
-        <HeaderSearch onSelectPlace={handleSelectPlace} onReset={handleReset}
-          handleEventDate={handleEventDate}
+        <HeaderSearch onSelectPlace={handleSelectPlace} onReset={handleClean}
+          handleEventDate={handleEventDate} onClose={closePanel}
         />
       </SafeAreaView>
 

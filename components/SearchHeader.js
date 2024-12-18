@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   TextInput,
   SafeAreaView,
+  ScrollView
 } from "react-native";
 import colors from "../styleConstants/colors";
 import TextApp from "../styleComponents/TextApp";
@@ -21,6 +22,7 @@ const HeaderSearch = ({
   handleEventDate,
   onSelectPlace,
   onReset,
+  onClose
 }) => {
   // const [search, setSearch] = useState("");
   const [dateActive, setDateActive] = useState(false);
@@ -31,6 +33,7 @@ const HeaderSearch = ({
   const [placeSearch, setPlaceSearch] = useState("");
 
   const [filterDay, setFilterDay] = useState([]);
+  const [searchArea, setSearchArea] = useState(false)
 
 
   useEffect(() => {
@@ -82,6 +85,10 @@ const HeaderSearch = ({
       setFilterDate('Date');
     }
   }
+
+  const searchPlace = () => {
+    onClose()
+  }
   
   return (
     <View style={styles.borderStyle}>
@@ -89,44 +96,31 @@ const HeaderSearch = ({
         {/* <View style={styles.wrap}>
           <FontAwesome name="search" size={24} color="#EDA0FF" />
           <TextInput
-            placeholder="Quoi de prévu par ici ?"
-            onChangeText={(value) => setSearch(value)}
-            value={search}
+          placeholder="Quoi de prévu par ici ?"
+          onChangeText={(value) => setSearch(value)}
+          value={search}
           />
-        </View> */}
-
-        <View style={styles.wrap}>
-          <FontAwesome name="search" size={24} color="#EDA0FF" />
-          <TextInput
-            placeholder="Rechercher un établissement"
-            value={placeSearch}
-            onChangeText={handleSearch}
-          />
-          {placesResult.length > 0 && (
-            <View style={styles.resultsList}>
-              {placesResult.map((place) => (
-                <Text
-                  style={styles.resultItem}
-                  onPress={() => chooseResult(place.name, place._id)}
-                  key={place._id}
-                >
-                  {place.name}
-                </Text>
-              ))}
-            </View>
-          )}
-          <View style={styles.searchResult}></View>
-        </View>
-        {!placeSearch ? (
-          <></>
-        ) : (
-          <FontAwesome
-            name="close"
-            size={20}
-            color="#EDA0FF"
-            onPress={() => handleDelete()}
-          />
-        )}
+          </View> */}
+          <View style={styles.searchSection}>
+            <FontAwesome name="search" size={24} color="#EDA0FF" />
+            <TextInput
+              placeholder="Rechercher un établissement"
+              style={styles.input}
+              value={placeSearch}
+              onChangeText={handleSearch}
+              onPress={ () => searchPlace()}
+              />
+          </View>
+            {!placeSearch ? (
+              <></>
+            ) : (
+              <FontAwesome
+              name="close"
+              size={20}
+              color="#EDA0FF"
+              onPress={() => handleDelete()}
+              />
+            )}
 
         <View>
           <TextApp>
@@ -142,6 +136,30 @@ const HeaderSearch = ({
           <TextApp>{filterDate}</TextApp>
         </TouchableOpacity>
       </View>
+      
+      <ScrollView style={styles.scrollSearch}>
+      {placesResult.length > 0 && (
+        <View style={styles.resultsList}>
+          {placesResult.map((place) => (
+           <View style={styles.etablissement}>
+            <Text
+            style={styles.resultItem}
+            onPress={() => chooseResult(place.name, place._id)}
+            key={place._id}
+            >
+           <FontAwesome
+            name="map-marker"
+            size={20}
+            color="#EDA0FF"
+            onPress={() => handleDelete()}
+            />
+              {'  '}{place.name}
+            </Text>
+           </View>
+          ))}
+        </View>
+      )}
+      </ScrollView>
 
       {dateActive && (
         <View style={styles.tagWrap}>
@@ -183,13 +201,13 @@ const styles = StyleSheet.create({
     width: "100%",
     borderWidth: 1,
     borderRadius: 15,
+    maxHeight: 300,
   },
   contentSearch: {
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
     height: 70,
-
     paddingHorizontal: 12,
   },
   wrap: {
@@ -223,6 +241,30 @@ const styles = StyleSheet.create({
     borderColor: colors.dark,
     borderWidth: 1,
     borderRadius: 15,
+  },
+  resultsList: {
+    width: "100%",
+    padding: 10,
+    borderColor: "#333",
+    backgroundColor: colors.light,
+    borderRadius: 15,
+
+  },
+  resultItem: {
+    padding: 10,
+  },
+  scrollSearch: {
+    borderRadius: 15
+  },
+  etablissement: {
+  },
+  searchSection: {
+    flexDirection: "row",
+    alignItems: 'center',
+    width: "65%",
+  },
+  input: {
+    width: "100%",
   },
 });
 
