@@ -12,7 +12,8 @@ import CardEvent from "../components/CardEvent";
 import HeaderSearch from "../components/SearchHeader";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import MapView, { Marker } from "react-native-maps";
+import MapView from "react-native-map-clustering";
+import { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { getAllEvents, getLikedEvents, likeAnEvent } from "../fetchers/events";
 import { useFocusEffect } from "@react-navigation/native";
@@ -202,25 +203,33 @@ const MapScreen = ({ navigation }) => {
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      <MapView
-        style={StyleSheet.absoluteFillObject}
-        setUserLocationEnabled={true}
-        showsUserLocation={true}
-        initialRegion={region}
-      >
-        {allEvents &&
-          allEvents.map((event) => (
-            <Marker
-              key={event._id}
-              coordinate={{
-                latitude: event.place.latitude,
-                longitude: event.place.longitude,
-              }}
-              title={event.name}
-              description={event.place.name}
-            />
-          ))}
-      </MapView>
+      {region ? (
+        <MapView
+          style={StyleSheet.absoluteFillObject}
+          setUserLocationEnabled={true}
+          showsUserLocation={true}
+          initialRegion={region}
+          animationEnabled={false}
+        >
+          {allEvents &&
+            allEvents.map((event) => (
+              <Marker
+                key={event._id}
+                coordinate={{
+                  latitude: event.place.latitude,
+                  longitude: event.place.longitude,
+                }}
+                title={event.name}
+                description={event.place.name}
+                color={colors.darkGreen}
+              />
+            ))}
+        </MapView>
+      ) : (
+        <View style={styles.loadingContainer}>
+          <TextApp>Chargement de la carte...</TextApp>
+        </View>
+      )}
 
       <SafeAreaView style={styles.searchbar}>
         <HeaderSearch
