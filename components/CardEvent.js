@@ -1,4 +1,6 @@
-import React, { useCallback } from "react";
+import React from "react";
+import { useSelector } from "react-redux";
+
 import {
   View,
   Text,
@@ -7,10 +9,8 @@ import {
   Touchable,
   TouchableOpacity,
 } from "react-native";
+
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { useFocusEffect } from "@react-navigation/native";
 import TextApp from "../styleComponents/TextApp";
 
 const CardEvent = ({ event, navigation, handleLike, isLiked }) => {
@@ -55,7 +55,7 @@ const CardEvent = ({ event, navigation, handleLike, isLiked }) => {
               <FontAwesome
                 name="heart"
                 size={15}
-                color={isLiked ? "red" : "#EDA0FF"}
+                color={isLiked ? "#EDA0FF" : "#333333"}
               />
             </TouchableOpacity>
           </View>

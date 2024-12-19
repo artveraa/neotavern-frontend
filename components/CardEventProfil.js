@@ -1,22 +1,17 @@
-import React, { useCallback } from "react";
+import React from "react";
 import {
   View,
   Text,
   StyleSheet,
   Image,
-  Touchable,
   TouchableOpacity,
 } from "react-native";
+
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { useFocusEffect } from "@react-navigation/native";
 import TextApp from "../styleComponents/TextApp";
 import colors from "../styleConstants/colors";
 
 const CardEventProfil = ({ event, navigation, handleDeleteEvent }) => {
-  const user = useSelector((state) => state.user.value);
-
   // navigation -> avec route de paramêtres à pousser
   const handleEvent = (event) => {
     navigation.push("Event", {
