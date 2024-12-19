@@ -124,14 +124,7 @@ const ProfileScreen = ({ navigation }) => {
       <Text style={styles.mainTitle}>Profil</Text>
       <View style={styles.events}>
 
-        {/* Ajout d'un loader de 1,5 sec pour montrer que les événéments que l'on a créé se charges */}
-
-        {isLoading ? (
-          <View style={styles.loading}>
-            <ActivityIndicator size="large" color={colors.dark} />
-          </View>
-        ) : (
-          <ScrollView style={styles.scrollWrapper}>
+        <ScrollView style={styles.scrollWrapper}>
             <View style={styles.blockInfo}>
               <TextAppTitle>Mes informations</TextAppTitle>
               <View style={styles.userInfo}>
@@ -145,6 +138,14 @@ const ProfileScreen = ({ navigation }) => {
           <TextApp>Se déconnecter</TextApp>
         </TouchableOpacity>
             </View>
+        
+        {/* Ajout d'un loader de 1,5 sec pour montrer que les événéments que l'on a créé se charges */}
+        {isLoading ? (
+          <View style={styles.loading}>
+            <ActivityIndicator size="large" color={colors.dark} />
+          </View>
+        ) : (
+          
 
             <View style={styles.eventContent}>
               <TextAppTitle>Mes événements créées</TextAppTitle>
@@ -168,14 +169,16 @@ const ProfileScreen = ({ navigation }) => {
                     </View>
                   ))}
             </View>
-          </ScrollView>
         )}
+
+        </ScrollView>
         <TouchableOpacity
           style={styles.buttonDelete}
           onPress={() => handleDeleteUser(token)}
         >
           <TextApp>Supprimer mon compte</TextApp>
         </TouchableOpacity>
+
       </View>
     </SafeAreaView>
   );
@@ -248,14 +251,16 @@ const styles = StyleSheet.create({
   },
 
   buttonDelete: {
-    padding: 12,
+    paddingVertical: 12,
+    paddingHorizontal:24,
     borderRadius: 15,
     backgroundColor: colors.red,
   },
 
   buttonLogout: {
     marginTop: 10,
-    padding: 12,
+    paddingHorizontal:24,
+    paddingVertical: 12,
     borderRadius: 15,
     backgroundColor: colors.purple,
   },

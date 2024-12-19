@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Image,
-  Text,
   StyleSheet,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { useSelector } from "react-redux";
 
 import RegisterUser from "../components/RegisterUser";
 import LoginUser from "../components/LoginUser";
@@ -16,8 +16,19 @@ import TextApp from "../styleComponents/TextApp";
 import colors from "../styleConstants/colors";
 
 const WelcomeScreen = ({ navigation }) => {
+  const user = useSelector((state) => state.user.value);
+  const token = user.user.token;
+
   const [resgisterForm, setResgisterForm] = useState(false);
   const [loginForm, setLoginForm] = useState(false);
+
+  //si je ferme l'application sans me lougout, je rouvre l'application en étant déjà connecté => le token est enregistré dans le persistore => je ne passe pas par la page de log mais j'arrive de suite sur mapScreen
+  useEffect(() => {
+    if (token) {
+      navigation.navigate("TabNavigator", { screen: "MapScreen" })
+    }
+  },[]
+  )
 
   //formulaires -> visible ou non
   const handleSignupForm = () => {

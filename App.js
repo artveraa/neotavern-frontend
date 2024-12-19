@@ -128,31 +128,17 @@ export default function App() {
         On utilise un Stack Navigator pour gérer la navigation entre les différentes pages
         On utilise des écrans pour chaque page de l'application
         On utilise un Tab Navigator pour gérer la navigation entre les onglets de l'application
-        On conditionne la navigation : si je quitte l'application mais que je suis connecté avec mon token dans le reducer, j'arrive sur l'application sans passer par la page de log.
        */}
         <NavigationContainer>
-          {user.user.token ?
-            <Stack.Navigator
+          <Stack.Navigator
             initialRouteName="Welcome"
             screenOptions={{ headerShown: false }}
-          >
-            <Stack.Screen name="Welcome" component={WelcomeScreen} />
-            <Stack.Screen name="Event" component={EventScreen} />
-            <Stack.Screen name="Place" component={PlaceScreen} />
-            <Stack.Screen name="TabNavigator" component={TabNavigator} />
-          </Stack.Navigator>
-          :
-          <Stack.Navigator
-            initialRouteName="TabNavigator"
-            screenOptions={{ headerShown: false }}
-          >            
+          >         
           <Stack.Screen name="Welcome" component={WelcomeScreen} />
           <Stack.Screen name="Event" component={EventScreen} />
           <Stack.Screen name="Place" component={PlaceScreen} />
           <Stack.Screen name="TabNavigator" component={TabNavigator} />
         </Stack.Navigator>
-          }
-
         </NavigationContainer>
       </PersistGate>
     </Provider>
