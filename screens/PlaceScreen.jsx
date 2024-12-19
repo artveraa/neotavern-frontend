@@ -1,28 +1,21 @@
 import { useEffect, useState } from "react";
 
-import TextAppS from "../styleComponents/TextAppS";
-import TagL from "../styleComponents/TagL";
-import TextAppTitle from "../styleComponents/TextAppTitle";
-import TextAppBold from "../styleComponents/TextAppBold";
-import TextApp from "../styleComponents/TextApp";
-import colors from "../styleConstants/colors";
-
 import {
-  SafeAreaView,
   View,
   Image,
   Text,
   StyleSheet,
   TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
   Linking,
 } from "react-native";
 
-import MapView, { Marker } from "react-native-maps";
-import * as Location from "expo-location";
-
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import MapView, { Marker } from "react-native-maps";
+
+import TagL from "../styleComponents/TagL";
+import TextAppTitle from "../styleComponents/TextAppTitle";
+import TextApp from "../styleComponents/TextApp";
+import colors from "../styleConstants/colors";
 
 const PlaceScreen = ({ route, navigation }) => {
   const { place } = route.params;
@@ -69,27 +62,14 @@ const PlaceScreen = ({ route, navigation }) => {
       {/* HERO */}
       <View style={styles.heroContainer}>
         <Image source={require("../assets/default.jpg")} style={styles.image} />
-
         <TouchableOpacity
           style={[styles.backWrap, styles.borderStyle]}
           onPress={() => handleBackMap()}
         >
           <View>
-            <Text style={styles.arrow}>&#x2190;</Text>
+            <TextApp style={styles.arrow}>&#x2190;</TextApp>
           </View>
         </TouchableOpacity>
-
-        <View style={[styles.likeWrap, styles.borderStyle]}>
-          <TouchableOpacity style={styles.likeBtn} onPress={() => handleLike()}>
-            <FontAwesome
-              name="heart"
-              size={18}
-              color="#EDA0FF"
-              paddingRight={6}
-            />
-          </TouchableOpacity>
-          <TextAppS>{place?.likes}</TextAppS>
-        </View>
       </View>
 
       {/*MAIN infos */}
@@ -107,18 +87,12 @@ const PlaceScreen = ({ route, navigation }) => {
                 place?.website && Linking.openURL(place?.website);
               }}
             />
-            {/* <TextAppBold>{formatDate(place?.date)}</TextAppBold> */}
           </View>
         </View>
-
         <View style={styles.placeContainer}>
           <View style={styles.scheduleWrap}>
             {place?.date && (
               <TagL>
-                {/* <Image
-                  source={require("../assets/clock.png")}
-                  style={styles.tagIcon}
-                /> */}
                 <Text>{formatDate(place?.date)}</Text>
               </TagL>
             )}
@@ -132,7 +106,6 @@ const PlaceScreen = ({ route, navigation }) => {
                   source={require("../assets/date.png")}
                   style={styles.tagIcon}
                 /> */}
-
                   {category[0]?.toUpperCase() + category?.slice(1)}
                 </TagL>
               ))}

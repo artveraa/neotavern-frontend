@@ -1,21 +1,21 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+
 import {
   View,
-  Text,
   StyleSheet,
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
 import { login } from "../reducers/user";
 
 import TextApp from "../styleComponents/TextApp";
 import colors from "../styleConstants/colors";
 
+
 const RegisterUser = ({ navigation }) => {
   //redux
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.value);
   //input valeur
   const [nickname, setNickname] = useState("");
   const [mail, setMail] = useState("");
@@ -26,8 +26,10 @@ const RegisterUser = ({ navigation }) => {
   const [mailErr, setMailErr] = useState(false);
   const [nameErr, setNameErr] = useState(false);
   const [passErr, setPassErr] = useState(false);
+
   const mailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+  // appel de la route post signup et dispache de la reponse dans le reducer user
   const handleRegisterUser = () => {
     fetch("http://neotavern-backend.vercel.app/users/signup", {
       method: "POST",
@@ -49,7 +51,7 @@ const RegisterUser = ({ navigation }) => {
             login({
               token: userData?.token,
               nickname: userData?.nickname,
-              email: mail,
+              email: userData?.email,
               likedEvents: userData?.likedEvents,
               
               role: userData?.role,
@@ -58,7 +60,6 @@ const RegisterUser = ({ navigation }) => {
             })
           )
           navigation.navigate("TabNavigator", { screen: "MapScreen" })
-          console.log('email register:', userData.email)
         }    
       });
   };
@@ -145,9 +146,6 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    fontSize: 14,
-
-    borderBottomColor: colors.dark,
     borderBottomWidth: 1,
     paddingTop: 4,
     paddingBottom: 4,
