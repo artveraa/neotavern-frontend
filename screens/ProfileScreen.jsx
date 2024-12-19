@@ -1,5 +1,6 @@
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   SafeAreaView,
   View,
@@ -11,32 +12,28 @@ import {
   ActivityIndicator,
   Dimensions,
 } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 
-import TextApp from "../styleComponents/TextApp";
-import TextAppBold from "../styleComponents/TextAppBold";
-import TextAppTitle from "../styleComponents/TextAppTitle";
 import { getAllEvents } from "../fetchers/events";
-import CardEvent from "../components/CardEvent";
-import colors from "../styleConstants/colors";
 import CardEventProfil from "../components/CardEventProfil";
 
+import TextApp from "../styleComponents/TextApp";
+import TextAppTitle from "../styleComponents/TextAppTitle";
+import colors from "../styleConstants/colors";
 const { width } = Dimensions.get("window");
 
 const ProfileScreen = ({ navigation }) => {
+  // userEvents contient les événéments créés seulement par l'utilisateur
   const [userEvents, setUserEvents] = useState([]);
   // isLoading pour charger les événements créés par l'utilisateur
   const [isLoading, setIsLoading] = useState(true);
 
+  // import des données utilisateurs depuis le reducer
   const user = useSelector((state) => state.user.value);
   const nickname = user.user.nickname;
   const email = user.user.email;
   const token = user.user.token;
-  const id = user.user.id;
 
-  // Simuler un chargement avec un délai de 2 secondes
+  // Simuler un chargement avec un délai de 1,5 secondes
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
@@ -44,28 +41,32 @@ const ProfileScreen = ({ navigation }) => {
     return () => clearTimeout(timer); // Nettoyer le timer
   }, []);
 
+  // importe tous les événements de la base de donnée et tri ceux qui sont créés par l'utilisateur (avec son token)
+    // ajout d'un try catch pour la gestion des erreurs
   const fetchEvents = async () => {
     try {
       const events = await getAllEvents();
-
       if (user) {
-        // Vérifie si `user` n'est pas nul
+        // Vérifie si 'user' n'est pas nul
         const myEvents = events.filter(
           (event) => event.user && event.user.token === token
         );
-        setUserEvents(myEvents);
+        setUserEvents(myEvents); // ajoute les événéments créés par l'utilisateur dans l'état userEvents
       }
     } catch (error) {
       console.error(error);
     }
   };
 
+  // Actualisation du fetch quand l'utilisateur change de screen
+    // useCallBack memorise le fetch pour éviter qu'il soit re-render à chaque rendu
   useFocusEffect(
     useCallback(() => {
       fetchEvents();
     }, [])
   );
 
+  // Supprime un événement créé par l'utilisateur (identifié par son token) grâce au fetch de la route Delete (events) en back
   const handleDeleteEvent = (eventId) => {
     fetch(`https://neotavern-backend.vercel.app/events/deleteEvent/${token}`, {
       method: "DELETE",
@@ -86,6 +87,7 @@ const ProfileScreen = ({ navigation }) => {
       });
   };
 
+  // Supprime le compte de l'utilisateur (identifié par son token) grâce au fetch de la route Delete (users) en back
   const handleDeleteUser = (token) => {
     fetch(`https://neotavern-backend.vercel.app/users/deleteUser/${token}`, {
       method: "DELETE",
@@ -113,6 +115,9 @@ const ProfileScreen = ({ navigation }) => {
       <Text style={styles.mainTitle}>Profil</Text>
       <View style={styles.events}>
         <TextAppTitle>Mes événements créées</TextAppTitle>
+
+        {/* Ajout d'un loader de 1,5 sec pour montrer que les événéments que l'on a créé se charges */}
+
         {isLoading ? (
           <View style={styles.loading}>
             <ActivityIndicator size="large" color={colors.dark} />
@@ -129,6 +134,9 @@ const ProfileScreen = ({ navigation }) => {
 
             <View style={styles.eventContent}>
               <TextApp>Gérez vos évènements créés ici !</TextApp>
+
+              {/* Ajout (map) et Tri (sort) des événéments créés par l'utilisateur par ordre de création (nouveaux en premier) */}
+
               {userEvents &&
                 userEvents
                   // .filter((event) => new Date(event.date) >= new Date())
@@ -197,7 +205,6 @@ const styles = StyleSheet.create({
   userInfo: {
     paddingTop: 12,
   },
-
   scrollWrapper: {
     paddingHorizontal: 28,
     minWidth: "100%",
