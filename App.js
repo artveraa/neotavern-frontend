@@ -12,10 +12,7 @@ import AddEventScreen from "./screens/AddEventScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import PlaceScreen from "./screens/PlaceScreen";
 
-import { Provider } from "react-redux";
-import { configureStore } from "@reduxjs/toolkit";
-import user from "./reducers/user";
-
+//import des fonts
 import {
   useFonts,
   Lexend_900Black,
@@ -29,10 +26,31 @@ import {
   Lexend_100Thin,
 } from "@expo-google-fonts/lexend";
 
+//instalation du persistore de redux
+// redux imports
+import { Provider } from 'react-redux';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+// redux-persist imports
+import { persistStore, persistReducer } from 'redux-persist';
+import { PersistGate } from 'redux-persist/integration/react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// le reducer de notre app
+import user from "./reducers/user";
+
+const reducers = combineReducers({ user });
+const persistConfig = {
+  key: 'neoTavern',
+  storage: AsyncStorage,
+};
 // Configuration du store Redux
 const store = configureStore({
-  reducer: { user },
-});
+  reducer: persistReducer(persistConfig, reducers),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }),
+ });
+
+ // Configuration de sa persistance
+ const persistor = persistStore(store);
 
 // Configuration de la navigation
 const Tab = createBottomTabNavigator();
@@ -104,23 +122,25 @@ export default function App() {
   return (
     // On enveloppe notre application dans le Provider Redux
     <Provider store={store}>
+       <PersistGate persistor={persistor}>
       {/* 
         On utilise la NavigationContainer de React Navigation pour gérer la navigation
         On utilise un Stack Navigator pour gérer la navigation entre les différentes pages
         On utilise des écrans pour chaque page de l'application
         On utilise un Tab Navigator pour gérer la navigation entre les onglets de l'application
        */}
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="Welcome"
-          screenOptions={{ headerShown: false }}
-        >
+        <NavigationContainer>
+          <Stack.Navigator
+            initialRouteName="Welcome"
+            screenOptions={{ headerShown: false }}
+          >         
           <Stack.Screen name="Welcome" component={WelcomeScreen} />
           <Stack.Screen name="Event" component={EventScreen} />
           <Stack.Screen name="Place" component={PlaceScreen} />
           <Stack.Screen name="TabNavigator" component={TabNavigator} />
         </Stack.Navigator>
-      </NavigationContainer>
+        </NavigationContainer>
+      </PersistGate>
     </Provider>
   );
 }
