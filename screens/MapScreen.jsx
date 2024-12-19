@@ -247,6 +247,7 @@ const MapScreen = ({ navigation }) => {
                   latitude: event.place.latitude,
                   longitude: event.place.longitude,
                 }}
+                image={require('../assets/placeholder.png')}
                 title={event.name}
                 description={event.place.name}
                 color={colors.darkGreen}
