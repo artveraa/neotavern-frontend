@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
 import {
   View,
   Image,
@@ -17,8 +16,6 @@ import TextApp from "../styleComponents/TextApp";
 import colors from "../styleConstants/colors";
 
 const WelcomeScreen = ({ navigation }) => {
-  const user = useSelector((state) => state.user.value);
-
   const [resgisterForm, setResgisterForm] = useState(false);
   const [loginForm, setLoginForm] = useState(false);
 

@@ -102,10 +102,6 @@ const PlaceScreen = ({ route, navigation }) => {
             {categories.length > 0 &&
               categories.map((category, index) => (
                 <TagL key={index}>
-                  {/* <Image
-                  source={require("../assets/date.png")}
-                  style={styles.tagIcon}
-                /> */}
                   {category[0]?.toUpperCase() + category?.slice(1)}
                 </TagL>
               ))}

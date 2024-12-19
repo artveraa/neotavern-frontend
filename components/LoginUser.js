@@ -3,7 +3,6 @@ import { useDispatch } from "react-redux";
 
 import {
   View,
-  Text,
   StyleSheet,
   TextInput,
   TouchableOpacity,
@@ -33,8 +32,6 @@ const LoginUser = ({ navigation }) => {
       .then((response) => response.json())
       .then((userData) => {
         if (userData.result) {
-          console.log(userData)
-
           dispatch(
             login({
               token: userData?.token,
