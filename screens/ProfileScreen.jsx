@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   SafeAreaView,
@@ -15,6 +15,7 @@ import {
 
 import { getAllEvents } from "../fetchers/events";
 import CardEventProfil from "../components/CardEventProfil";
+import { logout } from "../reducers/user";
 
 import TextApp from "../styleComponents/TextApp";
 import TextAppTitle from "../styleComponents/TextAppTitle";
@@ -26,6 +27,8 @@ const ProfileScreen = ({ navigation }) => {
   const [userEvents, setUserEvents] = useState([]);
   // isLoading pour charger les événements créés par l'utilisateur
   const [isLoading, setIsLoading] = useState(true);
+
+  const dispatch = useDispatch()
 
   // import des données utilisateurs depuis le reducer
   const user = useSelector((state) => state.user.value);
@@ -106,6 +109,12 @@ const ProfileScreen = ({ navigation }) => {
       });
   };
 
+// Deconnection utilisateur via le logout du reducer
+  const handleLogout = () => {
+    dispatch(logout())
+    navigation.navigate("Welcome")
+  }
+
   return (
     <SafeAreaView
       style={styles.container}
@@ -129,6 +138,12 @@ const ProfileScreen = ({ navigation }) => {
                 <TextApp>Surnom: {nickname}</TextApp>
                 <TextApp>Email: {email}</TextApp>
               </View>
+              <TouchableOpacity
+          style={styles.buttonLogout}
+          onPress={() => handleLogout()}
+        >
+          <TextApp>Se déconnecter</TextApp>
+        </TouchableOpacity>
             </View>
 
             <View style={styles.eventContent}>
@@ -233,11 +248,16 @@ const styles = StyleSheet.create({
   },
 
   buttonDelete: {
-    marginTop: 10,
-    marginLeft: 20,
     padding: 12,
     borderRadius: 15,
     backgroundColor: colors.red,
+  },
+
+  buttonLogout: {
+    marginTop: 10,
+    padding: 12,
+    borderRadius: 15,
+    backgroundColor: colors.purple,
   },
 
   buttonReset: {
