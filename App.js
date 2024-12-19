@@ -57,7 +57,18 @@ const TabNavigator = () => {
         },
         tabBarActiveTintColor: "#EDA0FF",
         tabBarInactiveTintColor: "#9B9B9B",
-
+        tabBarStyle: {
+          backgroundColor: "#F5F5F5",
+          borderTopWidth: 0,
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 2,
+          },
+          shadowOpacity: 0.25,
+          shadowRadius: 3.84,
+          elevation: 5,
+        },
         headerShown: false,
       })}
     >
