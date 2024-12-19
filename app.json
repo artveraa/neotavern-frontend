@@ -19,7 +19,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -28,7 +32,17 @@
       [
         "expo-font",
         {
-          "fonts": ["node_modules/@expo-google-fonts/Lexend_100Thin.ttf", "node_modules/@expo-google-fonts/Lexend_200ExtraLight.ttf", "node_modules/@expo-google-fonts/Lexend_300Light.ttf","node_modules/@expo-google-fonts/Lexend_400Regular.ttf","node_modules/@expo-google-fonts/Lexend_500Medium.ttf","node_modules/@expo-google-fonts/Lexend_600SemiBold.ttf","node_modules/@expo-google-fonts/Lexend_700Bold.ttf","node_modules/@expo-google-fonts/Lexend_800ExtraBold.ttf","node_modules/@expo-google-fonts/Lexend_900Black.ttf"]
+          "fonts": [
+            "node_modules/@expo-google-fonts/Lexend_100Thin.ttf",
+            "node_modules/@expo-google-fonts/Lexend_200ExtraLight.ttf",
+            "node_modules/@expo-google-fonts/Lexend_300Light.ttf",
+            "node_modules/@expo-google-fonts/Lexend_400Regular.ttf",
+            "node_modules/@expo-google-fonts/Lexend_500Medium.ttf",
+            "node_modules/@expo-google-fonts/Lexend_600SemiBold.ttf",
+            "node_modules/@expo-google-fonts/Lexend_700Bold.ttf",
+            "node_modules/@expo-google-fonts/Lexend_800ExtraBold.ttf",
+            "node_modules/@expo-google-fonts/Lexend_900Black.ttf"
+          ]
         }
       ],
       [
@@ -37,6 +51,17 @@
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "7842fc37-2044-4b3f-928e-9604eb7924b6"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/7842fc37-2044-4b3f-928e-9604eb7924b6"
+    }
   }
 }

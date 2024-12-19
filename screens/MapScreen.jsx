@@ -10,6 +10,7 @@ import {
   ScrollView,
   SafeAreaView,
 } from "react-native";
+import { ActivityIndicator } from "react-native";
 
 import CardEvent from "../components/CardEvent";
 import HeaderSearch from "../components/SearchHeader";
@@ -31,6 +32,7 @@ const MapScreen = ({ navigation }) => {
   const [allEvents, setAllEvents] = useState(null);
   const [selectedType, setSelectedType] = useState([]);
   const [selectedMarkerId, setSelectedMarkerId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const bottomSheetRef = useRef(null);
 
@@ -97,12 +99,14 @@ const MapScreen = ({ navigation }) => {
   // Récupérer tous les événements
 
   const fetchEvents = async () => {
+    setLoading(true);
     try {
       const events = await getAllEvents();
       setAllEvents(events);
-      // console.log(allEvents);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -351,7 +355,11 @@ const MapScreen = ({ navigation }) => {
         handleStyle={{ backgroundColor: colors.light }}
       >
         <BottomSheetScrollView style={styles.scrollContainer}>
-          {allEvents && allEvents.length > 0 ? (
+          {loading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={colors.dark} />
+            </View>
+          ) : allEvents && allEvents.length > 0 ? (
             allEvents
               .filter((event) => new Date(event.date) >= new Date().getDate()) // Filtre les événements passés
               .sort((a, b) => new Date(a.date) - new Date(b.date)) // Trie les événements par date
