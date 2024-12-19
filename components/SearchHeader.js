@@ -1,25 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+
 import {
   View,
-  Text,
   StyleSheet,
-  Image,
-  Touchable,
   TouchableOpacity,
   TextInput,
-  SafeAreaView,
   ScrollView,
 } from "react-native";
+
 import colors from "../styleConstants/colors";
 import TextApp from "../styleComponents/TextApp";
-import TagL from "../styleComponents/TagL";
 import TextAppS from "../styleComponents/TextAppS";
 import TextAppBold from "../styleComponents/TextAppBold";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { useSelector } from "react-redux";
 
 const HeaderSearch = ({
-  handleEventDate,
   onSelectPlace,
   onSelectEvent,
   onReset,
@@ -27,18 +22,19 @@ const HeaderSearch = ({
   allEvents,
   onFilterDate,
 }) => {
-  // const [search, setSearch] = useState("");
+
+  // Etats pour la gestion de l'affichage de la date avec boutons jour, semaine, weekend
   const [dateActive, setDateActive] = useState(false);
-  const [placesList, setPlacesList] = useState([]);
-  const [placesResult, setPlacesResult] = useState([]);
-  const [eventsResult, setEventsResult] = useState([]);
-  const [placeSearch, setPlaceSearch] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
 
-  useEffect(() => {
-    setPlacesList(allEvents);
-  }, [allEvents]);
+  // Etat pour le stockage des établissements/événements issus de la recherche de l'utilisateur
+  const [placesResult, setPlacesResult] = useState([]);
+  const [eventsResult, setEventsResult] = useState([]);
 
+  // Etat pour l'input de la barre de recherche
+  const [placeSearch, setPlaceSearch] = useState("");
+
+  // Fonction de recherche qui récupère le texte de l'input
   const handleSearch = (text) => {
     setPlaceSearch(text);
 
@@ -49,12 +45,14 @@ const HeaderSearch = ({
       return;
     }
 
+    // récupération du nom des établissements en fonction du texte de l'input
     const filteredPlaces = allEvents.filter((place) => {
       return place.place.name.toLowerCase().includes(text.toLowerCase());
     });
 
     setPlacesResult(filteredPlaces);
 
+    // récupération du nom des événements en fonction du texte de l'input
     const filteredEvents = allEvents.filter((event) => {
       return event.name.toLowerCase().includes(text.toLowerCase());
     });
@@ -62,6 +60,7 @@ const HeaderSearch = ({
     setEventsResult(filteredEvents);
   };
 
+   // fonction de séléction de l'établissement et reset des résultats de recherche
   const chooseResult = (placeName, placeId) => {
     setPlaceSearch(placeName);
     setPlacesResult([]);
@@ -69,15 +68,12 @@ const HeaderSearch = ({
     onSelectPlace(placeId);
   };
 
+   // fonction de séléction de l'événement et reset des résultats de recherche
   const chooseEvent = (eventName, eventId) => {
     setPlaceSearch(eventName);
     setEventsResult([]);
     setPlacesResult([]);
     onSelectEvent(eventId);
-  };
-
-  const handleDate = () => {
-    setDateActive(!dateActive);
   };
 
   // reset la recherche d'établissement sur mapscreen
@@ -86,7 +82,12 @@ const HeaderSearch = ({
     setPlaceSearch("");
   };
 
-  //
+  // fermeture du drawer/panel des événements
+  const closePanel = () => {
+    onClose();
+  };
+  
+  // sélection de la date (aujourd'hui / semaine / weekend)
   const handleFilterDate = (date) => {
     if (selectedDate === date) {
       setSelectedDate(null);
@@ -97,13 +98,13 @@ const HeaderSearch = ({
     }
   };
 
-  const searchPlace = () => {
-    onClose();
-  };
 
   return (
     <View style={styles.borderStyle}>
       <View style={styles.contentSearch}>
+
+        {/* Input de recherche d'établissement / d'évenement */}
+
         <View style={styles.searchSection}>
           <FontAwesome name="search" size={24} color="#EDA0FF" />
           <TextInput
@@ -111,7 +112,7 @@ const HeaderSearch = ({
             style={styles.input}
             value={placeSearch}
             onChangeText={handleSearch}
-            onPress={() => searchPlace()}
+            onPress={() => closePanel()}
           />
         </View>
         {!placeSearch ? (
@@ -127,6 +128,8 @@ const HeaderSearch = ({
 
         <View style={styles.separator}></View>
 
+        {/* Bouton date avec affichage du panneau du choix de la date */}
+
         <TouchableOpacity
           style={styles.btnDate}
           onPress={() => setDateActive(!dateActive)}
@@ -135,10 +138,17 @@ const HeaderSearch = ({
         </TouchableOpacity>
       </View>
 
+      
       <ScrollView style={styles.scrollSearch}>
         {placesResult.length > 0 && (
           <View style={styles.resultsList}>
+
+            {/* Affichage des résultats de recherche d'établissements */}
+
             <TextAppBold>Etablissements:</TextAppBold>
+
+              {/* Mapping des établissements en fonction de la recherche */}
+
             {placesResult.map((place) => (
               <View style={styles.etablissement} key={place._id}>
                 <TouchableOpacity
@@ -161,9 +171,16 @@ const HeaderSearch = ({
             ))}
           </View>
         )}
+
         {eventsResult.length > 0 && (
           <View style={styles.resultsList}>
+
+            {/* Affichage des résultats de recherche des événements */}
+
             <TextAppBold>Evenements:</TextAppBold>
+
+             {/* Mapping des événements en fonction de la recherche */}
+
             {eventsResult.map((event) => (
               <View style={styles.etablissement} key={event._id}>
                 <TouchableOpacity
@@ -186,8 +203,13 @@ const HeaderSearch = ({
         )}
       </ScrollView>
 
+      {/* Affichage des résultats de recherche en fonction de la date */}
+
       {dateActive && (
         <View style={styles.tagWrap}>
+
+          {/* Selection des événements pour aujourd'hui */}
+
           <TouchableOpacity
             style={[
               styles.tagBorder,
@@ -209,6 +231,8 @@ const HeaderSearch = ({
             <TextAppS>Aujourd'hui</TextAppS>
           </TouchableOpacity>
 
+          {/* Selection des événements pour les jours de la semaine */}
+
           <TouchableOpacity
             style={[
               styles.tagBorder,
@@ -229,6 +253,8 @@ const HeaderSearch = ({
             )}
             <TextAppS>Semaine</TextAppS>
           </TouchableOpacity>
+
+          {/* Selection des événements pour le weekend */}
 
           <TouchableOpacity
             style={[
@@ -272,8 +298,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: 70,
     width: "100%",
-    // marginHorizontal: 12,
-    // backgroundColor: "red",
     paddingHorizontal: 12,
   },
   wrap: {
