@@ -114,7 +114,6 @@ const ProfileScreen = ({ navigation }) => {
       <View></View>
       <Text style={styles.mainTitle}>Profil</Text>
       <View style={styles.events}>
-        <TextAppTitle>Mes événements créées</TextAppTitle>
 
         {/* Ajout d'un loader de 1,5 sec pour montrer que les événéments que l'on a créé se charges */}
 
@@ -133,7 +132,7 @@ const ProfileScreen = ({ navigation }) => {
             </View>
 
             <View style={styles.eventContent}>
-              <TextApp>Gérez vos évènements créés ici !</TextApp>
+              <TextAppTitle>Mes événements créées</TextAppTitle>
 
               {/* Ajout (map) et Tri (sort) des événéments créés par l'utilisateur par ordre de création (nouveaux en premier) */}
 
@@ -218,10 +217,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingBottom: 10,
+    paddingTop: 5
   },
 
   events: {
-    paddingTop: 32,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -257,7 +256,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 0.3,
     borderColor: colors.dark,
-
+    
+    paddingTop: 28,
     padding: 12,
   },
 });
