@@ -23,8 +23,16 @@ export const userSlice = createSlice({
     likeEvent: (state, action) => {
       state.value.user.likedArray.push(action.payload)
     },
+    logout: (state) => {
+      state.value.user.token = null
+      state.value.user.email = null
+      state.value.user.likedEvents = null
+      state.value.user.role = null
+      state.value.user.nickname = null
+      state.value.user.id = null
+    }
   },
 });
 
-export const { login, likeEvent } = userSlice.actions;
+export const { login, logout, likeEvent } = userSlice.actions;
 export default userSlice.reducer;
