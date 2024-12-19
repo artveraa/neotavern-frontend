@@ -18,7 +18,15 @@ import TextAppBold from "../styleComponents/TextAppBold";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
 
-const HeaderSearch = ({ handleEventDate, onSelectPlace, onSelectEvent, onReset, onClose, allEvents,onFilterDate }) => {
+const HeaderSearch = ({
+  handleEventDate,
+  onSelectPlace,
+  onSelectEvent,
+  onReset,
+  onClose,
+  allEvents,
+  onFilterDate,
+}) => {
   // const [search, setSearch] = useState("");
   const [dateActive, setDateActive] = useState(false);
   const [placesList, setPlacesList] = useState([]);
@@ -53,7 +61,6 @@ const HeaderSearch = ({ handleEventDate, onSelectPlace, onSelectEvent, onReset, 
 
     setEventsResult(filteredEvents);
   };
-
 
   const chooseResult = (placeName, placeId) => {
     setPlaceSearch(placeName);
@@ -134,21 +141,22 @@ const HeaderSearch = ({ handleEventDate, onSelectPlace, onSelectEvent, onReset, 
             <TextAppBold>Etablissements:</TextAppBold>
             {placesResult.map((place) => (
               <View style={styles.etablissement} key={place._id}>
-                <TouchableOpacity onPress={() => chooseResult(place.place.name, place.place._id)}  >  
-                <TextApp
-                  style={styles.resultItem}
+                <TouchableOpacity
+                  onPress={() =>
+                    chooseResult(place.place.name, place.place._id)
+                  }
                 >
-                  
-                  <FontAwesome
-                    name="map-marker"
-                    size={20}
-                    color={colors.purple}
-                    onPress={() => handleDelete()}
-                  />
-                  {"  "}
-                  {place.place.name}
-                </TextApp>
-                  </TouchableOpacity>
+                  <TextApp style={styles.resultItem}>
+                    <FontAwesome
+                      name="map-marker"
+                      size={20}
+                      color={colors.purple}
+                      onPress={() => handleDelete()}
+                    />
+                    {"  "}
+                    {place.place.name}
+                  </TextApp>
+                </TouchableOpacity>
               </View>
             ))}
           </View>
@@ -158,19 +166,19 @@ const HeaderSearch = ({ handleEventDate, onSelectPlace, onSelectEvent, onReset, 
             <TextAppBold>Evenements:</TextAppBold>
             {eventsResult.map((event) => (
               <View style={styles.etablissement} key={event._id}>
-                <TouchableOpacity onPress={() => chooseEvent(event.name, event._id)}>
-                <TextApp
-                  style={styles.resultItem}
+                <TouchableOpacity
+                  onPress={() => chooseEvent(event.name, event._id)}
                 >
-                  <FontAwesome
-                    name="ticket"
-                    size={20}
-                    color={colors.blue}
-                    onPress={() => handleDelete()}
-                  />
-                  {"  "}
-                  {event.name}
-                </TextApp>
+                  <TextApp style={styles.resultItem}>
+                    <FontAwesome
+                      name="ticket"
+                      size={20}
+                      color={colors.blue}
+                      onPress={() => handleDelete()}
+                    />
+                    {"  "}
+                    {event.name}
+                  </TextApp>
                 </TouchableOpacity>
               </View>
             ))}
@@ -336,7 +344,7 @@ const styles = StyleSheet.create({
   },
   etablissement: {
     paddingTop: 8,
-    paddingBottom: 8
+    paddingBottom: 8,
   },
   searchSection: {
     flexDirection: "row",
