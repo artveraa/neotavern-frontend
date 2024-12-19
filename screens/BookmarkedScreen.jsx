@@ -72,7 +72,7 @@ const BookmarkedScreen = ({ navigation }) => {
             <TextApp>Vos évènements préférés à venir :</TextApp>
             {likedEvents &&
               likedEvents
-                .filter((event) => new Date(event.date) > new Date())
+                .filter((event) => new Date(event.date) >= new Date().getDate())
                 .sort((a, b) => new Date(a.date) - new Date(b.date))
                 .map((event) => (
                   <CardEvent

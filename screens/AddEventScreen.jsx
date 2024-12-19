@@ -1,41 +1,103 @@
 import { useState, useEffect, useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useFocusEffect } from "@react-navigation/native";
+
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
-  Button,
   TextInput,
   TouchableOpacity,
   SafeAreaView,
-  Modal,
   Image,
 } from "react-native";
+
+import * as ImagePicker from "expo-image-picker";
+
+import { useSelector } from "react-redux";
+
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+
 import colors from "../styleConstants/colors";
 import TextApp from "../styleComponents/TextApp";
 import TextAppBold from "../styleComponents/TextAppBold";
-import * as ImagePicker from "expo-image-picker";
-import { useFocusEffect } from "@react-navigation/native";
 
 const AddEventScreen = ({ navigation }) => {
+  // States pour les champs de l'événement
   const [eventName, setEventName] = useState("");
   const [eventText, setEventText] = useState("");
   const [eventDate, setEventDate] = useState("");
   const [eventHour, setEventHour] = useState("");
+
+  // States relatifs à la date et l'heure
   const [isDateVisible, setDateVisibility] = useState(false);
   const [isTimeVisible, setTimeVisibility] = useState(false);
+
+  // States pour l'image
   const [photo, setPhoto] = useState(null);
   const [photoUrl, setPhotoUrl] = useState("");
   const [isUploading, setIsUploading] = useState(false);
 
+  // States pour le lieu
+
+  const [placesList, setPlacesList] = useState([]);
+  const [placesResult, setPlacesResult] = useState([]);
+  const [placeSearch, setPlaceSearch] = useState("");
+  const [placeId, setPlaceId] = useState("");
+
+  // States pour les types d'événement
+
+  const [selectedType, setSelectedType] = useState([]);
+
+  // States pour le tarif de l'événement
+
+  const [free, setFree] = useState(true);
+  const [paid, setPaid] = useState(false);
+
+  // Récupération de l'utilisateur connecté via Redux
   const user = useSelector((state) => state.user.value);
 
-  // SELECTION DE L'IMAGE VIA UPLOAD
+  // ---------- 1. Méthodes liées à la recherche de lieu ----------
+
+  // Récupération de la liste des lieux
+  useEffect(() => {
+    fetch("https://neotavern-backend.vercel.app/places/allPlaces")
+      .then((response) => response.json())
+      .then((data) => {
+        setPlacesList(data.data);
+      });
+  }, []);
+
+  // Méthode pour filtrer les lieux en fonction de la recherche
+  const handleSearch = (text) => {
+    setPlaceSearch(text);
+
+    if (text === "") {
+      setPlacesResult([]);
+      return;
+    }
+
+    const filteredPlaces = placesList.filter((place) => {
+      return place.name.toLowerCase().includes(text.toLowerCase());
+    });
+
+    setPlacesResult(filteredPlaces);
+  };
+
+  // Méthode pour choisir un lieu dans la liste des résultats
+  const chooseResult = (placeName, placeId) => {
+    setPlaceSearch(placeName);
+    setPlaceId(placeId);
+    setPlacesResult([]);
+  };
+
+  // ---------- 2. Méthodes liées à l'image ----------
+
+  // Méthode pour récupérer une image depuis la galerie
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    setIsUploading(true); // Commencer l'upload
+    setIsUploading(true); // Annonce le début de l'upload via le state isUploading
+
+    // Récupération de l'image
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images", "videos"],
       allowsEditing: true,
@@ -43,20 +105,18 @@ const AddEventScreen = ({ navigation }) => {
       quality: 0.1,
     });
 
-    // console.log("USER/", user);
-
-    // console.log("resultat de l image upload: ", result);
-
+    // Vérification si l'upload a été annulé
     if (!result.canceled) {
-      setIsUploading(false); // Terminer l'upload
+      setIsUploading(false);
       setPhoto(result.assets[0]);
     }
   };
 
-  // STOCKAGE DE L'IMAGE SUR LE CLOUDINARY
+  // Méthode pour uploader l'image sur Cloudinary
   const uploadImage = async () => {
-    // type d'encodage de donnée (fichier + chaîne de caracteres)
+    // Initialisation d'un objet FormData
     const formData = new FormData();
+
     // Chaque info à envoyer sera “ajoutée” au formData
     formData.append("photoFromFront", {
       // nom de la propriété qui va représenter le fichier côté backend
@@ -64,17 +124,21 @@ const AddEventScreen = ({ navigation }) => {
       name: "photo.webp", // nom générique
       type: "image/jpeg", // mimetype du fichier
     });
+
     setIsUploading(true);
+
+    // Try/catch pour gérer les erreurs
     try {
+      // Appel à l'API pour uploader l'image
       const response = await fetch(
         "https://neotavern-backend.vercel.app/upload",
         { method: "POST", body: formData }
       );
-      const data = await response.json();
-      // console.log("CLOUDINARY:", data);
-      if (data && data.url) {
-        // console.log(data.url);
 
+      const data = await response.json();
+
+      if (data && data.url) {
+        // Si l'upload est un succès, on met à jour le state photoUrl
         setPhotoUrl(data.url);
         setIsUploading(false);
       } else {
@@ -85,7 +149,17 @@ const AddEventScreen = ({ navigation }) => {
     }
   };
 
-  // tableau brut de type d'événement
+  // Utilisation de useFocusEffect pour lancer l'upload de l'image à chaque fois que la photo est modifiée et que le screen est affiché
+  useFocusEffect(
+    useCallback(() => {
+      // useCallback pour éviter de relancer l'upload à chaque fois que le screen est affiché
+      uploadImage();
+    }, [photo])
+  );
+
+  // ---------- 3. Méthodes liées au choix des types d'événement ----------
+
+  // Types d'événement
   const types = [
     { label: "Concert" },
     { label: "Soirée" },
@@ -101,23 +175,17 @@ const AddEventScreen = ({ navigation }) => {
     { label: "Autre" },
   ];
 
-  const drinks = [
-    { label: "Softs" },
-    { label: "Bière" },
-    { label: "Vin" },
-    { label: "Cocktails" },
-    { label: "Alcool fort" },
-    { label: "Mocktails" },
-  ];
+  // Méthode pour gérer la sélection des types d'événement
+  const handleType = (type) => {
+    if (selectedType.includes(type)) {
+      setSelectedType(selectedType.filter((item) => item !== type));
+      return;
+    } else {
+      setSelectedType([...selectedType, type]);
+    }
+  };
 
-  const food = [
-    { label: "Végétarien" },
-    { label: "Végétalien" },
-    { label: "Sans gluten" },
-    { label: "Halal" },
-    { label: "Casher" },
-    { label: "Vegan" },
-  ];
+  // ---------- 4. Méthodes liées au choix de la date et de l'heure de l'événement ----------
 
   // affichage du calendrier
   const showDatePicker = () => {
@@ -132,8 +200,6 @@ const AddEventScreen = ({ navigation }) => {
   // clique sur la date souhaitée et fermeture du calendrier
 
   const handleConfirmDate = (e) => {
-    // console.log(e);
-
     setEventDate(e);
     hideDatePicker();
   };
@@ -160,7 +226,69 @@ const AddEventScreen = ({ navigation }) => {
     hideTimePicker();
   };
 
-  // Vérification des champs
+  // ---------- 5. Méthodes liées à la gestion du prix de l'événement ----------
+
+  // Séléctionner le tarif de l'événement
+
+  const handlePayment = (toggle) => {
+    if (toggle === "paid") {
+      setFree(false);
+      setPaid(true);
+    } else {
+      setPaid(false);
+      setFree(true);
+    }
+  };
+
+  // ---------- 6. Méthodes liées au choix des types de boissons ----------
+
+  const drinks = [
+    { label: "Softs" },
+    { label: "Bière" },
+    { label: "Vin" },
+    { label: "Cocktails" },
+    { label: "Alcool fort" },
+    { label: "Mocktails" },
+  ];
+
+  // Séléctionner les types de boissons
+
+  const [selectedDrink, setSelectedDrink] = useState([]);
+
+  const handleDrink = (drink) => {
+    if (selectedDrink.includes(drink)) {
+      setSelectedDrink(selectedDrink.filter((item) => item !== drink));
+      return;
+    } else {
+      setSelectedDrink([...selectedDrink, drink]);
+    }
+  };
+
+  // ---------- 7. Méthodes liées au choix des critères alimentaires ----------
+
+  const food = [
+    { label: "Végétarien" },
+    { label: "Végétalien" },
+    { label: "Sans gluten" },
+    { label: "Halal" },
+    { label: "Casher" },
+    { label: "Vegan" },
+  ];
+
+  // Séléctionner les types de Nourriture
+
+  const [selectedFood, setSelectedFood] = useState([]);
+
+  const handleFood = (food) => {
+    if (selectedFood.includes(food)) {
+      setSelectedFood(selectedFood.filter((item) => item !== food));
+      return;
+    } else {
+      setSelectedFood([...selectedFood, food]);
+    }
+  };
+
+  // ---------- 8. Méthode liée à la validation des champs ----------
 
   const validateFields = () => {
     if (!eventName) {
@@ -206,18 +334,14 @@ const AddEventScreen = ({ navigation }) => {
     return true;
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      uploadImage();
-    }, [photo])
-  );
+  // ---------- 9. Méthode liée à la création de l'événement ----------
 
-  // CHARGEMENT UPLOAD IMAGE ET CREATION D'EVENEMENT
+  // Création de l'événement si tous les champs sont valides
   const handleCreate = () => {
     if (!validateFields()) {
       return;
     }
-
+    // Utilisation de la route createEvent pour créer un nouvel événement
     fetch("https://neotavern-backend.vercel.app/events/createEvent", {
       method: "POST",
       headers: {
@@ -248,96 +372,6 @@ const AddEventScreen = ({ navigation }) => {
       .catch((error) => {
         console.error("Erreur:", error);
       });
-  };
-
-  // Recherche de lieu
-
-  const [placesList, setPlacesList] = useState([]);
-  const [placesResult, setPlacesResult] = useState([]);
-  const [placeSearch, setPlaceSearch] = useState("");
-  const [placeId, setPlaceId] = useState("");
-
-  useEffect(() => {
-    fetch("https://neotavern-backend.vercel.app/places/allPlaces")
-      .then((response) => response.json())
-      .then((data) => {
-        setPlacesList(data.data);
-      });
-  }, []);
-
-  const handleSearch = (text) => {
-    setPlaceSearch(text);
-
-    if (text === "") {
-      setPlacesResult([]);
-      return;
-    }
-
-    const filteredPlaces = placesList.filter((place) => {
-      return place.name.toLowerCase().includes(text.toLowerCase());
-    });
-
-    setPlacesResult(filteredPlaces);
-  };
-
-  const chooseResult = (placeName, placeId) => {
-    setPlaceSearch(placeName);
-    setPlaceId(placeId);
-    setPlacesResult([]);
-  };
-
-  // Séléctionner des types d'événements
-
-  const [selectedType, setSelectedType] = useState([]);
-
-  const handleType = (type) => {
-    if (selectedType.includes(type)) {
-      setSelectedType(selectedType.filter((item) => item !== type));
-      return;
-    } else {
-      setSelectedType([...selectedType, type]);
-    }
-  };
-
-  // Séléctionner le tarif de l'événement
-
-  const [free, setFree] = useState(true);
-  const [paid, setPaid] = useState(false);
-
-  const handlePayment = (toggle) => {
-    if (toggle === "paid") {
-      setFree(false);
-      setPaid(true);
-    } else {
-      setPaid(false);
-      setFree(true);
-    }
-  };
-
-  // Séléctionner les types de boissons
-
-  const [selectedDrink, setSelectedDrink] = useState([]);
-
-  const handleDrink = (drink) => {
-    if (selectedDrink.includes(drink)) {
-      setSelectedDrink(selectedDrink.filter((item) => item !== drink));
-      return;
-    } else {
-      setSelectedDrink([...selectedDrink, drink]);
-    }
-  };
-
-  // Séléctionner les types de Nourriture
-
-  const [selectedFood, setSelectedFood] = useState([]);
-
-  const handleFood = (food) => {
-    if (selectedFood.includes(food)) {
-      setSelectedFood(selectedFood.filter((item) => item !== food));
-      return;
-    } else {
-      setSelectedFood([...selectedFood, food]);
-    }
   };
 
   return (
