@@ -27,10 +27,11 @@ import colors from "../styleConstants/colors"; // Importation des couleurs
 
 const MapScreen = ({ navigation }) => {
   const [likedEvents, setLikedEvents] = useState([]);
-  const bottomSheetRef = useRef(null);
   const [region, setRegion] = useState(null);
   const [allEvents, setAllEvents] = useState(null);
   const [selectedType, setSelectedType] = useState([]);
+
+  const bottomSheetRef = useRef(null);
 
   const user = useSelector((state) => state.user.value);
   const token = user.user.token;
@@ -337,7 +338,7 @@ const MapScreen = ({ navigation }) => {
         <BottomSheetScrollView style={styles.scrollContainer}>
           {allEvents && allEvents.length > 0 ? (
             allEvents
-              .filter((event) => new Date(event.date) >= new Date()) // Filtre les événements passés
+              // .filter((event) => new Date(event.date) >= new Date()) // Filtre les événements passés
               .sort((a, b) => new Date(a.date) - new Date(b.date)) // Trie les événements par date
               .map((event) => (
                 <CardEvent

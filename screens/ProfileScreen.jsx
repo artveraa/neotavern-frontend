@@ -131,7 +131,7 @@ const ProfileScreen = ({ navigation }) => {
               <TextApp>Gérez vos évènements créés ici !</TextApp>
               {userEvents &&
                 userEvents
-                  .filter((event) => new Date(event.date) >= new Date())
+                  // .filter((event) => new Date(event.date) >= new Date())
                   .sort((a, b) => new Date(a.date) - new Date(b.date))
                   .map((event) => (
                     <View key={event._id} style={styles.card}>
