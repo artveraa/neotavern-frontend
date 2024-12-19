@@ -1,5 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
+
 import { useSelector } from "react-redux";
+
 import {
   View,
   Text,
@@ -8,24 +10,32 @@ import {
   ScrollView,
   SafeAreaView,
 } from "react-native";
+
 import CardEvent from "../components/CardEvent";
 import HeaderSearch from "../components/SearchHeader";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-// import MapView from "react-native-map-clustering";
-import MapView from "react-native-maps";
-import { Marker } from "react-native-maps";
-import * as Location from "expo-location";
-import { getAllEvents, getLikedEvents, likeAnEvent } from "../fetchers/events";
-import { useFocusEffect } from "@react-navigation/native";
-import colors from "../styleConstants/colors";
 import TextApp from "../styleComponents/TextApp";
 
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import MapView from "react-native-maps";
+import { Marker } from "react-native-maps";
+import { useFocusEffect } from "@react-navigation/native";
+import * as Location from "expo-location";
+
+import { getAllEvents, getLikedEvents, likeAnEvent } from "../fetchers/events"; // Importation des fonctions fetchers
+import colors from "../styleConstants/colors"; // Importation des couleurs
+
 const MapScreen = ({ navigation }) => {
+  const [likedEvents, setLikedEvents] = useState([]);
+  const bottomSheetRef = useRef(null);
+  const [region, setRegion] = useState(null);
+  const [allEvents, setAllEvents] = useState(null);
+  const [selectedType, setSelectedType] = useState([]);
+
   const user = useSelector((state) => state.user.value);
   const token = user.user.token;
-  const userId = user.user.id;
 
+  // Liste des types d'événements
   const types = [
     { label: "Concert" },
     { label: "Soirée" },
@@ -40,15 +50,10 @@ const MapScreen = ({ navigation }) => {
     { label: "Jeux" },
   ];
 
-  const [likedEvents, setLikedEvents] = useState([]);
-  const bottomSheetRef = useRef(null);
-  const [region, setRegion] = useState(null);
-  const [allEvents, setAllEvents] = useState(null);
-  const [selectedType, setSelectedType] = useState([]);
+  const snapPoints = ["20%", "68%"]; // Tailles du drawer
 
-  const snapPoints = ["20%", "68%"];
+  // Ouvrir et fermer le panneau des résultats
 
-  //drawer
   const openPanel = () => {
     bottomSheetRef.current?.expand();
   };
@@ -57,7 +62,7 @@ const MapScreen = ({ navigation }) => {
     bottomSheetRef.current?.collapse();
   };
 
-  //map
+  // Récupérer la position de l'utilisateur et demander la permission d'accès à la localisation
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -74,7 +79,8 @@ const MapScreen = ({ navigation }) => {
     })();
   }, []);
 
-  //events
+  // Récupérer tous les événements
+
   const fetchEvents = async () => {
     try {
       const events = await getAllEvents();
@@ -85,6 +91,7 @@ const MapScreen = ({ navigation }) => {
     }
   };
 
+  // Récupérer les événements likés par l'utilisateur
 
   const fetchLikedEvents = async () => {
     try {
@@ -94,6 +101,8 @@ const MapScreen = ({ navigation }) => {
       console.error(error);
     }
   };
+
+  // Liker un événement
 
   const handleLike = async (eventId) => {
     try {
@@ -156,6 +165,8 @@ const MapScreen = ({ navigation }) => {
     }
   };
 
+  // Filtrer par type d'événement
+
   const handleEventType = (type) => {
     if (selectedType.includes(type)) {
       setSelectedType(
@@ -176,19 +187,23 @@ const MapScreen = ({ navigation }) => {
     }
   };
 
+  // Reset des filtres
+
   const handleReset = () => {
     setSelectedType([]);
     fetchEvents();
     openPanel();
   };
 
+  // Nettoyer les filtres
+
   const handleClean = () => {
     setSelectedType([]);
     fetchEvents();
   };
 
-  // Search
   // Selection de l'établissement dans la barre de recherche (récuperation de l'ID)
+
   const handleSelectPlace = (placeId) => {
     const filteredEvents = [...allEvents].filter(
       (event) => event.place._id === placeId
@@ -197,6 +212,7 @@ const MapScreen = ({ navigation }) => {
   };
 
   // Selection de l'evenement dans la barre de recherche (récuperation de l'ID)
+
   const handleSelectEvent = (eventId) => {
     const filteredEvents = [...allEvents].filter(
       (event) => event._id === eventId
@@ -204,34 +220,34 @@ const MapScreen = ({ navigation }) => {
     setAllEvents(filteredEvents);
   };
 
-
-  const goToEventPage = (event) => {
-    navigation.push("Event", {
-      event,
-    });
-  };
+  // useEffect pour réinitialiser la liste d'événements si aucun type n'est sélectionné
 
   useEffect(() => {
     if (selectedType.length === 0) {
       fetchEvents();
     }
-  }, [selectedType]);
+  }, [selectedType]); // le useEffect s'exécute à chaque changement de selectedType
+
+  // useFocusEffect pour charger les événements lors de la navigation sur l'écran
 
   useFocusEffect(
     useCallback(() => {
-      fetchEvents();
-      fetchLikedEvents();
-      openPanel();
+      fetchEvents(); // Récupérer tous les événements
+      fetchLikedEvents(); // Récupérer les événements likés par l'utilisateur
+      openPanel(); // Ouvrir le panneau des résultats
     }, [])
   );
 
   return (
     <GestureHandlerRootView style={styles.container}>
+      {/* 
+        Affichage de la carte avec les marqueurs des événements
+        Si aucun événement n'est chargé, afficher un message de chargement
+       */}
       {region ? (
         <MapView
           style={StyleSheet.absoluteFillObject}
           showsUserLocation={true}
-          // clusterColor={colors.purpleBorder}
           initialRegion={{
             latitude: region.latitude,
             longitude: region.longitude,
@@ -247,11 +263,10 @@ const MapScreen = ({ navigation }) => {
                   latitude: event.place.latitude,
                   longitude: event.place.longitude,
                 }}
-                image={require('../assets/placeholder.png')}
+                image={require("../assets/placeholder.png")}
                 title={event.name}
                 description={event.place.name}
                 color={colors.darkGreen}
-                onPress={() => goToEventPage(event)}
               />
             ))}
         </MapView>
@@ -260,6 +275,8 @@ const MapScreen = ({ navigation }) => {
           <TextApp>Chargement de la carte...</TextApp>
         </View>
       )}
+
+      {/* Module de recherche */}
 
       <SafeAreaView style={styles.searchbar}>
         <HeaderSearch
@@ -304,19 +321,24 @@ const MapScreen = ({ navigation }) => {
           ))}
         </ScrollView>
       </SafeAreaView>
-
+      {/*
+        Affichage des événements dans un drawer
+        Si aucun événement n'est chargé, afficher un message d'erreur
+        */}
       <BottomSheet
         ref={bottomSheetRef}
         index={1}
         snapPoints={snapPoints}
         style={styles.drawer}
         enableDynamicSizing={false}
+        handleIndicatorStyle={{ backgroundColor: colors.dark }}
+        handleStyle={{ backgroundColor: colors.light }}
       >
         <BottomSheetScrollView style={styles.scrollContainer}>
           {allEvents && allEvents.length > 0 ? (
             allEvents
-              .filter((event) => new Date(event.date) >= new Date())
-              .sort((a, b) => new Date(a.date) - new Date(b.date))
+              .filter((event) => new Date(event.date) >= new Date()) // Filtre les événements passés
+              .sort((a, b) => new Date(a.date) - new Date(b.date)) // Trie les événements par date
               .map((event) => (
                 <CardEvent
                   key={event._id}
@@ -343,26 +365,29 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
   },
+
   button: {
     backgroundColor: "#6200EE",
     padding: 12,
     borderRadius: 8,
     marginBottom: 20,
   },
+
   buttonText: {
     color: "#ffffff",
     fontSize: 16,
   },
+
   contentContainer: {
     position: "relative",
   },
 
-  scrollContainer: {
-    width: "100%",
-  },
+  drawer: {},
 
-  drawer: {
+  scrollContainer: {
     paddingHorizontal: 20,
+    width: "100%",
+    backgroundColor: colors.light,
   },
 
   searchbar: {

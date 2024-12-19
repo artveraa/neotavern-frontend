@@ -7,8 +7,10 @@ import {
   Text,
   StyleSheet,
   ScrollView,
+  Platform,
   TouchableOpacity,
   ActivityIndicator,
+  Dimensions,
 } from "react-native";
 
 import { getAllEvents } from "../fetchers/events";
@@ -17,6 +19,7 @@ import CardEventProfil from "../components/CardEventProfil";
 import TextApp from "../styleComponents/TextApp";
 import TextAppTitle from "../styleComponents/TextAppTitle";
 import colors from "../styleConstants/colors";
+const { width } = Dimensions.get("window");
 
 const ProfileScreen = ({ navigation }) => {
   // userEvents contient les événéments créés seulement par l'utilisateur
@@ -104,17 +107,14 @@ const ProfileScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={styles.container}
+      padding={Platform.OS === "ios" ? 25 : 0}
+    >
+      <View></View>
       <Text style={styles.mainTitle}>Profil</Text>
-      <View style={styles.blockInfo}>
-        <TextAppTitle>Mes informations</TextAppTitle>
-        <View style={styles.userInfo}>
-          <TextApp>Surnom: {nickname}</TextApp>
-          <TextApp>Email: {email}</TextApp>
-        </View>
-      </View>
       <View style={styles.events}>
-        <TextAppTitle>Mes événements créés</TextAppTitle>
+        <TextAppTitle>Mes événements créées</TextAppTitle>
 
         {/* Ajout d'un loader de 1,5 sec pour montrer que les événéments que l'on a créé se charges */}
 
@@ -124,6 +124,14 @@ const ProfileScreen = ({ navigation }) => {
           </View>
         ) : (
           <ScrollView style={styles.scrollWrapper}>
+            <View style={styles.blockInfo}>
+              <TextAppTitle>Mes informations</TextAppTitle>
+              <View style={styles.userInfo}>
+                <TextApp>Surnom: {nickname}</TextApp>
+                <TextApp>Email: {email}</TextApp>
+              </View>
+            </View>
+
             <View style={styles.eventContent}>
               <TextApp>Gérez vos évènements créés ici !</TextApp>
 
@@ -131,6 +139,7 @@ const ProfileScreen = ({ navigation }) => {
 
               {userEvents &&
                 userEvents
+                  .filter((event) => new Date(event.date) >= new Date())
                   .sort((a, b) => new Date(a.date) - new Date(b.date))
                   .map((event) => (
                     <View key={event._id} style={styles.card}>
@@ -142,7 +151,6 @@ const ProfileScreen = ({ navigation }) => {
                       />
                     </View>
                   ))}
-
             </View>
           </ScrollView>
         )}
@@ -162,14 +170,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.light,
     color: colors.dark,
-    width: "100%",
-    paddingRight: 28,
-    paddingLeft: 28,
+
+    width: width,
   },
+
   loading: {
     justifyContent: "center",
     alignItems: "center",
   },
+
   mainTitle: {
     fontSize: 18,
     fontFamily: "Lexend_500Medium",
@@ -181,6 +190,7 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.dark,
     color: colors.dark,
   },
+
   blockInfo: {
     justifyContent: "flex-start",
     alignItems: "center",
@@ -189,31 +199,38 @@ const styles = StyleSheet.create({
     padding: 28,
     borderWidth: 0.3,
     borderRadius: 15,
+    marginBottom: 28,
   },
+
   userInfo: {
     paddingTop: 12,
   },
   scrollWrapper: {
+    paddingHorizontal: 28,
     minWidth: "100%",
     marginVertical: 28,
   },
+
   card: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingBottom: 10,
   },
+
   events: {
     paddingTop: 32,
     justifyContent: "center",
     alignItems: "center",
   },
+
   image: {
     width: "100%",
     height: 30,
     margin: 10,
     borderRadius: 8,
   },
+
   buttonDelete: {
     marginTop: 10,
     marginLeft: 20,
@@ -221,6 +238,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     backgroundColor: colors.red,
   },
+
   buttonReset: {
     flex: 1,
     marginTop: 10,
@@ -229,6 +247,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     backgroundColor: colors.green,
   },
+
   eventContent: {
     borderRadius: 15,
     width: "100%",
