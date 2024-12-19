@@ -1,13 +1,8 @@
 import React, { useState, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
+import { ActivityIndicator } from "react-native";
 
-import {
-  SafeAreaView,
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-} from "react-native";
+import { SafeAreaView, View, Text, StyleSheet, ScrollView } from "react-native";
 
 import { useSelector } from "react-redux";
 import CardEvent from "../components/CardEvent";
@@ -22,6 +17,7 @@ const BookmarkedScreen = ({ navigation }) => {
   const token = user.user.token;
 
   const [likedEvents, setLikedEvents] = useState();
+  const [loading, setLoading] = useState(false);
 
   //useFOCUS -> je get mes evenements likés, je les set dans un tableau
   useFocusEffect(
@@ -31,11 +27,14 @@ const BookmarkedScreen = ({ navigation }) => {
   );
 
   const fetchLikedEvents = async () => {
+    setLoading(true);
     try {
       const response = await getLikedEvents(token);
       setLikedEvents(response.likedEvents.map((event) => event));
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -55,7 +54,12 @@ const BookmarkedScreen = ({ navigation }) => {
         <ScrollView style={styles.scrollWrapper}>
           <View style={styles.likedContainer}>
             <TextApp>Vos évènements préférés à venir :</TextApp>
-            {likedEvents &&
+            {loading ? (
+              <View>
+                <ActivityIndicator size="large" color={colors.dark} />
+              </View>
+            ) : (
+              likedEvents &&
               likedEvents
                 .filter((event) => new Date(event.date) >= new Date().getDate())
                 .sort((a, b) => new Date(a.date) - new Date(b.date))
@@ -67,7 +71,8 @@ const BookmarkedScreen = ({ navigation }) => {
                     handleLike={handleLike}
                     isLiked={true}
                   />
-                ))}
+                ))
+            )}
           </View>
         </ScrollView>
       </SafeAreaView>
