@@ -22,6 +22,7 @@ import colors from "../styleConstants/colors";
 import TextApp from "../styleComponents/TextApp";
 
 const MapScreen = ({ navigation }) => {
+  const [clickCount, setClickCount] = useState(0);
   const user = useSelector((state) => state.user.value);
   const token = user.user.token;
   const userId = user.user.id;
@@ -45,10 +46,12 @@ const MapScreen = ({ navigation }) => {
   const [region, setRegion] = useState(null);
   const [allEvents, setAllEvents] = useState(null);
   const [selectedType, setSelectedType] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   const snapPoints = ["20%", "68%"];
 
-  //drawer
+  // Ouvrir et fermer le panneau des résultats
+
   const openPanel = () => {
     bottomSheetRef.current?.expand();
   };
@@ -57,7 +60,7 @@ const MapScreen = ({ navigation }) => {
     bottomSheetRef.current?.collapse();
   };
 
-  //map
+  // Récupérer la position de l'utilisateur et demander la permission d'accès à la localisation
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -74,7 +77,20 @@ const MapScreen = ({ navigation }) => {
     })();
   }, []);
 
-  //events
+  // Gestion du clic sur un marqueur
+
+  const handleMarkerClick = (event) => {
+    if (clickCount === 0) {
+      setSelectedEvent(event);
+      setClickCount(1);
+    } else {
+      navigation.navigate("Event", { eventId: event._id });
+      setClickCount(0);
+    }
+  };
+
+  // Récupérer tous les événements
+
   const fetchEvents = async () => {
     try {
       const events = await getAllEvents();
@@ -85,6 +101,7 @@ const MapScreen = ({ navigation }) => {
     }
   };
 
+  // Récupérer les événements likés par l'utilisateur
 
   const fetchLikedEvents = async () => {
     try {
@@ -94,6 +111,8 @@ const MapScreen = ({ navigation }) => {
       console.error(error);
     }
   };
+
+  // Liker un événement
 
   const handleLike = async (eventId) => {
     try {
@@ -156,6 +175,8 @@ const MapScreen = ({ navigation }) => {
     }
   };
 
+  // Filtrer par type d'événement
+
   const handleEventType = (type) => {
     if (selectedType.includes(type)) {
       setSelectedType(
@@ -176,18 +197,21 @@ const MapScreen = ({ navigation }) => {
     }
   };
 
+  // Reset des filtres
+
   const handleReset = () => {
     setSelectedType([]);
     fetchEvents();
     openPanel();
   };
 
+  // Nettoyer les filtres
+
   const handleClean = () => {
     setSelectedType([]);
     fetchEvents();
   };
 
-  // Search
   // Selection de l'établissement dans la barre de recherche (récuperation de l'ID)
   const handleSelectPlace = (placeId) => {
     const filteredEvents = [...allEvents].filter(
@@ -204,24 +228,19 @@ const MapScreen = ({ navigation }) => {
     setAllEvents(filteredEvents);
   };
 
-
-  const goToEventPage = (event) => {
-    navigation.push("Event", {
-      event,
-    });
-  };
-
+  // useEffect pour réinitialiser la liste d'événements si aucun type n'est sélectionné
   useEffect(() => {
     if (selectedType.length === 0) {
       fetchEvents();
     }
-  }, [selectedType]);
+  }, [selectedType]); // le useEffect s'exécute à chaque changement de selectedType
 
+  // useFocusEffect pour charger les événements lors de la navigation sur l'écran
   useFocusEffect(
     useCallback(() => {
-      fetchEvents();
-      fetchLikedEvents();
-      openPanel();
+      fetchEvents(); // Récupérer tous les événements
+      fetchLikedEvents(); // Récupérer les événements likés par l'utilisateur
+      openPanel(); // Ouvrir le panneau des résultats
     }, [])
   );
 
@@ -231,7 +250,6 @@ const MapScreen = ({ navigation }) => {
         <MapView
           style={StyleSheet.absoluteFillObject}
           showsUserLocation={true}
-          // clusterColor={colors.purpleBorder}
           initialRegion={{
             latitude: region.latitude,
             longitude: region.longitude,
@@ -250,7 +268,7 @@ const MapScreen = ({ navigation }) => {
                 title={event.name}
                 description={event.place.name}
                 color={colors.darkGreen}
-                onPress={() => goToEventPage(event)}
+                onPress={() => handleMarkerClick(event)}
               />
             ))}
         </MapView>
@@ -314,7 +332,7 @@ const MapScreen = ({ navigation }) => {
         <BottomSheetScrollView style={styles.scrollContainer}>
           {allEvents && allEvents.length > 0 ? (
             allEvents
-              // .filter((event) => new Date(event.date) >= new Date())
+              .filter((event) => new Date(event.date) >= new Date())
               .sort((a, b) => new Date(a.date) - new Date(b.date))
               .map((event) => (
                 <CardEvent
@@ -342,16 +360,19 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
   },
+
   button: {
     backgroundColor: "#6200EE",
     padding: 12,
     borderRadius: 8,
     marginBottom: 20,
   },
+
   buttonText: {
     color: "#ffffff",
     fontSize: 16,
   },
+
   contentContainer: {
     position: "relative",
   },

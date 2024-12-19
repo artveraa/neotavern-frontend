@@ -6,9 +6,10 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  Image,
+  Platform,
   TouchableOpacity,
   ActivityIndicator,
+  Dimensions,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -21,6 +22,8 @@ import { getAllEvents } from "../fetchers/events";
 import CardEvent from "../components/CardEvent";
 import colors from "../styleConstants/colors";
 import CardEventProfil from "../components/CardEventProfil";
+
+const { width } = Dimensions.get("window");
 
 const ProfileScreen = ({ navigation }) => {
   const [userEvents, setUserEvents] = useState([]);
@@ -62,7 +65,6 @@ const ProfileScreen = ({ navigation }) => {
       fetchEvents();
     }, [])
   );
-  // console.log("recup des events:", userEvents);
 
   const handleDeleteEvent = (eventId) => {
     fetch(`https://neotavern-backend.vercel.app/events/deleteEvent/${token}`, {
@@ -90,8 +92,7 @@ const ProfileScreen = ({ navigation }) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-      }),
+      body: JSON.stringify({}),
     })
       .then((response) => response.json()) // Conversion de la réponse en JSON
       .then((data) => {
@@ -104,63 +105,56 @@ const ProfileScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={styles.container}
+      padding={Platform.OS === "ios" ? 25 : 0}
+    >
+      <View></View>
       <Text style={styles.mainTitle}>Profil</Text>
-      <View style={styles.blockInfo}>
-        <TextAppTitle>Mes informations</TextAppTitle>
-        <View style={styles.userInfo}>
-          <TextApp>Surnom: {nickname}</TextApp>
-          <TextApp>Email: {email}</TextApp>
-          {/* <TouchableOpacity style={styles.buttonReset}>
-            <TextApp>Réinitialiser mon mot de passe</TextApp>
-          </TouchableOpacity> */}
-        </View>
-      </View>
-      {/* <View style={styles.blockBadges}>
-        <TextAppTitle>Mes badges</TextAppTitle>
-        <View>
-          <Image source="../assets/badge" style={styles.image} />
-        </View>
-      </View> */}
       <View style={styles.events}>
         <TextAppTitle>Mes événements créées</TextAppTitle>
-          {isLoading ? (
-            <View style={styles.loading}>
-              <ActivityIndicator
-                size="large"
-                color={colors.dark}
-              />
-            </View>
-          ) : (
-        <ScrollView style={styles.scrollWrapper}>
-          <View style={styles.eventContent}>
-          <TextApp>
-              Gérez vos évènements créés ici !
-            </TextApp>
-
-            {userEvents &&
-            userEvents
-              .sort((a, b) => new Date(a.date) - new Date(b.date))
-              .map((event) => (
-                <View key={event._id} style={styles.card}>
-                  <CardEventProfil
-                    key={event._id}
-                    event={event}
-                    navigation={navigation}
-                    handleDeleteEvent={handleDeleteEvent}
-                  />
-                </View>
-              ))}
+        {isLoading ? (
+          <View style={styles.loading}>
+            <ActivityIndicator size="large" color={colors.dark} />
           </View>
-        </ScrollView>
-          )}
-        <TouchableOpacity style={styles.buttonDelete} onPress={() => handleDeleteUser(token)}>
+        ) : (
+          <ScrollView style={styles.scrollWrapper}>
+            <View style={styles.blockInfo}>
+              <TextAppTitle>Mes informations</TextAppTitle>
+              <View style={styles.userInfo}>
+                <TextApp>Surnom: {nickname}</TextApp>
+                <TextApp>Email: {email}</TextApp>
+              </View>
+            </View>
+
+            <View style={styles.eventContent}>
+              <TextApp>Gérez vos évènements créés ici !</TextApp>
+              {userEvents &&
+                userEvents
+                  .filter((event) => new Date(event.date) >= new Date())
+                  .sort((a, b) => new Date(a.date) - new Date(b.date))
+                  .map((event) => (
+                    <View key={event._id} style={styles.card}>
+                      <CardEventProfil
+                        key={event._id}
+                        event={event}
+                        navigation={navigation}
+                        handleDeleteEvent={handleDeleteEvent}
+                      />
+                    </View>
+                  ))}
+            </View>
+          </ScrollView>
+        )}
+        <TouchableOpacity
+          style={styles.buttonDelete}
+          onPress={() => handleDeleteUser(token)}
+        >
           <TextApp>Supprimer mon compte</TextApp>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
-  
 };
 
 const styles = StyleSheet.create({
@@ -172,14 +166,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.light,
     color: colors.dark,
 
-    width: "100%",
-    paddingRight: 28,
-    paddingLeft: 28,
+    width: width,
   },
+
   loading: {
     justifyContent: "center",
     alignItems: "center",
   },
+
   mainTitle: {
     fontSize: 18,
     fontFamily: "Lexend_500Medium",
@@ -191,43 +185,48 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.dark,
     color: colors.dark,
   },
+
   blockInfo: {
     justifyContent: "flex-start",
-    alignItems: 'center',
-    width: '100%',
+    alignItems: "center",
+    width: "100%",
     marginTop: 28,
     padding: 28,
     borderWidth: 0.3,
     borderRadius: 15,
+    marginBottom: 28,
   },
+
   userInfo: {
     paddingTop: 12,
   },
-  // blockBadges: {
-  //   paddingTop: 30,
-  // },
+
   scrollWrapper: {
+    paddingHorizontal: 28,
     minWidth: "100%",
     marginVertical: 28,
   },
+
   card: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingBottom: 10,
   },
+
   events: {
-    // flex:1,
     paddingTop: 32,
     justifyContent: "center",
     alignItems: "center",
   },
+
   image: {
     width: "100%",
     height: 30,
     margin: 10,
     borderRadius: 8,
   },
+
   buttonDelete: {
     marginTop: 10,
     marginLeft: 20,
@@ -235,23 +234,25 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     backgroundColor: colors.red,
   },
+
   buttonReset: {
-    flex:1,
+    flex: 1,
     marginTop: 10,
     marginLeft: 20,
     padding: 12,
     borderRadius: 15,
     backgroundColor: colors.green,
   },
+
   eventContent: {
     borderRadius: 15,
     width: "100%",
-    
-    alignItems:'center',
-    borderWidth:0.3,
-    borderColor:colors.dark,
 
-    padding:12,
+    alignItems: "center",
+    borderWidth: 0.3,
+    borderColor: colors.dark,
+
+    padding: 12,
   },
 });
 
