@@ -30,6 +30,7 @@ const MapScreen = ({ navigation }) => {
   const [region, setRegion] = useState(null);
   const [allEvents, setAllEvents] = useState(null);
   const [selectedType, setSelectedType] = useState([]);
+  const [selectedMarkerId, setSelectedMarkerId] = useState(null);
 
   const bottomSheetRef = useRef(null);
 
@@ -61,6 +62,19 @@ const MapScreen = ({ navigation }) => {
 
   const closePanel = () => {
     bottomSheetRef.current?.collapse();
+  };
+
+  // Gestion du double clic sur un marker
+
+  const handleMarkerPress = (event) => {
+    if (selectedMarkerId === event._id) {
+      // Si le même marker est cliqué à nouveau, redirige vers la page de détails
+      navigation.navigate("Event", { event });
+      setSelectedMarkerId(null); // Réinitialise l'état après la redirection
+    } else {
+      // Sinon, enregistre l'ID du marker sélectionné pour le premier clic
+      setSelectedMarkerId(event._id);
+    }
   };
 
   // Récupérer la position de l'utilisateur et demander la permission d'accès à la localisation
@@ -268,6 +282,7 @@ const MapScreen = ({ navigation }) => {
                 title={event.name}
                 description={event.place.name}
                 color={colors.darkGreen}
+                onPress={() => handleMarkerPress(event)}
               />
             ))}
         </MapView>
