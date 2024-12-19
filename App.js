@@ -1,8 +1,7 @@
-import { Button, StyleSheet, Text, View } from "react-native";
-
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 import WelcomeScreen from "./screens/WelcomeScreen";
@@ -30,13 +29,16 @@ import {
   Lexend_100Thin,
 } from "@expo-google-fonts/lexend";
 
+// Configuration du store Redux
 const store = configureStore({
   reducer: { user },
 });
 
+// Configuration de la navigation
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
+// Configuration des onglets de navigation
 const TabNavigator = () => {
   return (
     <Tab.Navigator
@@ -52,7 +54,6 @@ const TabNavigator = () => {
           } else if (route.name === "Profile") {
             iconName = "user-o";
           }
-
           return <FontAwesome name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: "#EDA0FF",
@@ -81,6 +82,7 @@ const TabNavigator = () => {
 };
 
 export default function App() {
+  // Chargement des polices
   let [fontsLoaded] = useFonts({
     Lexend_900Black,
     Lexend_800ExtraBold,
@@ -93,12 +95,20 @@ export default function App() {
     Lexend_100Thin,
   });
 
+  // Si les polices ne sont pas chargées, on ne rend rien
   if (!fontsLoaded) {
     return null;
   }
 
   return (
+    // On enveloppe notre application dans le Provider Redux
     <Provider store={store}>
+      {/* 
+        On utilise la NavigationContainer de React Navigation pour gérer la navigation
+        On utilise un Stack Navigator pour gérer la navigation entre les différentes pages
+        On utilise des écrans pour chaque page de l'application
+        On utilise un Tab Navigator pour gérer la navigation entre les onglets de l'application
+       */}
       <NavigationContainer>
         <Stack.Navigator
           initialRouteName="Welcome"
@@ -113,12 +123,3 @@ export default function App() {
     </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
