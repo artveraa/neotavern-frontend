@@ -338,7 +338,7 @@ const MapScreen = ({ navigation }) => {
         <BottomSheetScrollView style={styles.scrollContainer}>
           {allEvents && allEvents.length > 0 ? (
             allEvents
-              // .filter((event) => new Date(event.date) >= new Date()) // Filtre les événements passés
+              .filter((event) => new Date(event.date) >= new Date().getDate()) // Filtre les événements passés
               .sort((a, b) => new Date(a.date) - new Date(b.date)) // Trie les événements par date
               .map((event) => (
                 <CardEvent

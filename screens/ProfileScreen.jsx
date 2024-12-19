@@ -42,7 +42,7 @@ const ProfileScreen = ({ navigation }) => {
   }, []);
 
   // importe tous les événements de la base de donnée et tri ceux qui sont créés par l'utilisateur (avec son token)
-    // ajout d'un try catch pour la gestion des erreurs
+  // ajout d'un try catch pour la gestion des erreurs
   const fetchEvents = async () => {
     try {
       const events = await getAllEvents();
@@ -59,7 +59,7 @@ const ProfileScreen = ({ navigation }) => {
   };
 
   // Actualisation du fetch quand l'utilisateur change de screen
-    // useCallBack memorise le fetch pour éviter qu'il soit re-render à chaque rendu
+  // useCallBack memorise le fetch pour éviter qu'il soit re-render à chaque rendu
   useFocusEffect(
     useCallback(() => {
       fetchEvents();
@@ -139,7 +139,9 @@ const ProfileScreen = ({ navigation }) => {
 
               {userEvents &&
                 userEvents
-                  // .filter((event) => new Date(event.date) >= new Date())
+                  .filter(
+                    (event) => new Date(event.date) >= new Date().getDate()
+                  )
                   .sort((a, b) => new Date(a.date) - new Date(b.date))
                   .map((event) => (
                     <View key={event._id} style={styles.card}>
