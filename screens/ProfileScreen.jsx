@@ -160,9 +160,6 @@ const ProfileScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "center",
-
     backgroundColor: colors.light,
     color: colors.dark,
 
