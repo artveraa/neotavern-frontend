@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 
 import {
-  SafeAreaView,
   View,
   Image,
-  Text,
   StyleSheet,
   TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
 } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
@@ -24,7 +19,6 @@ import TextApp from "../styleComponents/TextApp";
 import colors from "../styleConstants/colors";
 
 const EventScreen = ({ navigation, route }) => {
-  const user = useSelector((state) => state.user.value);
   const [region, setRegion] = useState(null);
 
   // navigation -> get params event
@@ -79,7 +73,7 @@ const EventScreen = ({ navigation, route }) => {
           onPress={() => handleBackMap()}
         >
           <View>
-            <Text style={styles.arrow}>&#x2190;</Text>
+            <TextApp style={styles.arrow}>&#x2190;</TextApp>
           </View>
         </TouchableOpacity>
 
@@ -113,7 +107,7 @@ const EventScreen = ({ navigation, route }) => {
 
         <View style={styles.eventContainer}>
           <TouchableOpacity onPress={() => handlePlace(event?.place)}>
-            <TextAppTitle>{event?.place?.name}</TextAppTitle>
+            <TextAppTitle>{event?.place?.name} &#8594;</TextAppTitle>
           </TouchableOpacity>
 
           <View>

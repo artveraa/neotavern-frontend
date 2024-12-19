@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { login } from "../reducers/user";
+import { useDispatch } from "react-redux";
 
 import {
   View,
@@ -9,22 +8,22 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
+import { login } from "../reducers/user";
 
 import colors from "../styleConstants/colors";
-import TextAppS from "../styleComponents/TextApp";
 import TextApp from "../styleComponents/TextApp";
+
 
 const LoginUser = ({ navigation }) => {
   // redux
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.value);
-
   // input valeur
   const [mail, setMail] = useState("");
   const [pass, setPass] = useState("");
   // message erreur
   const [error, setError] = useState(false);
 
+  // appel de la route post login et dispache de la reponse dans le reducer user
   const handleLoginUser = () => {
     fetch("http://neotavern-backend.vercel.app/users/login", {
       method: "POST",
@@ -34,12 +33,15 @@ const LoginUser = ({ navigation }) => {
       .then((response) => response.json())
       .then((userData) => {
         if (userData.result) {
+          console.log(userData)
+
           dispatch(
             login({
               token: userData?.token,
               nickname: userData?.nickname,
-              email: mail,
+              email: userData?.email,
               likedEvents: userData?.likedEvents,
+
               role: userData?.role,
               id: userData?.id,
               badges: userData?.badges,
@@ -105,9 +107,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   input: {
-    fontSize: 14,
-
-    borderBottomColor: colors.dark,
     borderBottomWidth: 1,
     paddingTop: 4,
     paddingBottom: 4,

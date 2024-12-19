@@ -24,11 +24,6 @@ const CardEventProfil = ({ event, navigation, handleDeleteEvent }) => {
     });
   };
 
-  // LIKED
-  const handleClick = async () => {
-    handleLike(event._id);
-  };
-
   // DATE FORMATAGE
   const formatDate = (date) => {
     if (new Date(date).toDateString() === new Date().toDateString()) {

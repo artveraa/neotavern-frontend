@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-
+import { useSelector } from "react-redux";
 import {
-  SafeAreaView,
   View,
   Image,
   Text,
@@ -11,7 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
+
 import RegisterUser from "../components/RegisterUser";
 import LoginUser from "../components/LoginUser";
 
@@ -21,10 +19,10 @@ import colors from "../styleConstants/colors";
 const WelcomeScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.value);
 
-  //formulaire -> visible ou non
   const [resgisterForm, setResgisterForm] = useState(false);
   const [loginForm, setLoginForm] = useState(false);
 
+  //formulaires -> visible ou non
   const handleSignupForm = () => {
     setResgisterForm(!resgisterForm);
   };
@@ -39,6 +37,7 @@ const WelcomeScreen = ({ navigation }) => {
     >
       <Image source={require("../assets/logo.png")} style={styles.logo} />
 
+      {/* intégration du formulaire signin et suppression du btn singup */}
       {!resgisterForm && (
         <View style={styles.btnContainer}>
           <TouchableOpacity
@@ -57,12 +56,11 @@ const WelcomeScreen = ({ navigation }) => {
           {loginForm ? (
             <>
               <LoginUser navigation={navigation} />
-
               <TouchableOpacity
                 style={styles.back}
                 onPress={() => handleLoginForm()}
               >
-                <TextApp style={[styles.s, styles.dark, styles.labelBtn]}>
+                <TextApp style={styles.labelBtn}>
                   &lt; retour
                 </TextApp>
               </TouchableOpacity>
@@ -72,18 +70,20 @@ const WelcomeScreen = ({ navigation }) => {
               style={styles.btnPrimary}
               onPress={() => handleLoginForm()}
             >
-              <TextApp style={[styles.l, styles.dark, styles.labelBtn]}>
+              <TextApp style={styles.labelBtn}>
                 Se connecter avec son compte
               </TextApp>
             </TouchableOpacity>
           )}
         </View>
       )}
+
+      {/* intégration du formulaire signup et suppression du btn singin */}
       {!loginForm && (
         <View style={styles.btnContainer}>
           <View style={styles.straight}></View>
           <TextApp
-            style={[styles.s, styles.center, styles.dark, styles.labelBtn]}
+            style={[styles.center, styles.labelBtn]}
           >
             Pas encore inscrit ?
           </TextApp>
@@ -94,7 +94,7 @@ const WelcomeScreen = ({ navigation }) => {
                 style={styles.back}
                 onPress={() => handleSignupForm()}
               >
-                <TextApp style={[styles.s, styles.dark, styles.labelBtn]}>
+                <TextApp style={styles.labelBtn}>
                   &lt; retour
                 </TextApp>
               </TouchableOpacity>
@@ -118,14 +118,13 @@ const WelcomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.light,
-    color: colors.dark,
     justifyContent: "center",
     gap: "8%",
     alignItems: "center",
     width: "100%",
     paddingRight: 28,
     paddingLeft: 28,
+    backgroundColor: colors.light,
   },
 
   logo: {
@@ -183,8 +182,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
     marginBottom: 12,
 
-    fontSize: 16,
-    backgroundColor: colors.green,
+    backgroundColor: colors.darkGreen,
     borderRadius: 15,
   },
 

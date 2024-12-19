@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import colors from "../styleConstants/colors";
 
 const TagL = ({ children }) => {
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
 
     backgroundColor: colors.light,
     borderColor: colors.dark,
-    borderWidth: 1,
+    borderWidth: 0.3,
     borderRadius: 15,
   },
 });

@@ -1,40 +1,25 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-
-import { useDispatch, useSelector } from "react-redux";
-import CardEvent from "../components/CardEvent";
-
-import { getLikedEvents, likeAnEvent } from "../fetchers/events";
 
 import {
   SafeAreaView,
   View,
-  Image,
   Text,
   StyleSheet,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
   ScrollView,
 } from "react-native";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
 
-import MapView, { Marker } from "react-native-maps";
-import * as Location from "expo-location";
+import { useSelector } from "react-redux";
+import CardEvent from "../components/CardEvent";
 
-import TextAppS from "../styleComponents/TextAppS";
-import TagL from "../styleComponents/TagL";
-import TextAppTitle from "../styleComponents/TextAppTitle";
-import TextAppBold from "../styleComponents/TextAppBold";
+import { getLikedEvents, likeAnEvent } from "../fetchers/events";
+
 import TextApp from "../styleComponents/TextApp";
 import colors from "../styleConstants/colors";
 
 const BookmarkedScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.value);
-  const name = user.user.nickname;
-  const id = user.user.id;
   const token = user.user.token;
-  // const likedEvents = user.user.likedEvents
 
   const [likedEvents, setLikedEvents] = useState();
 

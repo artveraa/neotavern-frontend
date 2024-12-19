@@ -30,6 +30,7 @@ const ProfileScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.value);
   const nickname = user.user.nickname;
   const email = user.user.email;
+  console.log(email)
   const token = user.user.token;
   const id = user.user.id;
 
