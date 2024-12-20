@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Image,
+  Dimensions,
 } from "react-native";
 
 import * as ImagePicker from "expo-image-picker";
@@ -21,6 +22,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import colors from "../styleConstants/colors";
 import TextApp from "../styleComponents/TextApp";
 import TextAppBold from "../styleComponents/TextAppBold";
+const { width } = Dimensions.get("window");
 
 const AddEventScreen = ({ navigation }) => {
   // States pour les champs de l'événement
@@ -56,6 +58,7 @@ const AddEventScreen = ({ navigation }) => {
 
   // Récupération de l'utilisateur connecté via Redux
   const user = useSelector((state) => state.user.value);
+
 
   // ---------- 1. Méthodes liées à la recherche de lieu ----------
 
@@ -615,7 +618,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  searchPlace: {},
   input: {
     width: "100%",
     borderBottomWidth: 1,
@@ -707,11 +709,11 @@ const styles = StyleSheet.create({
     fontFamily: "Lexend_500Medium",
     paddingTop: 60,
     paddingBottom: 20,
-    width: "100%",
+    width: width,
     textAlign: "center",
     borderBottomWidth: 1,
-    borderBottomColor: "#333",
-    color: "#333333",
+    borderBottomColor: colors.dark,
+    color: colors.dark,
   },
 
   // Search section
