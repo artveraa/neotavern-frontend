@@ -249,6 +249,7 @@ const AddEventScreen = ({ navigation }) => {
     { label: "Cocktails" },
     { label: "Alcool fort" },
     { label: "Mocktails" },
+    { label: "Sans précisions boissons" },
   ];
 
   // Séléctionner les types de boissons
@@ -273,6 +274,7 @@ const AddEventScreen = ({ navigation }) => {
     { label: "Halal" },
     { label: "Casher" },
     { label: "Vegan" },
+    { label: "Sans précisions alimentaires" },
   ];
 
   // Séléctionner les types de Nourriture
