@@ -18,8 +18,8 @@ import TextApp from "../styleComponents/TextApp";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-// import MapView from "react-native-maps";
-import ClusteredMapView from "react-native-map-clustering";
+import MapView from "react-native-maps";
+// import ClusteredMapView from "react-native-map-clustering";
 import { Marker } from "react-native-maps";
 import { useFocusEffect } from "@react-navigation/native";
 import * as Location from "expo-location";
@@ -265,7 +265,7 @@ const MapScreen = ({ navigation }) => {
         Si aucun événement n'est chargé, afficher un message de chargement
        */}
       {region ? (
-        <ClusteredMapView
+        <MapView
           style={StyleSheet.absoluteFillObject}
           initialRegion={{
             latitude: region.latitude,
@@ -274,8 +274,6 @@ const MapScreen = ({ navigation }) => {
             longitudeDelta: 0.0421,
           }}
           showsUserLocation={true}
-          clusterColor={colors.purple}
-          clusterTextColor={colors.light}
         >
           {allEvents &&
             allEvents.map((event) => (
@@ -292,7 +290,7 @@ const MapScreen = ({ navigation }) => {
                 onPress={() => handleMarkerPress(event)}
               />
             ))}
-        </ClusteredMapView>
+        </MapView>
       ) : (
         <View style={styles.loadingContainer}>
           <TextApp>Chargement de la carte...</TextApp>
