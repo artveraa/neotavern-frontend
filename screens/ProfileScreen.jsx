@@ -170,14 +170,13 @@ const ProfileScreen = ({ navigation }) => {
                   ))}
             </View>
         )}
-
-        </ScrollView>
         <TouchableOpacity
           style={styles.buttonDelete}
           onPress={() => handleDeleteUser(token)}
         >
           <TextApp>Supprimer mon compte</TextApp>
         </TouchableOpacity>
+        </ScrollView>
 
       </View>
     </SafeAreaView>
@@ -227,7 +226,6 @@ const styles = StyleSheet.create({
   scrollWrapper: {
     paddingHorizontal: 28,
     minWidth: "100%",
-    marginVertical: 28,
   },
 
   card: {
@@ -252,9 +250,12 @@ const styles = StyleSheet.create({
 
   buttonDelete: {
     paddingVertical: 12,
+    marginTop: 20,
+    marginBottom: 140,
     paddingHorizontal:24,
     borderRadius: 15,
     backgroundColor: colors.red,
+    alignItems: 'center'
   },
 
   buttonLogout: {
