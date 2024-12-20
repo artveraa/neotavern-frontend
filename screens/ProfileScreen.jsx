@@ -102,6 +102,7 @@ const ProfileScreen = ({ navigation }) => {
       .then((response) => response.json()) // Conversion de la réponse en JSON
       .then((data) => {
         console.log("Utilisateur supprimé avec succès :", data);
+        dispatch(logout())
         navigation.navigate("Welcome");
       })
       .catch((error) => {
