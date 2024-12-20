@@ -274,6 +274,8 @@ const MapScreen = ({ navigation }) => {
             longitudeDelta: 0.0421,
           }}
           showsUserLocation={true}
+          clusterColor={colors.purple}
+          clusterTextColor={colors.light}
         >
           {allEvents &&
             allEvents.map((event) => (
