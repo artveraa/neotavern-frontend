@@ -22,6 +22,7 @@
         "backgroundColor": "#ffffff"
       },
       "permissions": [
+        "android.permission.RECORD_AUDIO",
         "android.permission.RECORD_AUDIO"
       ],
       "package": "com.neotavern.frontend"
@@ -58,6 +59,12 @@
         "projectId": "194b515a-64e0-45a8-aa94-53b94d8390d4"
       }
     },
-    "owner": "neotavern"
+    "owner": "neotavern",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/194b515a-64e0-45a8-aa94-53b94d8390d4"
+    }
   }
 }

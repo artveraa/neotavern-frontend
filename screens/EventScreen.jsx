@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import {
-  View,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { View, Image, StyleSheet, TouchableOpacity } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 import MapView, { Marker } from "react-native-maps";
@@ -118,7 +113,7 @@ const EventScreen = ({ navigation, route }) => {
           <View style={styles.tagWrap}>
             <TagL>
               <Image
-                source={require("../assets/date.png")}
+                source={require("../assets/badge.png")}
                 style={styles.tagIcon}
               />
               {event?.infosTags?.price}
@@ -126,7 +121,7 @@ const EventScreen = ({ navigation, route }) => {
             {event?.categories?.map((category, index) => (
               <TagL key={index}>
                 <Image
-                  source={require("../assets/date.png")}
+                  source={require("../assets/badge.png")}
                   style={styles.tagIcon}
                 />
                 {category}
