@@ -61,7 +61,12 @@ const BookmarkedScreen = ({ navigation }) => {
             ) : (
               likedEvents &&
               likedEvents
-                .filter((event) => new Date(event.date) >= new Date().getDate())
+                .filter((event) => {
+                  const eventDate = new Date(event.date);
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+                  return eventDate >= today;
+                })
                 .sort((a, b) => new Date(a.date) - new Date(b.date))
                 .map((event) => (
                   <CardEvent

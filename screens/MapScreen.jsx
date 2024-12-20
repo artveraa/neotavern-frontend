@@ -18,7 +18,8 @@ import TextApp from "../styleComponents/TextApp";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import MapView from "react-native-maps";
+// import MapView from "react-native-maps";
+import ClusteredMapView from "react-native-map-clustering";
 import { Marker } from "react-native-maps";
 import { useFocusEffect } from "@react-navigation/native";
 import * as Location from "expo-location";
@@ -264,15 +265,15 @@ const MapScreen = ({ navigation }) => {
         Si aucun événement n'est chargé, afficher un message de chargement
        */}
       {region ? (
-        <MapView
+        <ClusteredMapView
           style={StyleSheet.absoluteFillObject}
-          showsUserLocation={true}
           initialRegion={{
             latitude: region.latitude,
             longitude: region.longitude,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
+          showsUserLocation={true}
         >
           {allEvents &&
             allEvents.map((event) => (
@@ -289,7 +290,7 @@ const MapScreen = ({ navigation }) => {
                 onPress={() => handleMarkerPress(event)}
               />
             ))}
-        </MapView>
+        </ClusteredMapView>
       ) : (
         <View style={styles.loadingContainer}>
           <TextApp>Chargement de la carte...</TextApp>
@@ -361,7 +362,12 @@ const MapScreen = ({ navigation }) => {
             </View>
           ) : allEvents && allEvents.length > 0 ? (
             allEvents
-              .filter((event) => new Date(event.date) >= new Date().getDate()) // Filtre les événements passés
+              .filter((event) => {
+                const eventDate = new Date(event.date);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                return eventDate >= today;
+              })
               .sort((a, b) => new Date(a.date) - new Date(b.date)) // Trie les événements par date
               .map((event) => (
                 <CardEvent
